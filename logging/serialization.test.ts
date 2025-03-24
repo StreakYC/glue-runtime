@@ -11,7 +11,7 @@ Deno.test("serializeConsoleArgumentsToString", () => {
     false,
     1234,
   ]);
-  assertEquals(text, "hello world null undefined true false 1234\n");
+  assertEquals(text, "hello world null undefined true false 1234");
 });
 
 Deno.test("serializeConsoleArgumentsToString handles objects", () => {
@@ -19,18 +19,18 @@ Deno.test("serializeConsoleArgumentsToString handles objects", () => {
     a: 5,
     b: { c: 6 },
   }]);
-  assertEquals(text, 'hello {"a":5,"b":{"c":6}}\n');
+  assertEquals(text, 'hello {"a":5,"b":{"c":6}}');
 });
 
 Deno.test("serializeConsoleArgumentsToString handles objects", () => {
   const text = serializeConsoleArgumentsToString([function foo() {}, () => {}]);
-  assertEquals(text, "[Function: foo] [Function (anonymous)]\n");
+  assertEquals(text, "[Function: foo] [Function (anonymous)]");
 });
 
 Deno.test("serializeConsoleArgumentsToString handles errors", () => {
   const err = new Error("Test");
   const text = serializeConsoleArgumentsToString([err]);
-  assertEquals(text, `${err.stack}\n`);
+  assertEquals(text, `${err.stack}`);
 });
 
 Deno.test("serializeConsoleArgumentsToString handles Sets", () => {
@@ -39,7 +39,7 @@ Deno.test("serializeConsoleArgumentsToString handles Sets", () => {
   const text = serializeConsoleArgumentsToString([s]);
   assertEquals(
     text,
-    `Set(4) { 5, 6, Set(1) { 7 }, Set(1) { Set(1) { 7 } } }\n`,
+    `Set(4) { 5, 6, Set(1) { 7 }, Set(1) { Set(1) { 7 } } }`,
   );
 });
 
@@ -47,7 +47,7 @@ Deno.test("serializeConsoleArgumentsToString handles recursive Sets", () => {
   const s = new Set<unknown>([5, 6]);
   s.add(s);
   const text = serializeConsoleArgumentsToString([s]);
-  assertEquals(text, `Set(3) { 5, 6, [Circular reference] }\n`);
+  assertEquals(text, `Set(3) { 5, 6, [Circular reference] }`);
 });
 
 Deno.test("serializeConsoleArgumentsToString handles Maps", () => {
@@ -56,7 +56,7 @@ Deno.test("serializeConsoleArgumentsToString handles Maps", () => {
   const text = serializeConsoleArgumentsToString([m]);
   assertEquals(
     text,
-    `Map(3) { "a" => 5, "b" => Map(1) { "c" => 6 }, "bb" => Map(1) { "c" => 6 } }\n`,
+    `Map(3) { "a" => 5, "b" => Map(1) { "c" => 6 }, "bb" => Map(1) { "c" => 6 } }`,
   );
 });
 
@@ -64,7 +64,7 @@ Deno.test("serializeConsoleArgumentsToString handles recursive Maps", () => {
   const m = new Map<string, unknown>([["a", 5]]);
   m.set("b", m);
   const text = serializeConsoleArgumentsToString([m]);
-  assertEquals(text, `Map(2) { "a" => 5, "b" => [Circular reference] }\n`);
+  assertEquals(text, `Map(2) { "a" => 5, "b" => [Circular reference] }`);
 });
 
 Deno.test("serializeConsoleArgumentsToString handles unserializable values", () => {
@@ -75,22 +75,22 @@ Deno.test("serializeConsoleArgumentsToString handles unserializable values", () 
     "hello",
     selfReferencingObject,
   ]);
-  assertEquals(text, "hello [Unserializable value]\n");
+  assertEquals(text, "hello [Unserializable value]");
 });
 
 Deno.test("serializeConsoleArgumentsToString handles WeakMaps", () => {
   const wm = new WeakMap();
   const text = serializeConsoleArgumentsToString([wm]);
-  assertEquals(text, `[object WeakMap]\n`);
+  assertEquals(text, `[object WeakMap]`);
 });
 
 Deno.test("serializeConsoleArgumentsToString handles Symbols", () => {
   const s = Symbol("test");
   const text = serializeConsoleArgumentsToString([s]);
-  assertEquals(text, `Symbol(test)\n`);
+  assertEquals(text, `Symbol(test)`);
 });
 
 Deno.test("serializeConsoleArgumentsToString handles BigInts", () => {
   const text = serializeConsoleArgumentsToString([1234n]);
-  assertEquals(text, `1234n\n`);
+  assertEquals(text, `1234n`);
 });

@@ -58,5 +58,5 @@ function serializeValueAllowPlainStrings(value: unknown): string {
 }
 
 export function serializeConsoleArgumentsToString(args: unknown[]): string {
-  return args.map(serializeValueAllowPlainStrings).join(" ") + "\n";
+  return args.map(serializeValueAllowPlainStrings).join(" ");
 }

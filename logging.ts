@@ -31,7 +31,7 @@ export function patchConsoleGlobal() {
       const logs = asyncLocalStorage.getStore()?.logs;
       if (logs) {
         const timestamp = Date.now();
-        const text = serializeConsoleArgumentsToString(args);
+        const text = serializeConsoleArgumentsToString(args) + "\n";
         logs.push({
           timestamp,
           type: methodName === "error" ? "stderr" : "stdout",
@@ -85,7 +85,7 @@ export async function runInLoggingContext<T>(
       logContext.logs?.push({
         timestamp,
         type: "stdout",
-        text: serializeConsoleArgumentsToString(args),
+        text: serializeConsoleArgumentsToString(args) + "\n",
       });
     },
     error: (...args) => {
@@ -94,7 +94,7 @@ export async function runInLoggingContext<T>(
       logContext.logs?.push({
         timestamp,
         type: "stderr",
-        text: serializeConsoleArgumentsToString(args),
+        text: serializeConsoleArgumentsToString(args) + "\n",
       });
     },
   };
