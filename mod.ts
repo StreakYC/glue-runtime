@@ -5,11 +5,20 @@ import {
   patchConsoleGlobal,
   runInLoggingContext,
 } from "./logging.ts";
-import { Glue } from "@streak-glue/integrations/runtime";
-
-export type * from "@streak-glue/integrations/runtime";
+import * as webhookEventSource from "./integrations/eventSources/webhook/runtime.ts";
+import * as gmailEventSource from "./integrations/eventSources/gmail/runtime.ts";
 
 patchConsoleGlobal();
+
+export interface Glue {
+  gmail: gmailEventSource.GmailAPI;
+  webhook: webhookEventSource.WebhookAPI;
+}
+
+export const glue: Glue = {
+  gmail: gmailEventSource.createAPI(),
+  webhook: webhookEventSource.createAPI(),
+};
 
 interface TriggerEventResponse {
   logs: Log[];
@@ -22,9 +31,17 @@ interface RegisteredEvent {
 
 const eventListenersByType = new Map<string, Map<string, RegisteredEvent>>();
 
+export interface CommonTriggerOptions {
+  label?: string;
+}
+
 let nextAutomaticLabel = 0;
 
-export const glue: Glue = new Glue((eventName, callback, options = {}) => {
+export function registerEvent<T>(
+  eventName: string,
+  callback: (event: T) => void,
+  options: CommonTriggerOptions = {},
+) {
   scheduleInit();
 
   let specificEventListeners = eventListenersByType.get(eventName);
@@ -43,9 +60,9 @@ export const glue: Glue = new Glue((eventName, callback, options = {}) => {
     fn: callback as RegisteredEvent["fn"],
     options: restOptions,
   });
-});
+}
 
-function getRegisteredTriggers(): RegisteredTrigger[] {
+export function getRegisteredTriggers(): RegisteredTrigger[] {
   return Array.from(
     eventListenersByType.entries()
       .flatMap(([type, listeners]) =>

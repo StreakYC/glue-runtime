@@ -7,7 +7,6 @@
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1",
-    "@streak-glue/integrations": "jsr:@streak-glue/integrations@^0.1.0",
     "hono": "jsr:@hono/hono@^4.7.4",
     "zod": "npm:zod@^3.24.2"
   }

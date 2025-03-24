@@ -4,7 +4,6 @@
     "jsr:@hono/hono@^4.7.4": "4.7.4",
     "jsr:@std/assert@1": "1.0.11",
     "jsr:@std/internal@^1.0.5": "1.0.5",
-    "jsr:@streak-glue/integrations@0.1": "0.1.0",
     "npm:zod@^3.24.2": "3.24.2"
   },
   "jsr": {
@@ -19,9 +18,6 @@
     },
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
-    },
-    "@streak-glue/integrations@0.1.0": {
-      "integrity": "a9363f8cdec3cdd505fe2eb24f622a5f55a91c0881ab481feeb7d9a6e3f59445"
     }
   },
   "npm": {
@@ -33,7 +29,6 @@
     "dependencies": [
       "jsr:@hono/hono@^4.7.4",
       "jsr:@std/assert@1",
-      "jsr:@streak-glue/integrations@0.1",
       "npm:zod@^3.24.2"
     ]
   }
