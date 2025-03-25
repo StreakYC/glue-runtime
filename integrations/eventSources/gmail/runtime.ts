@@ -5,17 +5,11 @@ export interface GmailMessageEvent {
   subject: string;
 }
 
-export interface GmailAPI {
+export class Gmail {
   onMessage(
     fn: (event: GmailMessageEvent) => void,
     options?: CommonTriggerOptions,
-  ): void;
-}
-
-export function createAPI(): GmailAPI {
-  return {
-    onMessage(fn, options?): void {
-      registerEvent("gmail", fn, options);
-    },
-  };
+  ): void {
+    registerEvent("gmail", fn, options);
+  }
 }

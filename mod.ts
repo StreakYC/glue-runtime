@@ -5,20 +5,20 @@ import {
   patchConsoleGlobal,
   runInLoggingContext,
 } from "./logging.ts";
-import * as webhookEventSource from "./integrations/eventSources/webhook/runtime.ts";
 import * as gmailEventSource from "./integrations/eventSources/gmail/runtime.ts";
+import * as webhookEventSource from "./integrations/eventSources/webhook/runtime.ts";
 
 patchConsoleGlobal();
 
-export interface Glue {
-  gmail: gmailEventSource.GmailAPI;
-  webhook: webhookEventSource.WebhookAPI;
+class Glue {
+  readonly gmail: gmailEventSource.Gmail = new gmailEventSource.Gmail();
+  readonly webhook: webhookEventSource.Webhook = new webhookEventSource
+    .Webhook();
 }
 
-export const glue: Glue = {
-  gmail: gmailEventSource.createAPI(),
-  webhook: webhookEventSource.createAPI(),
-};
+export type { Glue };
+
+export const glue: Glue = new Glue();
 
 interface TriggerEventResponse {
   logs: Log[];

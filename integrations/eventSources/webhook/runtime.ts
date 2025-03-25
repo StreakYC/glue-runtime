@@ -7,17 +7,11 @@ export interface WebhookEvent {
   bodyText?: string;
 }
 
-export interface WebhookAPI {
+export class Webhook {
   onWebhook(
     fn: (event: WebhookEvent) => void,
     options?: CommonTriggerOptions,
-  ): void;
-}
-
-export function createAPI(): WebhookAPI {
-  return {
-    onWebhook(fn, options?): void {
-      registerEvent("webhook", fn, options);
-    },
-  };
+  ): void {
+    registerEvent("webhook", fn, options);
+  }
 }
