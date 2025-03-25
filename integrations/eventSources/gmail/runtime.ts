@@ -1,4 +1,7 @@
-import { type CommonTriggerOptions, registerEvent } from "../runtimeSupport.ts";
+import {
+  type CommonTriggerOptions,
+  registerEvent,
+} from "../../../runtimeSupport.ts";
 
 export interface GmailMessageEvent {
   type: "messageAdded";
