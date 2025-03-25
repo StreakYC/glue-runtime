@@ -10,5 +10,5 @@ jobs:
           deno-version: v2.x
       - run: deno fmt --check
       - run: deno lint
-      - run: deno test
+      - run: deno task test
       - run: deno publish --dry-run
