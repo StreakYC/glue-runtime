@@ -14,11 +14,12 @@ interface TriggerEventResponse {
 
 interface RegisteredEvent {
   fn: (event: unknown) => void | Promise<void>;
-  options: unknown;
+  config: unknown;
 }
 
 const eventListenersByType = new Map<string, Map<string, RegisteredEvent>>();
 
+// if you add anything to this interface, you need to update the register event function
 export interface CommonTriggerOptions {
   label?: string;
 }
@@ -37,7 +38,7 @@ export function registerEvent<T>(
     specificEventListeners = new Map();
     eventListenersByType.set(eventName, specificEventListeners);
   }
-  const { label, ...restOptions } = options;
+  const { label, ...config } = options;
   const resolvedLabel = label ?? String(nextAutomaticLabel++);
   if (specificEventListeners.has(resolvedLabel)) {
     throw new Error(
@@ -46,7 +47,7 @@ export function registerEvent<T>(
   }
   specificEventListeners.set(resolvedLabel, {
     fn: callback as RegisteredEvent["fn"],
-    options: restOptions,
+    config,
   });
 }
 
@@ -54,10 +55,10 @@ function getRegisteredTriggers(): RegisteredTrigger[] {
   return Array.from(
     eventListenersByType.entries()
       .flatMap(([type, listeners]) =>
-        listeners.entries().map(([label, { options }]) => ({
+        listeners.entries().map(([label, { config }]) => ({
           type,
           label,
-          options,
+          config,
         }))
       ),
   );

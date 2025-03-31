@@ -27,7 +27,7 @@ Deno.test({
         throw new Error(`Failed to fetch: ${response.status}`);
       }
       const body = await response.json();
-      assertEquals(body, [{ type: "webhook", label: "0", options: {} }]);
+      assertEquals(body, [{ type: "webhook", label: "0", config: {} }]);
     });
 
     await t.step("triggerEvent", async () => {
