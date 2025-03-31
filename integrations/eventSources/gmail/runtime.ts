@@ -8,10 +8,16 @@ export interface GmailMessageEvent {
   subject: string;
 }
 
+export type GmailTriggerOptions = CommonTriggerOptions & GmailConfig;
+
+export interface GmailConfig {
+  accountEmailAddress?: string;
+}
+
 export class Gmail {
   onMessage(
     fn: (event: GmailMessageEvent) => void,
-    options?: CommonTriggerOptions,
+    options?: GmailTriggerOptions,
   ): void {
     registerEvent("gmail", fn, options);
   }
