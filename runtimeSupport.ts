@@ -26,10 +26,11 @@ export interface CommonTriggerOptions {
 
 let nextAutomaticLabel = 0;
 
-export function registerEvent<T>(
+export function registerEventListener<T>(
   eventName: string,
   callback: (event: T) => void,
-  options: CommonTriggerOptions = {},
+  config: unknown,
+  options: CommonTriggerOptions | undefined,
 ) {
   scheduleInit();
 
@@ -38,11 +39,13 @@ export function registerEvent<T>(
     specificEventListeners = new Map();
     eventListenersByType.set(eventName, specificEventListeners);
   }
-  const { label, ...config } = options;
-  const resolvedLabel = label ?? String(nextAutomaticLabel++);
+
+  const resolvedLabel = options?.label ?? String(nextAutomaticLabel++);
   if (specificEventListeners.has(resolvedLabel)) {
     throw new Error(
-      `Event listener with label ${JSON.stringify(label)} already registered`,
+      `Event listener with label ${
+        JSON.stringify(resolvedLabel)
+      } already registered`,
     );
   }
   specificEventListeners.set(resolvedLabel, {

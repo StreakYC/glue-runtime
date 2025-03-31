@@ -1,9 +1,7 @@
 import {
   type CommonTriggerOptions,
-  registerEvent,
+  registerEventListener,
 } from "../../../runtimeSupport.ts";
-
-export type CronTriggerOptions = CommonTriggerOptions & CronConfig;
 
 export interface CronConfig {
   crontab: string;
@@ -15,9 +13,13 @@ export interface CronEvent {
 
 export class Cron {
   onCron(
+    crontab: string,
     fn: (event: CronEvent) => void,
-    options?: CronTriggerOptions,
+    options?: CommonTriggerOptions,
   ): void {
-    registerEvent("cron", fn, options);
+    const config: CronConfig = {
+      crontab,
+    };
+    registerEventListener("cron", fn, config, options);
   }
 }

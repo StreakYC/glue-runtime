@@ -1,6 +1,6 @@
 import {
   type CommonTriggerOptions,
-  registerEvent,
+  registerEventListener,
 } from "../../../runtimeSupport.ts";
 
 export interface GmailMessageEvent {
@@ -8,7 +8,9 @@ export interface GmailMessageEvent {
   subject: string;
 }
 
-export type GmailTriggerOptions = CommonTriggerOptions & GmailConfig;
+export type GmailTriggerOptions = CommonTriggerOptions & {
+  accountEmailAddress?: string;
+};
 
 export interface GmailConfig {
   accountEmailAddress?: string;
@@ -19,6 +21,9 @@ export class Gmail {
     fn: (event: GmailMessageEvent) => void,
     options?: GmailTriggerOptions,
   ): void {
-    registerEvent("gmail", fn, options);
+    const config: GmailConfig = {
+      accountEmailAddress: options?.accountEmailAddress,
+    };
+    registerEventListener("gmail", fn, config, options);
   }
 }

@@ -14,10 +14,7 @@ export type {
   WebhookEvent,
   WebhookTriggerOptions,
 } from "./integrations/eventSources/webhook/runtime.ts";
-export type {
-  CronEvent,
-  CronTriggerOptions,
-} from "./integrations/eventSources/cron/runtime.ts";
+export type { CronEvent } from "./integrations/eventSources/cron/runtime.ts";
 
 export type { CommonTriggerOptions } from "./runtimeSupport.ts";
 

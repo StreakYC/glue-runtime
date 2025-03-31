@@ -1,15 +1,25 @@
 import {
   type CommonTriggerOptions,
-  registerEvent,
+  registerEventListener,
 } from "../../../runtimeSupport.ts";
 
-export type GithubTriggerOptions = CommonTriggerOptions & GithubConfig;
+export type GithubTriggerOptions = CommonTriggerOptions & { username?: string };
 
-export interface GithubConfig {
+interface GithubRepoConfig {
   repo: string;
+  // org?: never;
   events: string[];
   username?: string;
 }
+
+interface GithubOrgConfig {
+  org: string;
+  // repo?: never;
+  events: string[];
+  username?: string;
+}
+
+export type GithubConfig = GithubRepoConfig | GithubOrgConfig;
 
 export interface GithubEvent {
   event: string;
@@ -17,10 +27,39 @@ export interface GithubEvent {
 }
 
 export class Github {
-  onEvent(
+  onRepoEvent(
+    repo: string,
+    events: string[],
     fn: (event: GithubEvent) => void,
     options?: GithubTriggerOptions,
   ): void {
-    registerEvent("github", fn, options);
+    const config: GithubRepoConfig = {
+      repo,
+      events,
+      username: options?.username,
+    };
+    registerEventListener("github", fn, config, options);
+  }
+
+  onNewPullRequest(
+    repo: string,
+    fn: (event: GithubEvent) => void,
+    options?: GithubTriggerOptions,
+  ): void {
+    this.onRepoEvent(repo, ["pull_request"], fn, options);
+  }
+
+  onOrgEvent(
+    org: string,
+    events: string[],
+    fn: (event: GithubEvent) => void,
+    options?: GithubTriggerOptions,
+  ): void {
+    const config: GithubOrgConfig = {
+      org,
+      events,
+      username: options?.username,
+    };
+    registerEventListener("github", fn, config, options);
   }
 }
