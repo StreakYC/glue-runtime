@@ -6,15 +6,14 @@ import {
 export type GithubTriggerOptions = CommonTriggerOptions & { username?: string };
 
 interface GithubRepoConfig {
+  owner: string;
   repo: string;
-  // org?: never;
   events: string[];
   username?: string;
 }
 
 interface GithubOrgConfig {
   org: string;
-  // repo?: never;
   events: string[];
   username?: string;
 }
@@ -28,12 +27,14 @@ export interface GithubEvent {
 
 export class Github {
   onRepoEvent(
+    owner: string,
     repo: string,
     events: string[],
     fn: (event: GithubEvent) => void,
     options?: GithubTriggerOptions,
   ): void {
     const config: GithubRepoConfig = {
+      owner,
       repo,
       events,
       username: options?.username,
@@ -42,11 +43,12 @@ export class Github {
   }
 
   onNewPullRequest(
+    owner: string,
     repo: string,
     fn: (event: GithubEvent) => void,
     options?: GithubTriggerOptions,
   ): void {
-    this.onRepoEvent(repo, ["pull_request"], fn, options);
+    this.onRepoEvent(owner, repo, ["pull_request"], fn, options);
   }
 
   onOrgEvent(
