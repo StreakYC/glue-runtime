@@ -16,8 +16,7 @@ export type TriggerEvent = z.infer<typeof TriggerEvent>;
 export interface RegisteredTrigger {
   type: string;
   label: string;
-  // TODO
-  // options: unknown;
+  options: unknown;
 }
 
 export type Awaitable<T> = T | Promise<T>;

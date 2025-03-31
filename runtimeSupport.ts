@@ -54,7 +54,11 @@ function getRegisteredTriggers(): RegisteredTrigger[] {
   return Array.from(
     eventListenersByType.entries()
       .flatMap(([type, listeners]) =>
-        listeners.keys().map((label) => ({ type, label }))
+        listeners.entries().map(([label, { options }]) => ({
+          type,
+          label,
+          options,
+        }))
       ),
   );
 }
