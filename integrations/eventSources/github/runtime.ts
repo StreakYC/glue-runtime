@@ -1,3 +1,7 @@
+import type {
+  WebhookEventMap,
+  WebhookEventName,
+} from "@octokit/webhooks-types";
 import {
   type CommonTriggerOptions,
   registerEventListener,
@@ -20,17 +24,18 @@ interface GithubOrgConfig {
 
 export type GithubConfig = GithubRepoConfig | GithubOrgConfig;
 
-export interface GithubEvent {
-  event: string;
-  payload: unknown;
+export interface GithubEvent<T extends WebhookEventName> {
+  event: T;
+  payload: WebhookEventMap[T];
 }
 
 export class Github {
-  onRepoEvent(
+  // generic events
+  onRepoEvent<T extends WebhookEventName>(
     owner: string,
     repo: string,
-    events: string[],
-    fn: (event: GithubEvent) => void,
+    events: T[],
+    fn: (event: GithubEvent<T>) => void,
     options?: GithubTriggerOptions,
   ): void {
     const config: GithubRepoConfig = {
@@ -42,19 +47,10 @@ export class Github {
     registerEventListener("github", fn, config, options);
   }
 
-  onNewPullRequest(
-    owner: string,
-    repo: string,
-    fn: (event: GithubEvent) => void,
-    options?: GithubTriggerOptions,
-  ): void {
-    this.onRepoEvent(owner, repo, ["pull_request"], fn, options);
-  }
-
-  onOrgEvent(
+  onOrgEvent<T extends WebhookEventName>(
     org: string,
-    events: string[],
-    fn: (event: GithubEvent) => void,
+    events: T[],
+    fn: (event: GithubEvent<T>) => void,
     options?: GithubTriggerOptions,
   ): void {
     const config: GithubOrgConfig = {
@@ -63,5 +59,15 @@ export class Github {
       username: options?.username,
     };
     registerEventListener("github", fn, config, options);
+  }
+
+  // specific events
+  onNewPullRequest(
+    owner: string,
+    repo: string,
+    fn: (event: GithubEvent<"pull_request">) => void,
+    options?: GithubTriggerOptions,
+  ): void {
+    this.onRepoEvent(owner, repo, ["pull_request"], fn, options);
   }
 }
