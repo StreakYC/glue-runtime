@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { type RegisteredTrigger, TriggerEvent } from "./common.ts";
+import { type RegisteredTrigger, TriggerEvent } from "./internalTypes.ts";
 import {
   type Log,
   patchConsoleGlobal,

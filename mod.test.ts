@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { glue } from "./mod.ts";
-import type { TriggerEvent } from "./common.ts";
+import type { TriggerEvent } from "./internalTypes.ts";
 
 Deno.test({
   name: "works",

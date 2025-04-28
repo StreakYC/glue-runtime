@@ -1,10 +1,10 @@
 {
   "name": "@streak-glue/runtime",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "license": "MIT",
   "exports": {
     ".": "./mod.ts",
-    "./configTypes": "./configTypes.ts"
+    "./internalTypes": "./internalTypes.ts"
   },
   "tasks": {
     "test": "deno test --allow-env=GLUE_DEV_PORT --allow-net=127.0.0.1"

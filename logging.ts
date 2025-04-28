@@ -1,5 +1,4 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import type { Awaitable } from "./common.ts";
 import { serializeConsoleArgumentsToString } from "./logging/serialization.ts";
 
 export interface Log {
@@ -103,3 +102,5 @@ export async function runInLoggingContext<T>(
   logContext.logs = undefined;
   return { result, logs };
 }
+
+type Awaitable<T> = T | Promise<T>;
