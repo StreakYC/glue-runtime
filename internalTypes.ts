@@ -18,10 +18,16 @@ export interface TriggerEvent {
   data?: unknown;
 }
 
+export const RegisteredTrigger: z.ZodType<RegisteredTrigger> = z.object({
+  type: z.string(),
+  label: z.string(),
+  config: z.object({}).optional(),
+});
+
 export interface RegisteredTrigger {
   type: string;
   label: string;
-  config: unknown;
+  config?: unknown;
 }
 
 export type { GithubConfig } from "./integrations/eventSources/github/runtime.ts";
