@@ -62,7 +62,7 @@ export class Github {
   }
 
   // specific events
-  onNewPullRequest(
+  onPullRequestEvent(
     owner: string,
     repo: string,
     fn: (event: GithubEvent<"pull_request">) => void,
