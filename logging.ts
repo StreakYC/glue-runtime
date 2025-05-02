@@ -74,7 +74,7 @@ export interface Logger {
 
 export async function runInLoggingContext<T>(
   fn: (logger: Logger) => Awaitable<T>,
-): Promise<{ result: T; logs: Log[] }> {
+): Promise<{ logs: Log[] }> {
   const logs: Log[] = [];
   const logContext: LogContext = { logs };
   const logger: Logger = {
@@ -97,10 +97,15 @@ export async function runInLoggingContext<T>(
       });
     },
   };
-  // TODO do we need to handle errors here?
-  const result: T = await asyncLocalStorage.run(logContext, () => fn(logger));
-  logContext.logs = undefined;
-  return { result, logs };
+
+  try {
+    await asyncLocalStorage.run(logContext, () => fn(logger));
+  } catch (error) {
+    logger.error(error);
+  } finally {
+    logContext.logs = undefined;
+  }
+  return { logs };
 }
 
 type Awaitable<T> = T | Promise<T>;
