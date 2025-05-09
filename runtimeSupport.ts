@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { type RegisteredTrigger, TriggerEvent } from "./internalTypes.ts";
+import { type Registrations, TriggerEvent } from "./internalTypes.ts";
 import {
   type Log,
   patchConsoleGlobal,
@@ -17,10 +17,22 @@ interface RegisteredEvent {
   config: unknown;
 }
 
+interface RegisteredCredentialRequest {
+  config: unknown;
+}
+
 const eventListenersByType = new Map<string, Map<string, RegisteredEvent>>();
+const credentialRequestsByType = new Map<
+  string,
+  Map<string, RegisteredCredentialRequest>
+>();
 
 // if you add anything to this interface, you need to update the register event function
 export interface CommonTriggerOptions {
+  label?: string;
+}
+
+export interface CommonCredentialRequestOptions {
   label?: string;
 }
 
@@ -54,17 +66,56 @@ export function registerEventListener<T>(
   });
 }
 
-function getRegisteredTriggers(): RegisteredTrigger[] {
-  return Array.from(
-    eventListenersByType.entries()
-      .flatMap(([type, listeners]) =>
-        listeners.entries().map(([label, { config }]) => ({
-          type,
-          label,
-          config,
-        }))
-      ),
-  );
+export function registerCredentialRequest(
+  type: string,
+  config: unknown,
+  options: CommonCredentialRequestOptions | undefined,
+) {
+  scheduleInit();
+  let specificCredentialRequests = credentialRequestsByType.get(type);
+  if (!specificCredentialRequests) {
+    specificCredentialRequests = new Map();
+    credentialRequestsByType.set(type, specificCredentialRequests);
+  }
+
+  const resolvedLabel = options?.label ?? String(nextAutomaticLabel++);
+  if (specificCredentialRequests.has(resolvedLabel)) {
+    throw new Error(
+      `Credential request with label ${
+        JSON.stringify(
+          resolvedLabel,
+        )
+      } already registered`,
+    );
+  }
+  specificCredentialRequests.set(resolvedLabel, {
+    config,
+  });
+}
+
+function getRegistrations(): Registrations {
+  return {
+    triggers: Array.from(
+      eventListenersByType.entries()
+        .flatMap(([type, listeners]) =>
+          listeners.entries().map(([label, { config }]) => ({
+            type,
+            label,
+            config,
+          }))
+        ),
+    ),
+    credentialRequests: Array.from(
+      credentialRequestsByType.entries()
+        .flatMap(([type, requests]) =>
+          requests.entries().map(([label, { config }]) => ({
+            type,
+            label,
+            config,
+          }))
+        ),
+    ),
+  };
 }
 
 async function handleTrigger(event: TriggerEvent) {
@@ -106,8 +157,11 @@ function scheduleInit() {
     serveOptions.onListen = () => {};
 
     const app = new Hono();
+    app.get("/__glue__/getRegistrations", (c) => {
+      return c.json(getRegistrations());
+    });
     app.get("/__glue__/getRegisteredTriggers", (c) => {
-      return c.json(getRegisteredTriggers());
+      return c.json(getRegistrations().triggers);
     });
     app.post("/__glue__/triggerEvent", async (c) => {
       const body = TriggerEvent.parse(await c.req.json());
