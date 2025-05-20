@@ -16,6 +16,7 @@ export type {
 } from "./integrations/eventSources/webhook/runtime.ts";
 export type { CronEvent } from "./integrations/eventSources/cron/runtime.ts";
 export type {
+  BoxEventType,
   StreakEvent,
 } from "./integrations/eventSources/streak/runtime.ts";
 export type { CommonTriggerOptions } from "./runtimeSupport.ts";
