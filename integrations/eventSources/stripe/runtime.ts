@@ -17,7 +17,7 @@ export interface StripeEvent<T extends StripeEventType> {
   payload: unknown;
 }
 
-export type StripeEventType = 
+export type StripeEventType =
   | "charge.succeeded"
   | "charge.failed"
   | "payment_intent.succeeded"
@@ -58,7 +58,7 @@ export class Stripe {
   ): void {
     this.onEvent(["charge.succeeded"], fn, options);
   }
-  
+
   onSubscriptionCreated(
     fn: (event: StripeEvent<"subscription.created">) => void,
     options?: StripeTriggerOptions,
