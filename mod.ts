@@ -2,6 +2,7 @@ import * as gmailEventSource from "./integrations/eventSources/gmail/runtime.ts"
 import * as webhookEventSource from "./integrations/eventSources/webhook/runtime.ts";
 import * as githubEventSource from "./integrations/eventSources/github/runtime.ts";
 import * as streakEventSource from "./integrations/eventSources/streak/runtime.ts";
+import * as stripeEventSource from "./integrations/eventSources/stripe/runtime.ts";
 export type {
   GmailMessageEvent,
   GmailTriggerOptions,
@@ -19,6 +20,11 @@ export type {
   BoxEventType,
   StreakEvent,
 } from "./integrations/eventSources/streak/runtime.ts";
+export type {
+  StripeEvent,
+  StripeEventType,
+  StripeTriggerOptions,
+} from "./integrations/eventSources/stripe/runtime.ts";
 export type { CommonTriggerOptions } from "./runtimeSupport.ts";
 
 class Glue {
@@ -27,6 +33,7 @@ class Glue {
     .Webhook();
   readonly github: githubEventSource.Github = new githubEventSource.Github();
   readonly streak: streakEventSource.Streak = new streakEventSource.Streak();
+  readonly stripe: stripeEventSource.Stripe = new stripeEventSource.Stripe();
 }
 
 export type { Glue };
