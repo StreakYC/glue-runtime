@@ -4,7 +4,7 @@ import {
   registerEventListener,
 } from "../../../runtimeSupport.ts";
 
-type StripeEventType = StripeLib.Event.Type;
+export type StripeEventType = StripeLib.Event.Type;
 
 export type StripeTriggerOptions = CommonTriggerOptions & {
   accountId?: string;
@@ -15,16 +15,16 @@ export interface StripeConfig {
   stripeAccountId?: string;
 }
 
-export interface StripeEvent {
-  event: StripeEventType;
-  payload: StripeLib.Event;
-}
+export type StripeEvent<T extends StripeEventType> = Extract<
+  StripeLib.Event,
+  { type: T }
+>;
 
 export class Stripe {
   // generic events
-  onEvents(
-    events: StripeEventType[],
-    fn: (event: StripeEvent) => void,
+  onEvents<T extends StripeEventType>(
+    events: T[],
+    fn: (event: StripeEvent<T>) => void,
     options?: StripeTriggerOptions,
   ): void {
     const config: StripeConfig = {
@@ -35,35 +35,35 @@ export class Stripe {
   }
 
   onCustomerCreated(
-    fn: (event: StripeEvent) => void,
+    fn: (event: StripeEvent<"customer.created">) => void,
     options?: StripeTriggerOptions,
   ): void {
     this.onEvents(["customer.created"], fn, options);
   }
 
   onSubscriptionCreated(
-    fn: (event: StripeEvent) => void,
+    fn: (event: StripeEvent<"customer.subscription.created">) => void,
     options?: StripeTriggerOptions,
   ): void {
     this.onEvents(["customer.subscription.created"], fn, options);
   }
 
   onSubscriptionCanceled(
-    fn: (event: StripeEvent) => void,
+    fn: (event: StripeEvent<"customer.subscription.deleted">) => void,
     options?: StripeTriggerOptions,
   ): void {
     this.onEvents(["customer.subscription.deleted"], fn, options);
   }
 
   onPaymentFailed(
-    fn: (event: StripeEvent) => void,
+    fn: (event: StripeEvent<"payment_intent.payment_failed">) => void,
     options?: StripeTriggerOptions,
   ): void {
     this.onEvents(["payment_intent.payment_failed"], fn, options);
   }
 
   onPaymentSucceeded(
-    fn: (event: StripeEvent) => void,
+    fn: (event: StripeEvent<"payment_intent.succeeded">) => void,
     options?: StripeTriggerOptions,
   ): void {
     this.onEvents(["payment_intent.succeeded"], fn, options);
