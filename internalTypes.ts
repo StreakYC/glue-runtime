@@ -57,3 +57,4 @@ export type { GmailConfig } from "./integrations/eventSources/gmail/runtime.ts";
 export type { WebhookConfig } from "./integrations/eventSources/webhook/runtime.ts";
 export type { CronConfig } from "./integrations/eventSources/cron/runtime.ts";
 export type { StreakConfig } from "./integrations/eventSources/streak/runtime.ts";
+export type { StripeConfig } from "./integrations/eventSources/stripe/runtime.ts";
