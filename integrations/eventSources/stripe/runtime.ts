@@ -1,4 +1,4 @@
-import type { Stripe as StripeLib } from "npm:stripe";
+import type { Stripe as StripeLib } from "stripe";
 import {
   type CommonTriggerOptions,
   registerEventListener,

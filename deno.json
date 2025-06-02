@@ -13,6 +13,7 @@
     "@octokit/webhooks-types": "npm:@octokit/webhooks-types@^7.6.1",
     "@std/assert": "jsr:@std/assert@1",
     "hono": "jsr:@hono/hono@^4.7.4",
+    "stripe": "npm:stripe@^18.2.0",
     "zod": "npm:zod@^3.24.2"
   }
 }

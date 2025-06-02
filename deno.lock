@@ -9,6 +9,7 @@
     "npm:@types/node@*": "22.12.0",
     "npm:octokit@*": "4.1.2_@octokit+core@6.1.4",
     "npm:stripe@*": "18.1.1_@types+node@22.12.0",
+    "npm:stripe@^18.2.0": "18.2.0_@types+node@22.12.0",
     "npm:zod@^3.24.2": "3.24.2"
   },
   "jsr": {
@@ -383,6 +384,16 @@
         "@types/node"
       ]
     },
+    "stripe@18.2.0_@types+node@22.12.0": {
+      "integrity": "sha512-RpOaGh5CLs3SYeVXw1CIQZNwPVADBJtgNyUgu+ZkIvu3u4pkZvNrlKr+WaLoNjSPQWef0dikxDS2AKHBl/l3bg==",
+      "dependencies": [
+        "@types/node",
+        "qs"
+      ],
+      "optionalPeers": [
+        "@types/node"
+      ]
+    },
     "toad-cache@3.7.0": {
       "integrity": "sha512-/m8M+2BJUpoJdgAHoG+baCwBT+tf2VraSfkBgl0Y00qIWt41DJ8R5B8nsEw0I58YwF5IZH6z24/2TobDKnqSWw=="
     },
@@ -504,6 +515,7 @@
       "jsr:@hono/hono@^4.7.4",
       "jsr:@std/assert@1",
       "npm:@octokit/webhooks-types@^7.6.1",
+      "npm:stripe@^18.2.0",
       "npm:zod@^3.24.2"
     ]
   }
