@@ -7,12 +7,12 @@ import {
 export type StripeEventType = StripeLib.Event.Type;
 
 export type StripeTriggerOptions = CommonTriggerOptions & {
-  accountId?: string;
+  accountLabel?: string;
 };
 
 export interface StripeConfig {
   events: StripeEventType[];
-  stripeAccountId?: string;
+  accountLabel?: string;
 }
 
 export type StripeEvent<T extends StripeEventType> = Extract<
@@ -29,7 +29,7 @@ export class Stripe {
   ): void {
     const config: StripeConfig = {
       events,
-      stripeAccountId: options?.accountId,
+      accountLabel: options?.accountLabel,
     };
     registerEventListener("stripe", fn, config, options);
   }
