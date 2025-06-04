@@ -1,10 +1,6 @@
 import { Hono } from "hono";
 import { type Registrations, TriggerEvent } from "./internalTypes.ts";
-import {
-  type Log,
-  patchConsoleGlobal,
-  runInLoggingContext,
-} from "./logging.ts";
+import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
 
 patchConsoleGlobal();
 
@@ -55,9 +51,7 @@ export function registerEventListener<T>(
   const resolvedLabel = options?.label ?? String(nextAutomaticLabel++);
   if (specificEventListeners.has(resolvedLabel)) {
     throw new Error(
-      `Event listener with label ${
-        JSON.stringify(resolvedLabel)
-      } already registered`,
+      `Event listener with label ${JSON.stringify(resolvedLabel)} already registered`,
     );
   }
   specificEventListeners.set(resolvedLabel, {
@@ -151,9 +145,7 @@ function scheduleInit() {
 
     const GLUE_DEV_PORT = Deno.env.get("GLUE_DEV_PORT");
 
-    const serveOptions: Deno.ServeTcpOptions = GLUE_DEV_PORT
-      ? { hostname: "127.0.0.1", port: Number(GLUE_DEV_PORT) }
-      : {};
+    const serveOptions: Deno.ServeTcpOptions = GLUE_DEV_PORT ? { hostname: "127.0.0.1", port: Number(GLUE_DEV_PORT) } : {};
     serveOptions.onListen = () => {};
 
     const app = new Hono();

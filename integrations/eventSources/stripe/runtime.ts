@@ -1,8 +1,5 @@
 import type { Stripe as StripeLib } from "stripe";
-import {
-  type CommonTriggerOptions,
-  registerEventListener,
-} from "../../../runtimeSupport.ts";
+import { type CommonTriggerOptions, registerEventListener } from "../../../runtimeSupport.ts";
 
 export type StripeEventType = StripeLib.Event.Type;
 

@@ -4,27 +4,12 @@ import * as githubEventSource from "./integrations/eventSources/github/runtime.t
 import * as streakEventSource from "./integrations/eventSources/streak/runtime.ts";
 import * as stripeEventSource from "./integrations/eventSources/stripe/runtime.ts";
 import * as cronEventSource from "./integrations/eventSources/cron/runtime.ts";
-export type {
-  GmailMessageEvent,
-  GmailTriggerOptions,
-} from "./integrations/eventSources/gmail/runtime.ts";
-export type {
-  GithubEvent,
-  GithubTriggerOptions,
-} from "./integrations/eventSources/github/runtime.ts";
-export type {
-  WebhookEvent,
-  WebhookTriggerOptions,
-} from "./integrations/eventSources/webhook/runtime.ts";
+export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/eventSources/gmail/runtime.ts";
+export type { GithubEvent, GithubTriggerOptions } from "./integrations/eventSources/github/runtime.ts";
+export type { WebhookEvent, WebhookTriggerOptions } from "./integrations/eventSources/webhook/runtime.ts";
 export type { CronEvent } from "./integrations/eventSources/cron/runtime.ts";
-export type {
-  BoxEventType,
-  StreakEvent,
-} from "./integrations/eventSources/streak/runtime.ts";
-export type {
-  StripeEvent,
-  StripeTriggerOptions,
-} from "./integrations/eventSources/stripe/runtime.ts";
+export type { BoxEventType, StreakEvent } from "./integrations/eventSources/streak/runtime.ts";
+export type { StripeEvent, StripeTriggerOptions } from "./integrations/eventSources/stripe/runtime.ts";
 export type { CommonTriggerOptions } from "./runtimeSupport.ts";
 
 class Glue {

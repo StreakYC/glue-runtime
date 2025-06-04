@@ -1,11 +1,5 @@
-import type {
-  WebhookEventMap,
-  WebhookEventName,
-} from "@octokit/webhooks-types";
-import {
-  type CommonTriggerOptions,
-  registerEventListener,
-} from "../../../runtimeSupport.ts";
+import type { WebhookEventMap, WebhookEventName } from "@octokit/webhooks-types";
+import { type CommonTriggerOptions, registerEventListener } from "../../../runtimeSupport.ts";
 
 export type GithubTriggerOptions = CommonTriggerOptions & { username?: string };
 
