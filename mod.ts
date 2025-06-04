@@ -3,6 +3,7 @@ import * as webhookEventSource from "./integrations/eventSources/webhook/runtime
 import * as githubEventSource from "./integrations/eventSources/github/runtime.ts";
 import * as streakEventSource from "./integrations/eventSources/streak/runtime.ts";
 import * as stripeEventSource from "./integrations/eventSources/stripe/runtime.ts";
+import * as cronEventSource from "./integrations/eventSources/cron/runtime.ts";
 export type {
   GmailMessageEvent,
   GmailTriggerOptions,
@@ -30,6 +31,7 @@ class Glue {
   readonly gmail: gmailEventSource.Gmail = new gmailEventSource.Gmail();
   readonly webhook: webhookEventSource.Webhook = new webhookEventSource
     .Webhook();
+  readonly cron: cronEventSource.Cron = new cronEventSource.Cron();
   readonly github: githubEventSource.Github = new githubEventSource.Github();
   readonly streak: streakEventSource.Streak = new streakEventSource.Streak();
   readonly stripe: stripeEventSource.Stripe = new stripeEventSource.Stripe();
