@@ -14,14 +14,14 @@ interface RegisteredEvent {
   config: unknown;
 }
 
-interface RegisteredCredentialRequest {
+interface RegisteredAccountInjection {
   config: unknown;
 }
 
 const eventListenersByType = new Map<string, Map<string, RegisteredEvent>>();
-const credentialRequestsByType = new Map<
+const accountInjectionsByType = new Map<
   string,
-  Map<string, RegisteredCredentialRequest>
+  Map<string, RegisteredAccountInjection>
 >();
 
 // if you add anything to this interface, you need to update the register event function
@@ -29,7 +29,7 @@ export interface CommonTriggerOptions {
   label?: string;
 }
 
-export interface CommonCredentialRequestOptions {
+export interface CommonAccountInjectionOptions {
   label?: string;
 }
 
@@ -61,29 +61,29 @@ export function registerEventListener<T>(
   });
 }
 
-export function registerCredentialRequest(
+export function registerAccountInjection(
   type: string,
   config: unknown,
-  options: CommonCredentialRequestOptions | undefined,
+  options: CommonAccountInjectionOptions | undefined,
 ) {
   scheduleInit();
-  let specificCredentialRequests = credentialRequestsByType.get(type);
-  if (!specificCredentialRequests) {
-    specificCredentialRequests = new Map();
-    credentialRequestsByType.set(type, specificCredentialRequests);
+  let typeAccountInjections = accountInjectionsByType.get(type);
+  if (!typeAccountInjections) {
+    typeAccountInjections = new Map();
+    accountInjectionsByType.set(type, typeAccountInjections);
   }
 
   const resolvedLabel = options?.label ?? String(nextAutomaticLabel++);
-  if (specificCredentialRequests.has(resolvedLabel)) {
+  if (typeAccountInjections.has(resolvedLabel)) {
     throw new Error(
-      `Credential request with label ${
+      `Account injection with label ${
         JSON.stringify(
           resolvedLabel,
         )
       } already registered`,
     );
   }
-  specificCredentialRequests.set(resolvedLabel, {
+  typeAccountInjections.set(resolvedLabel, {
     config,
   });
 }
@@ -100,8 +100,8 @@ function getRegistrations(): Registrations {
           }))
         ),
     ),
-    credentialRequests: Array.from(
-      credentialRequestsByType.entries()
+    accountInjections: Array.from(
+      accountInjectionsByType.entries()
         .flatMap(([type, requests]) =>
           requests.entries().map(([label, { config }]) => ({
             type,
