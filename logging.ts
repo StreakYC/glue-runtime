@@ -74,7 +74,7 @@ export interface Logger {
 
 export async function runInLoggingContext<T>(
   fn: (logger: Logger) => Awaitable<T>,
-): Promise<{ logs: Log[] }> {
+): Promise<{ logs: Log[]; error: string | undefined }> {
   const logs: Log[] = [];
   const logContext: LogContext = { logs };
   const logger: Logger = {
@@ -98,14 +98,16 @@ export async function runInLoggingContext<T>(
     },
   };
 
+  let error: string | undefined;
   try {
     await asyncLocalStorage.run(logContext, () => fn(logger));
-  } catch (error) {
-    logger.error(error);
+  } catch (e) {
+    logger.error(e);
+    error = serializeConsoleArgumentsToString([e]);
   } finally {
     logContext.logs = undefined;
   }
-  return { logs };
+  return { logs, error };
 }
 
 type Awaitable<T> = T | Promise<T>;
