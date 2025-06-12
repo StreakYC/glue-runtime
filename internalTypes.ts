@@ -18,38 +18,40 @@ export const TriggerEvent: z.ZodType<TriggerEvent> = z.object({
   data: z.unknown(),
 });
 
-export interface RegisteredTrigger {
+export interface TriggerRegistration {
   type: string;
   label: string;
   config?: unknown;
 }
 
-export const RegisteredTrigger: z.ZodType<RegisteredTrigger> = z.object({
+export const TriggerRegistration: z.ZodType<TriggerRegistration> = z.object({
   type: z.string(),
   label: z.string(),
   config: z.object({}).optional(),
 });
 
-export interface CredentialRequest {
+export interface AccountInjectionRegistration {
   type: string;
   label: string;
   config?: unknown;
 }
 
-export const CredentialRequest: z.ZodType<CredentialRequest> = z.object({
-  type: z.string(),
-  label: z.string(),
-  config: z.object({}).optional(),
-});
+export const AccountInjectionRegistration: z.ZodType<AccountInjectionRegistration> = z
+  .object({
+    type: z.string(),
+    label: z.string(),
+    config: z.object({}).optional(),
+  });
 
 export interface Registrations {
-  triggers: RegisteredTrigger[];
-  credentialRequests: CredentialRequest[];
+  triggers: TriggerRegistration[];
+  accountInjections: AccountInjectionRegistration[];
 }
 
 export const Registrations: z.ZodType<Registrations> = z.object({
-  triggers: z.array(RegisteredTrigger),
-  credentialRequests: z.array(CredentialRequest),
+  triggers: z.array(TriggerRegistration),
+  accountInjections: z.array(AccountInjectionRegistration),
+  // TODO secretInjections
 });
 
 export type { GithubConfig } from "./integrations/eventSources/github/runtime.ts";
