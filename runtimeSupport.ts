@@ -6,6 +6,7 @@ patchConsoleGlobal();
 
 interface TriggerEventResponse {
   logs: Log[];
+  error: string | undefined;
 }
 
 interface RegisteredEvent {
@@ -157,8 +158,8 @@ function scheduleInit() {
     });
     app.post("/__glue__/triggerEvent", async (c) => {
       const body = TriggerEvent.parse(await c.req.json());
-      const { logs } = await runInLoggingContext(() => handleTrigger(body));
-      const response: TriggerEventResponse = { logs };
+      const { logs, error } = await runInLoggingContext(() => handleTrigger(body));
+      const response: TriggerEventResponse = { logs, error };
       return c.json(response);
     });
 
