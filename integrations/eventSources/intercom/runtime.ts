@@ -2,7 +2,7 @@ import { type CommonTriggerOptions, registerEventListener } from "../../../runti
 
 export type IntercomTriggerOptions = CommonTriggerOptions & { workspaceId?: string };
 
-interface IntercomConfig {
+export interface IntercomConfig {
   events: string[];
   workspaceId?: string;
 }
