@@ -60,3 +60,4 @@ export type { WebhookConfig } from "./integrations/eventSources/webhook/runtime.
 export type { CronConfig } from "./integrations/eventSources/cron/runtime.ts";
 export type { StreakConfig } from "./integrations/eventSources/streak/runtime.ts";
 export type { StripeConfig } from "./integrations/eventSources/stripe/runtime.ts";
+export type { IntercomConfig } from "./integrations/eventSources/intercom/runtime.ts";
