@@ -27,7 +27,7 @@ export interface TriggerRegistration {
 export const TriggerRegistration: z.ZodType<TriggerRegistration> = z.object({
   type: z.string(),
   label: z.string(),
-  config: z.object({}).optional(),
+  config: z.object({}).passthrough().optional(),
 });
 
 export interface AccountInjectionRegistration {
@@ -40,7 +40,7 @@ export const AccountInjectionRegistration: z.ZodType<AccountInjectionRegistratio
   .object({
     type: z.string(),
     label: z.string(),
-    config: z.object({}).optional(),
+    config: z.object({}).passthrough().optional(),
   });
 
 export interface Registrations {
