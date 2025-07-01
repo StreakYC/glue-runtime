@@ -1,6 +1,17 @@
 import { type CommonTriggerOptions, registerEventListener } from "../../../runtimeSupport.ts";
 
-export type IntercomTriggerOptions = CommonTriggerOptions & { workspaceId?: string };
+export interface IntercomTriggerOptions extends CommonTriggerOptions {
+  workspaceId?: string;
+}
+
+export interface IntercomEvent {
+  topic: string;
+  data: {
+    type: string;
+    item: Record<string, unknown>;
+  };
+  workspaceId: string;
+}
 
 export interface IntercomConfig {
   events: string[];
@@ -11,7 +22,7 @@ export class Intercom {
   // generic events
   onEvent(
     events: string[],
-    fn: (event: unknown) => void,
+    fn: (event: IntercomEvent) => void,
     options?: IntercomTriggerOptions,
   ): void {
     const config: IntercomConfig = {
@@ -23,7 +34,7 @@ export class Intercom {
 
   // specific events
   onConversationClosed(
-    fn: (event: unknown) => void,
+    fn: (event: IntercomEvent) => void,
     options?: IntercomTriggerOptions,
   ): void {
     this.onEvent(["conversation.admin.closed"], fn, options);

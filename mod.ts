@@ -11,7 +11,7 @@ export type { WebhookEvent, WebhookTriggerOptions } from "./integrations/eventSo
 export type { CronEvent } from "./integrations/eventSources/cron/runtime.ts";
 export type { BoxEventType, StreakEvent } from "./integrations/eventSources/streak/runtime.ts";
 export type { StripeEvent, StripeTriggerOptions } from "./integrations/eventSources/stripe/runtime.ts";
-export type { IntercomTriggerOptions } from "./integrations/eventSources/intercom/runtime.ts";
+export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/eventSources/intercom/runtime.ts";
 export type { CommonTriggerOptions } from "./runtimeSupport.ts";
 
 class Glue {
