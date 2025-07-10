@@ -24,17 +24,77 @@ const accountInjectionsByType = new Map<
   Map<string, RegisteredAccountInjection>
 >();
 
-// if you add anything to this interface, you need to update the register event function
+/**
+ * Common options available for all trigger event listeners.
+ *
+ * These options can be passed to any event source's registration methods
+ * to customize the behavior of the trigger.
+ *
+ * @example
+ * ```typescript
+ * glue.github.onPullRequestEvent("owner", "repo", handlePR, {
+ *   label: "my-pr-handler"
+ * });
+ * ```
+ */
 export interface CommonTriggerOptions {
+  /**
+   * A unique label to identify this specific trigger registration. Labels
+   * are useful so that Glue can correlate different trigger handlers across
+   * deployment versions. This keeps things like webhook URLs consistent
+   * between deployments.
+   *
+   * If not provided, an auto-generated numeric label will be assigned.
+   * Labels must be unique for a given trigger type.
+   *
+   * @example "pr-reviewer"
+   * @example "daily-backup"
+   */
   label?: string;
 }
 
+/**
+ * Common options available for all account injection configurations.
+ *
+ * Account injections allow you to configure authentication and connection
+ * details for external services that your triggers will use.
+ *
+ * @example
+ * ```typescript
+ * glue.github.inject({
+ *   label: "my-github-account"
+ * });
+ * ```
+ */
 export interface CommonAccountInjectionOptions {
+  /**
+   * A unique label to identify this specific account injection. Labels are
+   * useful so that Glue can correlate different account injections across
+   * deployment versions. This keeps things like default accounts consistent
+   * between deployments.
+   *
+   * If not provided, an auto-generated numeric label will be assigned.
+   * Labels must be unique within your application. Labels are also used to
+   * identify the account injection when it is used in a trigger.
+   *
+   * @example "primary-github"
+   * @example "customer-stripe"
+   */
   label?: string;
 }
 
 let nextAutomaticLabel = 0;
 
+/**
+ * @internal
+ * Registers an event listener for a specific event type.
+ * This function is used internally by event source implementations.
+ *
+ * @param eventName - The type of event to listen for (e.g., "github", "stripe")
+ * @param callback - The function to call when the event is triggered
+ * @param config - Event source specific configuration
+ * @param options - Common trigger options including label
+ */
 export function registerEventListener<T>(
   eventName: string,
   callback: (event: T) => void,
@@ -61,6 +121,15 @@ export function registerEventListener<T>(
   });
 }
 
+/**
+ * @internal
+ * Registers an account injection for a specific service type.
+ * This function is used internally by event source implementations.
+ *
+ * @param type - The type of service account to inject (e.g., "github", "stripe")
+ * @param config - Service-specific account configuration
+ * @param options - Common account injection options including label
+ */
 export function registerAccountInjection(
   type: string,
   config: unknown,
