@@ -25,6 +25,11 @@ class Glue {
   readonly streak: streakEventSource.Streak = new streakEventSource.Streak();
   readonly stripe: stripeEventSource.Stripe = new stripeEventSource.Stripe();
   readonly intercom: intercomEventSource.Intercom = new intercomEventSource.Intercom();
+
+  /**
+   * Webflow event source for website and CMS events.
+   * Monitors Webflow sites for form submissions, publishes, and collection changes.
+   */
   readonly webflow: webflowEventSource.Webflow = new webflowEventSource.Webflow();
 }
 

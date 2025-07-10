@@ -61,4 +61,9 @@ export type { CronConfig } from "./integrations/eventSources/cron/runtime.ts";
 export type { StreakConfig } from "./integrations/eventSources/streak/runtime.ts";
 export type { StripeConfig } from "./integrations/eventSources/stripe/runtime.ts";
 export type { IntercomConfig } from "./integrations/eventSources/intercom/runtime.ts";
+
+/**
+ * Webflow event source configuration.
+ * Specifies which Webflow site and events to monitor.
+ */
 export type { WebflowConfig } from "./integrations/eventSources/webflow/runtime.ts";
