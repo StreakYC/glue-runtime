@@ -18,29 +18,6 @@ export interface GoogleAccountInjectionConfig {
   accountEmailAddress?: string;
 }
 
-/**
- * Gmail event source for listening to email events.
- *
- * Provides methods to register glue handlers that are triggered when new emails
- * arrive in connected Gmail accounts. This can be used to automate email
- * processing, notifications, and workflows.
- *
- * @example
- * ```typescript
- * // React to all new emails
- * glue.gmail.onMessage((event) => {
- *   console.log(`New email: ${event.subject}`);
- * });
- *
- * // Filter to specific account
- * glue.gmail.onMessage((event) => {
- *   // Process customer support emails
- *   if (event.subject.includes("Support Request")) {
- *     createSupportTicket(event);
- *   }
- * }, { accountEmailAddress: "support@company.com" });
- * ```
- */
 export class Google {
   getCredentialFetcher(options?: GoogleAccountInjectionOptions): () => Promise<AccessTokenCredential> {
     const config: GoogleAccountInjectionConfig = {
