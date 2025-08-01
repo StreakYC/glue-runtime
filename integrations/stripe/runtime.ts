@@ -1,5 +1,5 @@
 import type { Stripe as StripeLib } from "stripe";
-import { type CommonTriggerOptions, registerEventListener } from "../../../runtimeSupport.ts";
+import { type CommonTriggerOptions, registerEventListener } from "../../runtimeSupport.ts";
 
 /**
  * Union type of all possible Stripe webhook event types.

@@ -149,10 +149,10 @@ export const Registrations: z.ZodType<Registrations> = z.object({
   // TODO secretInjections
 });
 
-export type { GithubConfig } from "./integrations/eventSources/github/runtime.ts";
-export type { GmailConfig } from "./integrations/eventSources/gmail/runtime.ts";
-export type { WebhookConfig } from "./integrations/eventSources/webhook/runtime.ts";
-export type { CronConfig } from "./integrations/eventSources/cron/runtime.ts";
-export type { StreakConfig } from "./integrations/eventSources/streak/runtime.ts";
-export type { StripeConfig } from "./integrations/eventSources/stripe/runtime.ts";
-export type { IntercomConfig } from "./integrations/eventSources/intercom/runtime.ts";
+export type { GithubConfig } from "./integrations/github/runtime.ts";
+export type { GmailConfig } from "./integrations/gmail/runtime.ts";
+export type { WebhookConfig } from "./integrations/webhook/runtime.ts";
+export type { CronConfig } from "./integrations/cron/runtime.ts";
+export type { StreakConfig } from "./integrations/streak/runtime.ts";
+export type { StripeConfig } from "./integrations/stripe/runtime.ts";
+export type { IntercomConfig } from "./integrations/intercom/runtime.ts";

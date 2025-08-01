@@ -1,5 +1,5 @@
 import type { WebhookEventMap, WebhookEventName } from "@octokit/webhooks-types";
-import { type CommonTriggerOptions, registerEventListener } from "../../../runtimeSupport.ts";
+import { type CommonTriggerOptions, registerEventListener } from "../../runtimeSupport.ts";
 
 /**
  * Options specific to GitHub event triggers.

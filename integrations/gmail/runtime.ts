@@ -4,7 +4,7 @@ import {
   type CommonTriggerOptions,
   registerAccountInjection,
   registerEventListener,
-} from "../../../runtimeSupport.ts";
+} from "../../runtimeSupport.ts";
 
 /**
  * Represents a Gmail message event triggered when a new email is received.

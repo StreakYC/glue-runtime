@@ -4,7 +4,7 @@ import {
   type CommonTriggerOptions,
   registerAccountInjection,
   registerEventListener,
-} from "../../../runtimeSupport.ts";
+} from "../../runtimeSupport.ts";
 
 /**
  * Options specific to Streak event triggers.

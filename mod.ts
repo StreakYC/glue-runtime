@@ -48,20 +48,20 @@
  * All event handlers must be registered at the top level of your application during initialization.
  */
 
-import * as gmailEventSource from "./integrations/eventSources/gmail/runtime.ts";
-import * as webhookEventSource from "./integrations/eventSources/webhook/runtime.ts";
-import * as githubEventSource from "./integrations/eventSources/github/runtime.ts";
-import * as streakEventSource from "./integrations/eventSources/streak/runtime.ts";
-import * as stripeEventSource from "./integrations/eventSources/stripe/runtime.ts";
-import * as cronEventSource from "./integrations/eventSources/cron/runtime.ts";
-import * as intercomEventSource from "./integrations/eventSources/intercom/runtime.ts";
-export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/eventSources/gmail/runtime.ts";
-export type { GithubEvent, GithubTriggerOptions } from "./integrations/eventSources/github/runtime.ts";
-export type { WebhookEvent, WebhookTriggerOptions } from "./integrations/eventSources/webhook/runtime.ts";
-export type { CronEvent } from "./integrations/eventSources/cron/runtime.ts";
-export type { BoxEventType, StreakEvent, StreakTriggerOptions } from "./integrations/eventSources/streak/runtime.ts";
-export type { StripeEvent, StripeTriggerOptions } from "./integrations/eventSources/stripe/runtime.ts";
-export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/eventSources/intercom/runtime.ts";
+import * as gmailEventSource from "./integrations/gmail/runtime.ts";
+import * as webhookEventSource from "./integrations/webhook/runtime.ts";
+import * as githubEventSource from "./integrations/github/runtime.ts";
+import * as streakEventSource from "./integrations/streak/runtime.ts";
+import * as stripeEventSource from "./integrations/stripe/runtime.ts";
+import * as cronEventSource from "./integrations/cron/runtime.ts";
+import * as intercomEventSource from "./integrations/intercom/runtime.ts";
+export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/gmail/runtime.ts";
+export type { GithubEvent, GithubTriggerOptions } from "./integrations/github/runtime.ts";
+export type { WebhookEvent, WebhookTriggerOptions } from "./integrations/webhook/runtime.ts";
+export type { CronEvent } from "./integrations/cron/runtime.ts";
+export type { BoxEventType, StreakEvent, StreakTriggerOptions } from "./integrations/streak/runtime.ts";
+export type { StripeEvent, StripeTriggerOptions } from "./integrations/stripe/runtime.ts";
+export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/intercom/runtime.ts";
 export type { AccessTokenCredential, ApiKeyCredential, CommonTriggerOptions } from "./runtimeSupport.ts";
 
 /**
