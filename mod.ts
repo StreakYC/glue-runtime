@@ -61,7 +61,7 @@ export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/gmai
 export type { GithubEvent, GithubTriggerOptions } from "./integrations/github/runtime.ts";
 export type { WebhookEvent, WebhookTriggerOptions } from "./integrations/webhook/runtime.ts";
 export type { CronEvent } from "./integrations/cron/runtime.ts";
-export type { BoxEventType, StreakEvent, StreakTriggerOptions } from "./integrations/streak/runtime.ts";
+export type { BoxEventType, StreakAccountInjectionOptions, StreakEvent, StreakTriggerOptions } from "./integrations/streak/runtime.ts";
 export type { StripeEvent, StripeTriggerOptions } from "./integrations/stripe/runtime.ts";
 export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/intercom/runtime.ts";
 export type { AccessTokenCredential, ApiKeyCredential, CommonTriggerOptions } from "./runtimeSupport.ts";
