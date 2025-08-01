@@ -150,6 +150,7 @@ export const Registrations: z.ZodType<Registrations> = z.object({
 });
 
 export type { GithubConfig } from "./integrations/github/runtime.ts";
+export type { GoogleAccountInjectionConfig } from "./integrations/google/runtime.ts";
 export type { GmailConfig } from "./integrations/gmail/runtime.ts";
 export type { WebhookConfig } from "./integrations/webhook/runtime.ts";
 export type { CronConfig } from "./integrations/cron/runtime.ts";

@@ -48,6 +48,7 @@
  * All event handlers must be registered at the top level of your application during initialization.
  */
 
+import { Google } from "./integrations/google/runtime.ts";
 import * as gmailEventSource from "./integrations/gmail/runtime.ts";
 import * as webhookEventSource from "./integrations/webhook/runtime.ts";
 import * as githubEventSource from "./integrations/github/runtime.ts";
@@ -55,6 +56,7 @@ import * as streakEventSource from "./integrations/streak/runtime.ts";
 import * as stripeEventSource from "./integrations/stripe/runtime.ts";
 import * as cronEventSource from "./integrations/cron/runtime.ts";
 import * as intercomEventSource from "./integrations/intercom/runtime.ts";
+export type { GoogleAccountInjectionOptions } from "./integrations/google/runtime.ts";
 export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/gmail/runtime.ts";
 export type { GithubEvent, GithubTriggerOptions } from "./integrations/github/runtime.ts";
 export type { WebhookEvent, WebhookTriggerOptions } from "./integrations/webhook/runtime.ts";
@@ -83,6 +85,8 @@ class Glue {
    * Allows you to react to new emails in connected Gmail accounts.
    */
   readonly gmail: gmailEventSource.Gmail = new gmailEventSource.Gmail();
+
+  readonly google: Google = new Google();
 
   /**
    * Webhook event source for handling HTTP webhook requests.
