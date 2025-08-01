@@ -243,15 +243,6 @@ export class Streak {
     const fetcher = registerAccountInjection<ApiKeyCredential>("streak", config, options);
     return fetcher;
   }
-
-  // getClientFetcher(options?: StreakAccountInjectionOptions): () => Promise<string> {
-  //   const credFetcher = this.getCredentialFetcher(options);
-  //   return async () => {
-  //     const _credential = await credFetcher();
-  //     // const client = new Streak(_credential);
-  //     throw new Error("TODO");
-  //   };
-  // }
 }
 
 /**
