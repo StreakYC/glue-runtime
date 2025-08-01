@@ -1,4 +1,4 @@
-import { type CommonTriggerOptions, registerEventListener } from "../../../runtimeSupport.ts";
+import { type CommonTriggerOptions, registerEventListener } from "../../runtimeSupport.ts";
 
 /**
  * Options specific to Intercom event triggers.

@@ -83,6 +83,15 @@ export interface CommonAccountInjectionOptions {
   label?: string;
 }
 
+export interface AccessTokenCredential {
+  accessToken: string;
+  expiresAt: number;
+}
+
+export interface ApiKeyCredential {
+  apiKey: string;
+}
+
 let nextAutomaticLabel = 0;
 
 /**
@@ -130,11 +139,11 @@ export function registerEventListener<T>(
  * @param config - Service-specific account configuration
  * @param options - Common account injection options including label
  */
-export function registerAccountInjection(
+export function registerAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
   type: string,
   config: unknown,
   options: CommonAccountInjectionOptions | undefined,
-) {
+): () => Promise<T> {
   scheduleInit();
   let typeAccountInjections = accountInjectionsByType.get(type);
   if (!typeAccountInjections) {
@@ -155,6 +164,31 @@ export function registerAccountInjection(
   typeAccountInjections.set(resolvedLabel, {
     config,
   });
+
+  return async () => {
+    if (!glueDeploymentId || !glueAuthHeader) {
+      throw new Error(
+        "Credential fetcher must not be used before any trigger events have been received.",
+      );
+    }
+    const res = await fetch(
+      `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${encodeURIComponent(glueDeploymentId)}/accountInjections/${encodeURIComponent(type)}/${
+        encodeURIComponent(resolvedLabel)
+      }`,
+      {
+        headers: {
+          "Authorization": glueAuthHeader,
+        },
+      },
+    );
+    if (!res.ok) {
+      throw new Error(
+        `Failed to fetch account injection: ${res.status} ${res.statusText}`,
+      );
+    }
+    const body = await res.json() as T;
+    return body;
+  };
 }
 
 function getRegistrations(): Registrations {
@@ -194,6 +228,9 @@ async function handleTrigger(event: TriggerEvent) {
 let hasScheduledInit = false;
 let hasInited = false;
 
+let glueDeploymentId: string | undefined;
+let glueAuthHeader: string | undefined;
+
 /**
  * This function needs to be called when any triggers are registered. It
  * schedules a microtask to initialize listening for the triggers, and throws an
@@ -226,6 +263,11 @@ function scheduleInit() {
       return c.json(getRegistrations().triggers);
     });
     app.post("/__glue__/triggerEvent", async (c) => {
+      // TODO need to authenticate the request as coming from glue-backend.
+
+      glueDeploymentId = c.req.header("X-Glue-Deployment-Id");
+      glueAuthHeader = c.req.header("X-Glue-API-Auth-Header");
+
       const body = TriggerEvent.parse(await c.req.json());
       const { logs, error } = await runInLoggingContext(() => handleTrigger(body));
       const response: TriggerEventResponse = { logs, error };

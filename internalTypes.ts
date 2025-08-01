@@ -149,53 +149,11 @@ export const Registrations: z.ZodType<Registrations> = z.object({
   // TODO secretInjections
 });
 
-/**
- * GitHub event source configuration.
- * Can be either repository-specific or organization-wide.
- * @see {@link GithubRepoConfig} for repository configuration
- * @see {@link GithubOrgConfig} for organization configuration
- * @internal
- */
-export type { GithubConfig } from "./integrations/eventSources/github/runtime.ts";
-
-/**
- * Gmail event source configuration.
- * Specifies which Gmail account to monitor for new messages.
- * @internal
- */
-export type { GmailConfig } from "./integrations/eventSources/gmail/runtime.ts";
-
-/**
- * Webhook event source configuration.
- * Specifies HTTP method filtering for webhook endpoints.
- * @internal
- */
-export type { WebhookConfig } from "./integrations/eventSources/webhook/runtime.ts";
-
-/**
- * Cron event source configuration.
- * Contains the cron expression for scheduled triggers.
- * @internal
- */
-export type { CronConfig } from "./integrations/eventSources/cron/runtime.ts";
-
-/**
- * Streak CRM event source configuration.
- * Specifies which pipeline and events to monitor.
- * @internal
- */
-export type { StreakConfig } from "./integrations/eventSources/streak/runtime.ts";
-
-/**
- * Stripe event source configuration.
- * Specifies which Stripe webhook events to listen for.
- * @internal
- */
-export type { StripeConfig } from "./integrations/eventSources/stripe/runtime.ts";
-
-/**
- * Intercom event source configuration.
- * Specifies which Intercom workspace and events to monitor.
- * @internal
- */
-export type { IntercomConfig } from "./integrations/eventSources/intercom/runtime.ts";
+export type { GithubConfig } from "./integrations/github/runtime.ts";
+export type { GoogleAccountInjectionConfig } from "./integrations/google/runtime.ts";
+export type { GmailConfig } from "./integrations/gmail/runtime.ts";
+export type { WebhookConfig } from "./integrations/webhook/runtime.ts";
+export type { CronConfig } from "./integrations/cron/runtime.ts";
+export type { StreakAccountInjectionConfig, StreakConfig } from "./integrations/streak/runtime.ts";
+export type { StripeConfig } from "./integrations/stripe/runtime.ts";
+export type { IntercomConfig } from "./integrations/intercom/runtime.ts";

@@ -1,4 +1,4 @@
-import { type CommonTriggerOptions, registerEventListener } from "../../../runtimeSupport.ts";
+import { type CommonTriggerOptions, registerEventListener } from "../../runtimeSupport.ts";
 
 /**
  * Represents a Gmail message event triggered when a new email is received.
