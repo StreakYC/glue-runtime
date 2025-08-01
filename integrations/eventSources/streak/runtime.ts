@@ -1,4 +1,10 @@
-import { type CommonTriggerOptions, registerEventListener } from "../../../runtimeSupport.ts";
+import {
+  type ApiKeyCredential,
+  type CommonAccountInjectionOptions,
+  type CommonTriggerOptions,
+  registerAccountInjection,
+  registerEventListener,
+} from "../../../runtimeSupport.ts";
 
 /**
  * Options specific to Streak event triggers.
@@ -22,7 +28,17 @@ export interface StreakConfig {
   pipelineKey: string;
   /** The specific box event type to listen for */
   event: BoxEventType;
-  /** Optional email address for the account */
+  /** Optional email address to select appropriate account. */
+  emailAddress?: string;
+}
+
+export interface StreakAccountInjectionOptions extends CommonAccountInjectionOptions {
+  /** Optional email address to select appropriate account. */
+  emailAddress?: string;
+}
+
+export interface StreakAccountInjectionConfig {
+  /** Optional email address to select appropriate account. */
   emailAddress?: string;
 }
 
@@ -219,6 +235,23 @@ export class Streak {
   ): void {
     this.onBoxEvent("BOX_CHANGE_STAGE", pipelineKey, fn, options);
   }
+
+  getCredentialFetcher(options?: StreakAccountInjectionOptions): () => Promise<ApiKeyCredential> {
+    const config: StreakAccountInjectionConfig = {
+      emailAddress: options?.emailAddress,
+    };
+    const fetcher = registerAccountInjection<ApiKeyCredential>("streak", config, options);
+    return fetcher;
+  }
+
+  // getClientFetcher(options?: StreakAccountInjectionOptions): () => Promise<string> {
+  //   const credFetcher = this.getCredentialFetcher(options);
+  //   return async () => {
+  //     const _credential = await credFetcher();
+  //     // const client = new Streak(_credential);
+  //     throw new Error("TODO");
+  //   };
+  // }
 }
 
 /**

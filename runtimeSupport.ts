@@ -83,6 +83,15 @@ export interface CommonAccountInjectionOptions {
   label?: string;
 }
 
+export interface AccessTokenCredential {
+  accessToken: string;
+  expiresAt: number;
+}
+
+export interface ApiKeyCredential {
+  apiKey: string;
+}
+
 let nextAutomaticLabel = 0;
 
 /**
@@ -130,11 +139,11 @@ export function registerEventListener<T>(
  * @param config - Service-specific account configuration
  * @param options - Common account injection options including label
  */
-export function registerAccountInjection(
+export function registerAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
   type: string,
   config: unknown,
   options: CommonAccountInjectionOptions | undefined,
-): () => Promise<string> {
+): () => Promise<T> {
   scheduleInit();
   let typeAccountInjections = accountInjectionsByType.get(type);
   if (!typeAccountInjections) {
@@ -163,7 +172,9 @@ export function registerAccountInjection(
       );
     }
     const res = await fetch(
-      `${Deno.env.get("GLUE_API_SERVER")}/internal/deployments/${glueDeploymentId}/accountInjections?type=google&label=${encodeURIComponent(resolvedLabel)}`,
+      `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${encodeURIComponent(glueDeploymentId)}/accountInjections/${encodeURIComponent(type)}/${
+        encodeURIComponent(resolvedLabel)
+      }`,
       {
         headers: {
           "Authorization": glueAuthHeader,
@@ -175,8 +186,8 @@ export function registerAccountInjection(
         `Failed to fetch account injection: ${res.status} ${res.statusText}`,
       );
     }
-    const body = await res.json() as { value: string };
-    return body.value;
+    const body = await res.json() as T;
+    return body;
   };
 }
 

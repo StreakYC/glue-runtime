@@ -1,4 +1,10 @@
-import { type CommonAccountInjectionOptions, type CommonTriggerOptions, registerAccountInjection, registerEventListener } from "../../../runtimeSupport.ts";
+import {
+  type AccessTokenCredential,
+  type CommonAccountInjectionOptions,
+  type CommonTriggerOptions,
+  registerAccountInjection,
+  registerEventListener,
+} from "../../../runtimeSupport.ts";
 
 /**
  * Represents a Gmail message event triggered when a new email is received.
@@ -33,6 +39,15 @@ export type GmailTriggerOptions = CommonTriggerOptions & {
    */
   accountEmailAddress?: string;
 };
+
+export interface GmailAccountInjectionOptions extends CommonAccountInjectionOptions {
+  /**
+   * Optional email address to select appropriate account.
+   *
+   * @example "user@gmail.com"
+   */
+  accountEmailAddress?: string;
+}
 
 /**
  * Internal configuration for Gmail event listeners.
@@ -111,18 +126,20 @@ export class Gmail {
     registerEventListener("gmail", fn, config, options);
   }
 
-  getCredentialFetcher(config?: GmailConfig, options?: CommonAccountInjectionOptions): () => Promise<string> {
-    const fetcher = registerAccountInjection("google", config, options);
+  getCredentialFetcher(options?: GmailAccountInjectionOptions): () => Promise<AccessTokenCredential> {
+    const config: GmailConfig = {
+      accountEmailAddress: options?.accountEmailAddress,
+    };
+    const fetcher = registerAccountInjection<AccessTokenCredential>("google", config, options);
     return fetcher;
   }
 
-  getClientFetcher(config?: GmailConfig, options?: CommonAccountInjectionOptions): () => Promise<string> {
-    const credFetcher = this.getCredentialFetcher(config, options);
-
-    return async () => {
-      const _credential = await credFetcher();
-      // const client = new GoogleClient(_credential);
-      throw new Error("TODO");
-    };
-  }
+  // getClientFetcher(options?: GmailAccountInjectionOptions): () => Promise<string> {
+  //   const credFetcher = this.getCredentialFetcher(options);
+  //   return async () => {
+  //     const _credential = await credFetcher();
+  //     // const client = new GoogleClient(_credential);
+  //     throw new Error("TODO");
+  //   };
+  // }
 }

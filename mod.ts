@@ -59,10 +59,10 @@ export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/even
 export type { GithubEvent, GithubTriggerOptions } from "./integrations/eventSources/github/runtime.ts";
 export type { WebhookEvent, WebhookTriggerOptions } from "./integrations/eventSources/webhook/runtime.ts";
 export type { CronEvent } from "./integrations/eventSources/cron/runtime.ts";
-export type { BoxEventType, StreakEvent } from "./integrations/eventSources/streak/runtime.ts";
+export type { BoxEventType, StreakEvent, StreakTriggerOptions } from "./integrations/eventSources/streak/runtime.ts";
 export type { StripeEvent, StripeTriggerOptions } from "./integrations/eventSources/stripe/runtime.ts";
 export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/eventSources/intercom/runtime.ts";
-export type { CommonTriggerOptions } from "./runtimeSupport.ts";
+export type { AccessTokenCredential, ApiKeyCredential, CommonTriggerOptions } from "./runtimeSupport.ts";
 
 /**
  * The main Glue runtime class that provides access to all event sources.
