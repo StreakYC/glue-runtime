@@ -7,6 +7,7 @@ export interface GoogleAccountInjectionOptions extends CommonAccountInjectionOpt
    * @example "user@gmail.com"
    */
   accountEmailAddress?: string;
+  scopes: string[];
 }
 
 /**
@@ -16,6 +17,7 @@ export interface GoogleAccountInjectionOptions extends CommonAccountInjectionOpt
 export interface GoogleAccountInjectionConfig {
   /** Optional email address filter */
   accountEmailAddress?: string;
+  scopes: string[];
 }
 
 export class Google {
@@ -41,9 +43,10 @@ export class Google {
    * });
    * ```
    */
-  getCredentialFetcher(options?: GoogleAccountInjectionOptions): () => Promise<AccessTokenCredential> {
+  getCredentialFetcher(options: GoogleAccountInjectionOptions): () => Promise<AccessTokenCredential> {
     const config: GoogleAccountInjectionConfig = {
-      accountEmailAddress: options?.accountEmailAddress,
+      accountEmailAddress: options.accountEmailAddress,
+      scopes: options.scopes,
     };
     const fetcher = registerAccountInjection<AccessTokenCredential>("google", config, options);
     return fetcher;
