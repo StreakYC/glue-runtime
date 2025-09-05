@@ -26,61 +26,20 @@ const accountInjectionsByType = new Map<
 
 /**
  * Common options available for all trigger event listeners.
- *
- * These options can be passed to any event source's registration methods
- * to customize the behavior of the trigger.
- *
- * @example
- * ```typescript
- * glue.github.onPullRequestEvent("owner", "repo", handlePR, {
- *   label: "my-pr-handler"
- * });
- * ```
  */
+// deno-lint-ignore no-empty-interface
 export interface CommonTriggerOptions {
-  /**
-   * A unique label to identify this specific trigger registration. Labels
-   * are useful so that Glue can correlate different trigger handlers across
-   * deployment versions. This keeps things like webhook URLs consistent
-   * between deployments.
-   *
-   * If not provided, an auto-generated numeric label will be assigned.
-   * Labels must be unique for a given trigger type.
-   *
-   * @example "pr-reviewer"
-   * @example "daily-backup"
-   */
-  label?: string;
+  // TODO
+  // setupDescription?: string;
 }
 
 /**
  * Common options available for all account injection configurations.
- *
- * Account injections allow you to configure authentication and connection
- * details for external services that your triggers will use.
- *
- * @example
- * ```typescript
- * glue.github.inject({
- *   label: "my-github-account"
- * });
- * ```
  */
+// deno-lint-ignore no-empty-interface
 export interface CommonAccountInjectionOptions {
-  /**
-   * A unique label to identify this specific account injection. Labels are
-   * useful so that Glue can correlate different account injections across
-   * deployment versions. This keeps things like default accounts consistent
-   * between deployments.
-   *
-   * If not provided, an auto-generated numeric label will be assigned.
-   * Labels must be unique within your application. Labels are also used to
-   * identify the account injection when it is used in a trigger.
-   *
-   * @example "primary-github"
-   * @example "customer-stripe"
-   */
-  label?: string;
+  // TODO
+  // setupDescription?: string;
 }
 
 export interface AccessTokenCredential {
@@ -108,7 +67,7 @@ export function registerEventListener<T>(
   eventName: string,
   callback: (event: T) => void,
   config: unknown,
-  options: CommonTriggerOptions | undefined,
+  _options: CommonTriggerOptions | undefined,
 ) {
   scheduleInit();
 
@@ -118,7 +77,7 @@ export function registerEventListener<T>(
     eventListenersByType.set(eventName, specificEventListeners);
   }
 
-  const resolvedLabel = options?.label ?? String(nextAutomaticLabel++);
+  const resolvedLabel = String(nextAutomaticLabel++);
   if (specificEventListeners.has(resolvedLabel)) {
     throw new Error(
       `Event listener with label ${JSON.stringify(resolvedLabel)} already registered`,
@@ -142,7 +101,7 @@ export function registerEventListener<T>(
 export function registerAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
   type: string,
   config: unknown,
-  options: CommonAccountInjectionOptions | undefined,
+  _options: CommonAccountInjectionOptions | undefined,
 ): () => Promise<T> {
   scheduleInit();
   let typeAccountInjections = accountInjectionsByType.get(type);
@@ -151,7 +110,7 @@ export function registerAccountInjection<T extends AccessTokenCredential | ApiKe
     accountInjectionsByType.set(type, typeAccountInjections);
   }
 
-  const resolvedLabel = options?.label ?? String(nextAutomaticLabel++);
+  const resolvedLabel = String(nextAutomaticLabel++);
   if (typeAccountInjections.has(resolvedLabel)) {
     throw new Error(
       `Account injection with label ${
