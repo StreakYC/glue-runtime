@@ -73,11 +73,7 @@ export type { AccessTokenCredential, ApiKeyCredential, CommonTriggerOptions } fr
  * providing a unified interface for registering event listeners across
  * different platforms and services.
  *
- * @example
- * ```typescript
- * const myGlue = new Glue();
- * myGlue.github.onPullRequestEvent("owner", "repo", handlePR);
- * ```
+ * This class is made available to users through the {@link glue} singleton.
  */
 class Glue {
   /**
@@ -136,7 +132,7 @@ export type { Glue };
  *
  * @example
  * ```typescript
- * import { glue } from "@glue/runtime";
+ * import { glue } from "jsr:@streak-glue/runtime";
  *
  * glue.stripe.onCustomerCreated((event) => {
  *   console.log("New customer:", event.data.object.email);

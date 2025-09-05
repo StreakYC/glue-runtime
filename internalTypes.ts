@@ -13,13 +13,6 @@
 
 import { z } from "zod";
 
-/**
- * Represents an event that can trigger a registered handler.
- *
- * This is the base structure for all events that flow through the Glue runtime,
- * regardless of the specific event source (GitHub, Stripe, webhook, etc.).
- * @internal
- */
 export interface TriggerEvent {
   /** The event source type (e.g., "github", "stripe", "webhook") */
   type: string;
@@ -31,35 +24,12 @@ export interface TriggerEvent {
   data?: unknown;
 }
 
-/** Zod schema for validating TriggerEvent objects */
 export const TriggerEvent: z.ZodType<TriggerEvent> = z.object({
   type: z.string(),
   label: z.string(),
   data: z.unknown(),
 });
 
-/**
- * Represents a trigger registration in the Glue system.
- *
- * This structure is used to communicate registered triggers from the runtime
- * to the backend, including all necessary configuration for the backend to
- * set up the appropriate webhooks or event listeners.
- *
- * @example
- * ```typescript
- * const registration: TriggerRegistration = {
- *   type: "github",
- *   label: "pr-reviewer",
- *   config: {
- *     owner: "octocat",
- *     repo: "hello-world",
- *     events: ["pull_request"],
- *     username: "bot-user"
- *   }
- * };
- * ```
- * @internal
- */
 export interface TriggerRegistration {
   /** The event source type this trigger is registered for */
   type: string;
@@ -69,34 +39,12 @@ export interface TriggerRegistration {
   config?: unknown;
 }
 
-/** Zod schema for validating TriggerRegistration objects */
 export const TriggerRegistration: z.ZodType<TriggerRegistration> = z.object({
   type: z.string(),
   label: z.string(),
   config: z.object({}).passthrough().optional(),
 });
 
-/**
- * Represents an account injection registration.
- *
- * Account injections allow users to configure authentication credentials
- * and connection details for external services that triggers will use.
- * This enables triggers to act on behalf of specific accounts when
- * interacting with external APIs.
- *
- * @example
- * ```typescript
- * const accountInjection: AccountInjectionRegistration = {
- *   type: "github",
- *   label: "main-github-account",
- *   config: {
- *     token: "ghp_xxxxxxxxxxxx",
- *     username: "octocat"
- *   }
- * };
- * ```
- * @internal
- */
 export interface AccountInjectionRegistration {
   /** The service type this account is for (e.g., "github", "stripe") */
   type: string;
@@ -106,7 +54,6 @@ export interface AccountInjectionRegistration {
   config?: unknown;
 }
 
-/** Zod schema for validating AccountInjectionRegistration objects */
 export const AccountInjectionRegistration: z.ZodType<AccountInjectionRegistration> = z
   .object({
     type: z.string(),
@@ -115,25 +62,8 @@ export const AccountInjectionRegistration: z.ZodType<AccountInjectionRegistratio
   });
 
 /**
- * Container for all registrations in a Glue application.
- *
- * This structure holds all triggers and account injections registered
- * by a Glue application, and is used to communicate the complete
- * configuration from the runtime to the backend.
- *
- * @example
- * ```typescript
- * const registrations: Registrations = {
- *   triggers: [
- *     { type: "github", label: "pr-handler", config: {...} },
- *     { type: "cron", label: "daily-backup", config: {...} }
- *   ],
- *   accountInjections: [
- *     { type: "github", label: "bot-account", config: {...} }
- *   ]
- * };
- * ```
- * @internal
+ * Container for all registrations in a Glue application. This is the type that
+ * the runtime serves on the `/__glue__/getRegistrations` to the backend.
  */
 export interface Registrations {
   /** All event trigger registrations in the application */
@@ -142,7 +72,6 @@ export interface Registrations {
   accountInjections: AccountInjectionRegistration[];
 }
 
-/** Zod schema for validating Registrations objects */
 export const Registrations: z.ZodType<Registrations> = z.object({
   triggers: z.array(TriggerRegistration),
   accountInjections: z.array(AccountInjectionRegistration),
