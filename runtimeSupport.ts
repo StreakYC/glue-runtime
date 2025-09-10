@@ -67,6 +67,20 @@ export function registerEventListener<T>(
 }
 
 /**
+ * Used to fetch an account credential or client at runtime.
+ */
+export interface AccountFetcher<T> {
+  /**
+   * Fetches the account credential or client. This must only be called within
+   * an event handler.
+   *
+   * @throws If called outside of an event handler, or if there is an error
+   * fetching the credential.
+   */
+  get(): Promise<T>;
+}
+
+/**
  * @internal
  * Registers an account injection for a specific service type.
  * This function is used internally by event source implementations.
@@ -74,7 +88,7 @@ export function registerEventListener<T>(
 export function registerAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
   type: string,
   config: AccountInjectionBackendConfig,
-): () => Promise<T> {
+): AccountFetcher<T> {
   scheduleInit();
   let typeAccountInjections = accountInjectionsByType.get(type);
   if (!typeAccountInjections) {
@@ -96,29 +110,31 @@ export function registerAccountInjection<T extends AccessTokenCredential | ApiKe
     config,
   });
 
-  return async () => {
-    if (!glueDeploymentId || !glueAuthHeader) {
-      throw new Error(
-        "Credential fetcher must not be used before any trigger events have been received.",
-      );
-    }
-    const res = await fetch(
-      `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${encodeURIComponent(glueDeploymentId)}/accountInjections/${encodeURIComponent(type)}/${
-        encodeURIComponent(resolvedLabel)
-      }`,
-      {
-        headers: {
-          "Authorization": glueAuthHeader,
+  return {
+    async get() {
+      if (!glueDeploymentId || !glueAuthHeader) {
+        throw new Error(
+          "Credential fetcher must not be used before any trigger events have been received.",
+        );
+      }
+      const res = await fetch(
+        `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${encodeURIComponent(glueDeploymentId)}/accountInjections/${encodeURIComponent(type)}/${
+          encodeURIComponent(resolvedLabel)
+        }`,
+        {
+          headers: {
+            "Authorization": glueAuthHeader,
+          },
         },
-      },
-    );
-    if (!res.ok) {
-      throw new Error(
-        `Failed to fetch account injection: ${res.status} ${res.statusText}`,
       );
-    }
-    const body = await res.json() as T;
-    return body;
+      if (!res.ok) {
+        throw new Error(
+          `Failed to fetch account injection: ${res.status} ${res.statusText}`,
+        );
+      }
+      const body = await res.json() as T;
+      return body;
+    },
   };
 }
 

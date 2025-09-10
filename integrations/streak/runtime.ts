@@ -1,6 +1,6 @@
 import z from "zod";
 import { type CommonAccountInjectionOptions, CommonTriggerOptions } from "../../common.ts";
-import { type ApiKeyCredential, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
+import { type AccountFetcher, type ApiKeyCredential, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
 
 /**
  * Options specific to Streak event triggers.
@@ -143,7 +143,7 @@ export class Streak {
     this.onBoxEvent("BOX_CHANGE_STAGE", pipelineKey, fn, options);
   }
 
-  getCredentialFetcher(options?: StreakAccountInjectionOptions): () => Promise<ApiKeyCredential> {
+  getCredentialFetcher(options?: StreakAccountInjectionOptions): AccountFetcher<ApiKeyCredential> {
     return registerAccountInjection<ApiKeyCredential>("streak", {
       setupDescription: options?.setupDescription,
       selector: options?.emailAddress,
