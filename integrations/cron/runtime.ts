@@ -1,25 +1,20 @@
-import { type CommonTriggerOptions, registerEventListener } from "../../runtimeSupport.ts";
+import { z } from "zod";
+import { CommonTriggerOptions } from "../../common.ts";
+import { registerEventListener } from "../../runtimeSupport.ts";
 
-/**
- * Internal configuration for cron event listeners.
- * @internal
- */
-export interface CronConfig {
+export interface CronTriggerBackendConfig extends CommonTriggerOptions {
   /** The cron expression defining when the event should trigger */
   crontab: string;
 }
 
+export const CronTriggerBackendConfig: z.ZodType<CronTriggerBackendConfig> = CommonTriggerOptions.extend({
+  crontab: z.string(),
+});
+
 /**
  * Represents a cron scheduled event handed to your glue handler.
  *
- * This event is triggered based on a cron schedule
- *
- * @example
- * ```typescript
- * function handleScheduledTask(event: CronEvent) {
- *   console.log("Scheduled task triggered at", new Date());
- * }
- * ```
+ * This event does not contain any data.
  */
 // deno-lint-ignore no-empty-interface
 export interface CronEvent {}
@@ -109,8 +104,8 @@ export class Cron {
    * @see https://crontab.guru/ - Interactive cron expression editor
    */
   onCron(crontab: string, fn: (event: CronEvent) => void, options?: CommonTriggerOptions): void {
-    const config: CronConfig = { crontab };
-    registerEventListener("cron", fn, config, options);
+    const config: CronTriggerBackendConfig = { ...options, crontab };
+    registerEventListener("cron", fn, config);
   }
 
   /**

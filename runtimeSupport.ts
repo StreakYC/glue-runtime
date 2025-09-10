@@ -1,6 +1,7 @@
 import { Hono } from "hono";
-import { type Registrations, TriggerEvent } from "./internalTypes.ts";
+import { type AccountInjectionBackendConfig, type Registrations, TriggerEvent } from "./backendTypes.ts";
 import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
+import type { CommonTriggerOptions } from "./common.ts";
 
 patchConsoleGlobal();
 
@@ -15,7 +16,7 @@ interface RegisteredEvent {
 }
 
 interface RegisteredAccountInjection {
-  config: unknown;
+  config: AccountInjectionBackendConfig;
 }
 
 const eventListenersByType = new Map<string, Map<string, RegisteredEvent>>();
@@ -23,24 +24,6 @@ const accountInjectionsByType = new Map<
   string,
   Map<string, RegisteredAccountInjection>
 >();
-
-/**
- * Common options available for all trigger event listeners.
- */
-// deno-lint-ignore no-empty-interface
-export interface CommonTriggerOptions {
-  // TODO
-  // setupDescription?: string;
-}
-
-/**
- * Common options available for all account injection configurations.
- */
-// deno-lint-ignore no-empty-interface
-export interface CommonAccountInjectionOptions {
-  // TODO
-  // setupDescription?: string;
-}
 
 export interface AccessTokenCredential {
   accessToken: string;
@@ -57,17 +40,11 @@ let nextAutomaticLabel = 0;
  * @internal
  * Registers an event listener for a specific event type.
  * This function is used internally by event source implementations.
- *
- * @param eventName - The type of event to listen for (e.g., "github", "stripe")
- * @param callback - The function to call when the event is triggered
- * @param config - Event source specific configuration
- * @param options - Common trigger options including label
  */
 export function registerEventListener<T>(
   eventName: string,
   callback: (event: T) => void,
-  config: unknown,
-  _options: CommonTriggerOptions | undefined,
+  options: CommonTriggerOptions | undefined,
 ) {
   scheduleInit();
 
@@ -85,7 +62,7 @@ export function registerEventListener<T>(
   }
   specificEventListeners.set(resolvedLabel, {
     fn: callback as RegisteredEvent["fn"],
-    config,
+    config: options ?? {},
   });
 }
 
@@ -93,15 +70,10 @@ export function registerEventListener<T>(
  * @internal
  * Registers an account injection for a specific service type.
  * This function is used internally by event source implementations.
- *
- * @param type - The type of service account to inject (e.g., "github", "stripe")
- * @param config - Service-specific account configuration
- * @param options - Common account injection options including label
  */
 export function registerAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
   type: string,
-  config: unknown,
-  _options: CommonAccountInjectionOptions | undefined,
+  config: AccountInjectionBackendConfig,
 ): () => Promise<T> {
   scheduleInit();
   let typeAccountInjections = accountInjectionsByType.get(type);

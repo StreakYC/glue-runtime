@@ -1,4 +1,5 @@
-import { type AccessTokenCredential, type CommonAccountInjectionOptions, registerAccountInjection } from "../../runtimeSupport.ts";
+import type { CommonAccountInjectionOptions } from "../../common.ts";
+import { type AccessTokenCredential, registerAccountInjection } from "../../runtimeSupport.ts";
 
 export interface GoogleAccountInjectionOptions extends CommonAccountInjectionOptions {
   /**
@@ -6,16 +7,6 @@ export interface GoogleAccountInjectionOptions extends CommonAccountInjectionOpt
    *
    * @example "user@gmail.com"
    */
-  accountEmailAddress?: string;
-  scopes: string[];
-}
-
-/**
- * Internal configuration for Google account injections.
- * @internal
- */
-export interface GoogleAccountInjectionConfig {
-  /** Optional email address filter */
   accountEmailAddress?: string;
   scopes: string[];
 }
@@ -44,11 +35,10 @@ export class Google {
    * ```
    */
   getCredentialFetcher(options: GoogleAccountInjectionOptions): () => Promise<AccessTokenCredential> {
-    const config: GoogleAccountInjectionConfig = {
-      accountEmailAddress: options.accountEmailAddress,
+    return registerAccountInjection<AccessTokenCredential>("google", {
+      setupDescription: options.setupDescription,
+      selector: options.accountEmailAddress,
       scopes: options.scopes,
-    };
-    const fetcher = registerAccountInjection<AccessTokenCredential>("google", config, options);
-    return fetcher;
+    });
   }
 }

@@ -1,43 +1,33 @@
-import {
-  type ApiKeyCredential,
-  type CommonAccountInjectionOptions,
-  type CommonTriggerOptions,
-  registerAccountInjection,
-  registerEventListener,
-} from "../../runtimeSupport.ts";
+import z from "zod";
+import { type CommonAccountInjectionOptions, CommonTriggerOptions } from "../../common.ts";
+import { type ApiKeyCredential, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
 
 /**
  * Options specific to Streak event triggers.
- *
- * Extends the common trigger options with Streak-specific configuration
- * for filtering events by user email.
  */
-export type StreakTriggerOptions = CommonTriggerOptions & {
+export interface StreakTriggerOptions extends CommonTriggerOptions {
   /**
    * Optional email address to select appropriate account.
    */
   emailAddress?: string;
-};
+}
 
-/**
- * Internal configuration for Streak event listeners.
- * @internal
- */
-export interface StreakConfig {
+export interface StreakTriggerBackendConfig extends CommonTriggerOptions {
   /** The Streak pipeline key to monitor for events */
   pipelineKey: string;
   /** The specific box event type to listen for */
   event: BoxEventType;
-  /** Optional email address to select appropriate account. */
+  /** Optional email address to select appropriate Streak account. */
   emailAddress?: string;
 }
+
+export const StreakTriggerBackendConfig = CommonTriggerOptions.extend({
+  pipelineKey: z.string(),
+  event: z.string(),
+  emailAddress: z.string().optional(),
+}) as z.ZodType<StreakTriggerBackendConfig>; // doing a cast only because we have a looser type for event
 
 export interface StreakAccountInjectionOptions extends CommonAccountInjectionOptions {
-  /** Optional email address to select appropriate account. */
-  emailAddress?: string;
-}
-
-export interface StreakAccountInjectionConfig {
   /** Optional email address to select appropriate account. */
   emailAddress?: string;
 }
@@ -60,6 +50,8 @@ export interface StreakEvent {
   /** The type of box event that occurred */
   event: BoxEventType;
   /** The event payload containing details about the affected objects */
+  // TODO make StreakEvent be a union of specific event types with typed
+  // payloads instead of having `payload: unknown`.
   payload: unknown;
 }
 
@@ -78,13 +70,7 @@ export interface StreakEvent {
  *   // Add to external systems, assign team members, etc.
  * });
  *
- * // Track stage changes
- * glue.streak.onBoxStageChanged("pipeline-key", (event) => {
- *   const box = event.payload;
- *   updateSalesMetrics(box);
- * });
- *
- * // React to any box event
+ * // React to box edit events
  * glue.streak.onBoxEvent("BOX_EDIT", "pipeline-key", (event) => {
  *   syncToExternalCRM(event.payload);
  * });
@@ -102,83 +88,34 @@ export class Streak {
    * @param event - The type of box event to listen for
    * @param pipelineKey - The Streak pipeline key to monitor
    * @param fn - Handler function called when the specified event occurs
-   * @param options - Optional trigger configuration including email filtering
-   *
-   * @example
-   * ```typescript
-   * // Listen for box edits
-   * glue.streak.onBoxEvent("BOX_EDIT", "pipeline-key", (event) => {
-   *   const box = event.payload;
-   *   console.log("Box updated:", box.name);
-   *   updateDealRecord(box);
-   * });
-   *
-   * // Monitor email activity
-   * glue.streak.onBoxEvent("BOX_NEW_EMAIL_RECEIVED", "pipeline-key", (event) => {
-   *   const { box, email } = event.payload;
-   *   logCustomerInteraction(box.key, email);
-   * });
-   *
-   * // Track task completion
-   * glue.streak.onBoxEvent("TASK_COMPLETE", "pipeline-key", (event) => {
-   *   const { task, box } = event.payload;
-   *   updateTaskMetrics(task, box);
-   * }, { emailAddress: "manager@company.com" });
-   * ```
+   * @param options - Optional trigger configuration
    */
-  // generic events
   onBoxEvent(
     event: BoxEventType,
     pipelineKey: string,
     fn: (event: StreakEvent) => void,
     options?: StreakTriggerOptions,
   ): void {
-    const config: StreakConfig = {
+    const config: StreakTriggerBackendConfig = {
+      ...options,
       pipelineKey,
       event,
       emailAddress: options?.emailAddress,
     };
-    registerEventListener("streak", fn, config, options);
+    registerEventListener("streak", fn, config);
   }
 
   /**
    * Registers a glue handler for new box creation events.
    *
    * Triggered when a new box (deal/lead) is created in the specified pipeline.
-   * This is useful for initializing processes when new opportunities enter
-   * your sales pipeline.
+   * For example, this could be useful for initializing processes when new
+   * opportunities enter your sales pipeline.
    *
    * @param pipelineKey - The Streak pipeline key to monitor
    * @param fn - Handler function called when a new box is created
    * @param options - Optional trigger configuration
-   *
-   * @example
-   * ```typescript
-   * glue.streak.onNewBoxCreated("pipeline-key", async (event) => {
-   *   const box = event.payload;
-   *
-   *   // Set up initial tasks
-   *   await createOnboardingTasks(box.key);
-   *
-   *   // Assign to team member
-   *   await assignToSalesRep(box);
-   *
-   *   // Send welcome email
-   *   if (box.emailAddresses?.length > 0) {
-   *     await sendWelcomeEmail(box.emailAddresses[0]);
-   *   }
-   *
-   *   // Add to forecasting
-   *   await addToSalesForecast({
-   *     dealId: box.key,
-   *     value: box.value,
-   *     stage: box.stageKey,
-   *     expectedCloseDate: box.expectedCloseDate
-   *   });
-   * });
-   * ```
    */
-  // specific events
   onNewBoxCreated(
     pipelineKey: string,
     fn: (event: StreakEvent) => void,
@@ -197,36 +134,6 @@ export class Streak {
    * @param pipelineKey - The Streak pipeline key to monitor
    * @param fn - Handler function called when a box changes stage
    * @param options - Optional trigger configuration
-   *
-   * @example
-   * ```typescript
-   * glue.streak.onBoxStageChanged("pipeline-key", async (event) => {
-   *   const { box, oldStage, newStage } = event.payload;
-   *
-   *   // Log stage progression
-   *   console.log(`Deal ${box.name} moved from ${oldStage} to ${newStage}`);
-   *
-   *   // Trigger stage-specific actions
-   *   switch (newStage) {
-   *     case "proposal-sent":
-   *       await scheduleFollowUp(box, { days: 3 });
-   *       break;
-   *     case "negotiation":
-   *       await notifyManagement(box);
-   *       await generateContract(box);
-   *       break;
-   *     case "closed-won":
-   *       await createCustomerAccount(box);
-   *       await notifyFulfillmentTeam(box);
-   *       await updateRevenueForecast(box.value);
-   *       break;
-   *     case "closed-lost":
-   *       await scheduleLossAnalysis(box);
-   *       await updateCompetitorTracking(box);
-   *       break;
-   *   }
-   * });
-   * ```
    */
   onBoxStageChanged(
     pipelineKey: string,
@@ -237,11 +144,10 @@ export class Streak {
   }
 
   getCredentialFetcher(options?: StreakAccountInjectionOptions): () => Promise<ApiKeyCredential> {
-    const config: StreakAccountInjectionConfig = {
-      emailAddress: options?.emailAddress,
-    };
-    const fetcher = registerAccountInjection<ApiKeyCredential>("streak", config, options);
-    return fetcher;
+    return registerAccountInjection<ApiKeyCredential>("streak", {
+      setupDescription: options?.setupDescription,
+      selector: options?.emailAddress,
+    });
   }
 }
 

@@ -1,23 +1,25 @@
+import { z } from "zod";
 import type { WebhookEventMap, WebhookEventName } from "@octokit/webhooks-types";
-import { type CommonTriggerOptions, registerEventListener } from "../../runtimeSupport.ts";
+import { registerEventListener } from "../../runtimeSupport.ts";
+import { CommonTriggerOptions } from "../../common.ts";
 
 /**
  * Options specific to GitHub event triggers.
  *
  * Extends the common trigger options with GitHub-specific configuration.
  */
-export type GithubTriggerOptions = CommonTriggerOptions & {
+export interface GithubTriggerOptions extends CommonTriggerOptions {
   /**
    * Optional GitHub username to select appropriate account.
    */
   username?: string;
-};
+}
 
 /**
  * Configuration for listening to events on a specific GitHub repository.
  * @internal
  */
-interface GithubRepoConfig {
+interface GithubRepoTriggerBackendConfig extends CommonTriggerOptions {
   /** The owner (user or organization) of the repository */
   owner: string;
   /** The name of the repository */
@@ -28,11 +30,18 @@ interface GithubRepoConfig {
   username?: string;
 }
 
+const GithubRepoTriggerBackendConfig: z.ZodType<GithubRepoTriggerBackendConfig> = CommonTriggerOptions.extend({
+  owner: z.string(),
+  repo: z.string(),
+  events: z.array(z.string()),
+  username: z.string().optional(),
+});
+
 /**
  * Configuration for listening to events on a GitHub organization.
  * @internal
  */
-interface GithubOrgConfig {
+interface GithubOrgTriggerBackendConfig extends CommonTriggerOptions {
   /** The organization name */
   org: string;
   /** Array of GitHub webhook event names to listen for */
@@ -41,12 +50,18 @@ interface GithubOrgConfig {
   username?: string;
 }
 
-/**
- * Internal configuration type for GitHub event listeners.
- * Can be either repository-specific or organization-wide.
- * @internal
- */
-export type GithubConfig = GithubRepoConfig | GithubOrgConfig;
+const GithubOrgTriggerBackendConfig: z.ZodType<GithubOrgTriggerBackendConfig> = CommonTriggerOptions.extend({
+  org: z.string(),
+  events: z.array(z.string()),
+  username: z.string().optional(),
+});
+
+export type GithubTriggerBackendConfig = GithubRepoTriggerBackendConfig | GithubOrgTriggerBackendConfig;
+
+export const GithubTriggerBackendConfig: z.ZodType<GithubTriggerBackendConfig> = z.union([
+  GithubRepoTriggerBackendConfig,
+  GithubOrgTriggerBackendConfig,
+]);
 
 /**
  * Represents a GitHub webhook event with its type and payload.
@@ -127,7 +142,6 @@ export class Github {
    *
    * @see https://docs.github.com/en/webhooks/webhook-events-and-payloads
    */
-  // generic events
   onRepoEvent<T extends WebhookEventName>(
     owner: string,
     repo: string,
@@ -135,13 +149,13 @@ export class Github {
     fn: (event: GithubEvent<T>) => void,
     options?: GithubTriggerOptions,
   ): void {
-    const config: GithubRepoConfig = {
+    const config: GithubRepoTriggerBackendConfig = {
+      ...options,
       owner,
       repo,
       events,
-      username: options?.username,
     };
-    registerEventListener("github", fn, config, options);
+    registerEventListener("github", fn, config);
   }
 
   /**
@@ -174,12 +188,12 @@ export class Github {
     fn: (event: GithubEvent<T>) => void,
     options?: GithubTriggerOptions,
   ): void {
-    const config: GithubOrgConfig = {
+    const config: GithubOrgTriggerBackendConfig = {
+      ...options,
       org,
       events,
-      username: options?.username,
     };
-    registerEventListener("github", fn, config, options);
+    registerEventListener("github", fn, config);
   }
 
   /**
@@ -215,7 +229,6 @@ export class Github {
    *
    * @see https://docs.github.com/en/webhooks/webhook-events-and-payloads#pull_request
    */
-  // specific events
   onPullRequestEvent(
     owner: string,
     repo: string,

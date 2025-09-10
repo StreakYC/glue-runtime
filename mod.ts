@@ -64,7 +64,8 @@ export type { CronEvent } from "./integrations/cron/runtime.ts";
 export type { BoxEventType, StreakAccountInjectionOptions, StreakEvent, StreakTriggerOptions } from "./integrations/streak/runtime.ts";
 export type { StripeEvent, StripeTriggerOptions } from "./integrations/stripe/runtime.ts";
 export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/intercom/runtime.ts";
-export type { AccessTokenCredential, ApiKeyCredential, CommonTriggerOptions } from "./runtimeSupport.ts";
+export type { AccessTokenCredential, ApiKeyCredential } from "./runtimeSupport.ts";
+export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./common.ts";
 
 /**
  * The main Glue runtime class that provides access to all event sources.
