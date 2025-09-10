@@ -1,9 +1,7 @@
-import type { CommonTriggerOptions } from "../../common.ts";
+import z from "zod";
+import { CommonTriggerOptions } from "../../common.ts";
 import { registerEventListener } from "../../runtimeSupport.ts";
 
-/**
- * Options specific to webhook event triggers.
- */
 export interface WebhookTriggerOptions extends CommonTriggerOptions {
   /**
    * Optional HTTP method filter.
@@ -13,6 +11,12 @@ export interface WebhookTriggerOptions extends CommonTriggerOptions {
    */
   method?: string;
 }
+
+export type WebhookTriggerBackendConfig = WebhookTriggerOptions;
+
+export const WebhookTriggerBackendConfig: z.ZodType<WebhookTriggerBackendConfig> = CommonTriggerOptions.extend({
+  method: z.string().optional(),
+});
 
 /**
  * Represents an incoming webhook HTTP request event.
