@@ -143,7 +143,7 @@ export class Streak {
     this.onBoxEvent("BOX_CHANGE_STAGE", pipelineKey, fn, options);
   }
 
-  getCredentialFetcher(options?: StreakAccountInjectionOptions): AccountFetcher<ApiKeyCredential> {
+  createCredentialFetcher(options?: StreakAccountInjectionOptions): AccountFetcher<ApiKeyCredential> {
     return registerAccountInjection<ApiKeyCredential>("streak", {
       setupDescription: options?.setupDescription,
       selector: options?.emailAddress,

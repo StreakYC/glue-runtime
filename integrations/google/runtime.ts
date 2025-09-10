@@ -24,7 +24,7 @@ export class Google {
    * import { glue } from "jsr:@streak-glue/runtime";
    *
    * // Create a credential fetcher
-   * const googleCredFetcher = glue.google.getCredentialFetcher();
+   * const googleCredFetcher = glue.google.createCredentialFetcher();
    *
    * // Use the fetcher to get credentials when needed
    * glue.webhook.onGet(async (_event) => {
@@ -34,7 +34,7 @@ export class Google {
    * });
    * ```
    */
-  getCredentialFetcher(options: GoogleAccountInjectionOptions): AccountFetcher<AccessTokenCredential> {
+  createCredentialFetcher(options: GoogleAccountInjectionOptions): AccountFetcher<AccessTokenCredential> {
     return registerAccountInjection<AccessTokenCredential>("google", {
       setupDescription: options.setupDescription,
       selector: options.accountEmailAddress,
