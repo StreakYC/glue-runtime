@@ -67,7 +67,7 @@ export interface AccountInjectionRegistration {
    * deployment.
    */
   label: string;
-  config?: AccountInjectionBackendConfig;
+  config: AccountInjectionBackendConfig;
 }
 
 export const AccountInjectionRegistration: z.ZodType<AccountInjectionRegistration> = z
