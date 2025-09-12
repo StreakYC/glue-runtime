@@ -36,7 +36,7 @@ export class Google {
    */
   createCredentialFetcher(options: GoogleAccountInjectionOptions): AccountFetcher<AccessTokenCredential> {
     return registerAccountInjection<AccessTokenCredential>("google", {
-      setupDescription: options.setupDescription,
+      description: options.description,
       selector: options.accountEmailAddress,
       scopes: options.scopes,
     });

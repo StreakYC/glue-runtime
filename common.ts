@@ -5,7 +5,7 @@ import z from "zod";
  */
 export interface CommonTriggerOptions {
   /** Description that appears for the trigger when configuring a Glue. */
-  setupDescription?: string;
+  description?: string;
 }
 
 // ugh I'm sorry about this super explicit type. It needs to be done because
@@ -13,14 +13,14 @@ export interface CommonTriggerOptions {
 // ZodObject type instead of ZodType so the `.extend()` method is present.
 export const CommonTriggerOptions: z.ZodObject<
   {
-    setupDescription: z.ZodOptional<z.ZodString>;
+    description: z.ZodOptional<z.ZodString>;
   },
   "strip",
   z.ZodTypeAny,
   CommonTriggerOptions,
   CommonTriggerOptions
 > = z.object({
-  setupDescription: z.string().optional(),
+  description: z.string().optional(),
 });
 
 /**
@@ -28,7 +28,7 @@ export const CommonTriggerOptions: z.ZodObject<
  */
 export interface CommonAccountInjectionOptions {
   /** Description that appears for the account injection when configuring a Glue. */
-  setupDescription?: string;
+  description?: string;
 }
 
 // This needs this ugly explicit type because otherwise deno's
@@ -36,12 +36,12 @@ export interface CommonAccountInjectionOptions {
 // of ZodType so the `.extend()` method is present.
 export const CommonAccountInjectionOptions: z.ZodObject<
   {
-    setupDescription: z.ZodOptional<z.ZodString>;
+    description: z.ZodOptional<z.ZodString>;
   },
   "strip",
   z.ZodTypeAny,
   CommonAccountInjectionOptions,
   CommonAccountInjectionOptions
 > = z.object({
-  setupDescription: z.string().optional(),
+  description: z.string().optional(),
 });

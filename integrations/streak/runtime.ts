@@ -145,7 +145,7 @@ export class Streak {
 
   createCredentialFetcher(options?: StreakAccountInjectionOptions): AccountFetcher<ApiKeyCredential> {
     return registerAccountInjection<ApiKeyCredential>("streak", {
-      setupDescription: options?.setupDescription,
+      description: options?.description,
       selector: options?.emailAddress,
     });
   }
