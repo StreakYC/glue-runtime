@@ -1,14 +1,10 @@
-import { type CommonTriggerOptions, registerEventListener } from "../../runtimeSupport.ts";
+import z from "zod";
+import { CommonTriggerOptions } from "../../common.ts";
+import { registerEventListener } from "../../runtimeSupport.ts";
 
-/**
- * Options specific to Intercom event triggers.
- *
- * Extends the common trigger options with Intercom-specific configuration
- * for filtering events by workspace.
- */
 export interface IntercomTriggerOptions extends CommonTriggerOptions {
   /**
-   * Optional Intercom workspace ID to select appropriate account.
+   * Optional Intercom workspace ID to select the appropriate account.
    */
   workspaceId?: string;
 }
@@ -64,16 +60,17 @@ export interface IntercomEvent {
   workspaceId: string;
 }
 
-/**
- * Internal configuration for Intercom event listeners.
- * @internal
- */
-export interface IntercomConfig {
+export interface IntercomTriggerBackendConfig extends CommonTriggerOptions {
   /** Array of Intercom event topics to listen for */
   events: string[];
   /** Optional workspace ID filter */
   workspaceId?: string;
 }
+
+export const IntercomTriggerBackendConfig: z.ZodType<IntercomTriggerBackendConfig> = CommonTriggerOptions.extend({
+  events: z.array(z.string()),
+  workspaceId: z.string().optional(),
+});
 
 /**
  * Intercom event source for customer conversation and contact events.
@@ -102,8 +99,6 @@ export interface IntercomConfig {
  *   }
  * });
  * ```
- *
- * @see https://developers.intercom.com/intercom-api-reference/reference/webhooks
  */
 export class Intercom {
   /**
@@ -141,30 +136,21 @@ export class Intercom {
    *       break;
    *   }
    * });
-   *
-   * // Monitor contact lifecycle
-   * glue.intercom.onEvent([
-   *   "contact.created",
-   *   "contact.deleted",
-   *   "contact.email.updated"
-   * ], (event) => {
-   *   syncContactWithCRM(event);
-   * }, { workspaceId: "your-workspace-id" });
    * ```
    *
-   * @see https://developers.intercom.com/intercom-api-reference/reference/webhook-topics - Full list of topics
+   * @see https://developers.intercom.com/intercom-api-reference/reference/webhook-topics - Full list of event types
    */
-  // generic events
   onEvent(
     events: string[],
     fn: (event: IntercomEvent) => void,
     options?: IntercomTriggerOptions,
   ): void {
-    const config: IntercomConfig = {
+    const config: IntercomTriggerBackendConfig = {
+      ...options,
       events,
       workspaceId: options?.workspaceId,
     };
-    registerEventListener("intercom", fn, config, options);
+    registerEventListener("intercom", fn, config);
   }
 
   /**
@@ -173,42 +159,7 @@ export class Intercom {
    * Triggered when an admin closes a conversation in Intercom.
    * This is useful for tracking support metrics, sending follow-up
    * surveys, or updating external systems.
-   *
-   * @param fn - Handler function called when a conversation is closed
-   * @param options - Optional trigger configuration
-   *
-   * @example
-   * ```typescript
-   * glue.intercom.onConversationClosed((event) => {
-   *   const conversation = event.data.item;
-   *
-   *   // Extract conversation details
-   *   const conversationId = conversation.id;
-   *   const customerId = conversation.user.id;
-   *   const closedAt = new Date(conversation.updated_at * 1000);
-   *   const tags = conversation.tags?.tags || [];
-   *
-   *   // Track support metrics
-   *   await trackSupportMetrics({
-   *     conversationId,
-   *     customerId,
-   *     closedAt,
-   *     resolutionTime: closedAt - new Date(conversation.created_at * 1000),
-   *     tags: tags.map(t => t.name)
-   *   });
-   *
-   *   // Send satisfaction survey after 1 hour
-   *   if (conversation.user.email) {
-   *     await scheduleSatisfactionSurvey(
-   *       conversation.user.email,
-   *       conversationId,
-   *       { delayHours: 1 }
-   *     );
-   *   }
-   * });
-   * ```
    */
-  // specific events
   onConversationClosed(
     fn: (event: IntercomEvent) => void,
     options?: IntercomTriggerOptions,

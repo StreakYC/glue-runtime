@@ -1,6 +1,7 @@
 import { Hono } from "hono";
-import { type Registrations, TriggerEvent } from "./internalTypes.ts";
+import { type AccountInjectionBackendConfig, type Registrations, TriggerEvent } from "./backendTypes.ts";
 import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
+import type { CommonTriggerOptions } from "./common.ts";
 
 patchConsoleGlobal();
 
@@ -15,7 +16,7 @@ interface RegisteredEvent {
 }
 
 interface RegisteredAccountInjection {
-  config: unknown;
+  config: AccountInjectionBackendConfig;
 }
 
 const eventListenersByType = new Map<string, Map<string, RegisteredEvent>>();
@@ -23,65 +24,6 @@ const accountInjectionsByType = new Map<
   string,
   Map<string, RegisteredAccountInjection>
 >();
-
-/**
- * Common options available for all trigger event listeners.
- *
- * These options can be passed to any event source's registration methods
- * to customize the behavior of the trigger.
- *
- * @example
- * ```typescript
- * glue.github.onPullRequestEvent("owner", "repo", handlePR, {
- *   label: "my-pr-handler"
- * });
- * ```
- */
-export interface CommonTriggerOptions {
-  /**
-   * A unique label to identify this specific trigger registration. Labels
-   * are useful so that Glue can correlate different trigger handlers across
-   * deployment versions. This keeps things like webhook URLs consistent
-   * between deployments.
-   *
-   * If not provided, an auto-generated numeric label will be assigned.
-   * Labels must be unique for a given trigger type.
-   *
-   * @example "pr-reviewer"
-   * @example "daily-backup"
-   */
-  label?: string;
-}
-
-/**
- * Common options available for all account injection configurations.
- *
- * Account injections allow you to configure authentication and connection
- * details for external services that your triggers will use.
- *
- * @example
- * ```typescript
- * glue.github.inject({
- *   label: "my-github-account"
- * });
- * ```
- */
-export interface CommonAccountInjectionOptions {
-  /**
-   * A unique label to identify this specific account injection. Labels are
-   * useful so that Glue can correlate different account injections across
-   * deployment versions. This keeps things like default accounts consistent
-   * between deployments.
-   *
-   * If not provided, an auto-generated numeric label will be assigned.
-   * Labels must be unique within your application. Labels are also used to
-   * identify the account injection when it is used in a trigger.
-   *
-   * @example "primary-github"
-   * @example "customer-stripe"
-   */
-  label?: string;
-}
 
 export interface AccessTokenCredential {
   accessToken: string;
@@ -98,16 +40,10 @@ let nextAutomaticLabel = 0;
  * @internal
  * Registers an event listener for a specific event type.
  * This function is used internally by event source implementations.
- *
- * @param eventName - The type of event to listen for (e.g., "github", "stripe")
- * @param callback - The function to call when the event is triggered
- * @param config - Event source specific configuration
- * @param options - Common trigger options including label
  */
 export function registerEventListener<T>(
   eventName: string,
   callback: (event: T) => void,
-  config: unknown,
   options: CommonTriggerOptions | undefined,
 ) {
   scheduleInit();
@@ -118,7 +54,7 @@ export function registerEventListener<T>(
     eventListenersByType.set(eventName, specificEventListeners);
   }
 
-  const resolvedLabel = options?.label ?? String(nextAutomaticLabel++);
+  const resolvedLabel = String(nextAutomaticLabel++);
   if (specificEventListeners.has(resolvedLabel)) {
     throw new Error(
       `Event listener with label ${JSON.stringify(resolvedLabel)} already registered`,
@@ -126,24 +62,33 @@ export function registerEventListener<T>(
   }
   specificEventListeners.set(resolvedLabel, {
     fn: callback as RegisteredEvent["fn"],
-    config,
+    config: options ?? {},
   });
+}
+
+/**
+ * Used to fetch an account credential or client at runtime.
+ */
+export interface AccountFetcher<T> {
+  /**
+   * Fetches the account credential or client. This must only be called within
+   * an event handler.
+   *
+   * @throws If called outside of an event handler, or if there is an error
+   * fetching the credential.
+   */
+  get(): Promise<T>;
 }
 
 /**
  * @internal
  * Registers an account injection for a specific service type.
  * This function is used internally by event source implementations.
- *
- * @param type - The type of service account to inject (e.g., "github", "stripe")
- * @param config - Service-specific account configuration
- * @param options - Common account injection options including label
  */
 export function registerAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
   type: string,
-  config: unknown,
-  options: CommonAccountInjectionOptions | undefined,
-): () => Promise<T> {
+  config: AccountInjectionBackendConfig,
+): AccountFetcher<T> {
   scheduleInit();
   let typeAccountInjections = accountInjectionsByType.get(type);
   if (!typeAccountInjections) {
@@ -151,7 +96,7 @@ export function registerAccountInjection<T extends AccessTokenCredential | ApiKe
     accountInjectionsByType.set(type, typeAccountInjections);
   }
 
-  const resolvedLabel = options?.label ?? String(nextAutomaticLabel++);
+  const resolvedLabel = String(nextAutomaticLabel++);
   if (typeAccountInjections.has(resolvedLabel)) {
     throw new Error(
       `Account injection with label ${
@@ -165,29 +110,31 @@ export function registerAccountInjection<T extends AccessTokenCredential | ApiKe
     config,
   });
 
-  return async () => {
-    if (!glueDeploymentId || !glueAuthHeader) {
-      throw new Error(
-        "Credential fetcher must not be used before any trigger events have been received.",
-      );
-    }
-    const res = await fetch(
-      `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${encodeURIComponent(glueDeploymentId)}/accountInjections/${encodeURIComponent(type)}/${
-        encodeURIComponent(resolvedLabel)
-      }`,
-      {
-        headers: {
-          "Authorization": glueAuthHeader,
+  return {
+    async get() {
+      if (!glueDeploymentId || !glueAuthHeader) {
+        throw new Error(
+          "Credential fetcher must not be used before any trigger events have been received.",
+        );
+      }
+      const res = await fetch(
+        `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${encodeURIComponent(glueDeploymentId)}/accountInjections/${encodeURIComponent(type)}/${
+          encodeURIComponent(resolvedLabel)
+        }`,
+        {
+          headers: {
+            "Authorization": glueAuthHeader,
+          },
         },
-      },
-    );
-    if (!res.ok) {
-      throw new Error(
-        `Failed to fetch account injection: ${res.status} ${res.statusText}`,
       );
-    }
-    const body = await res.json() as T;
-    return body;
+      if (!res.ok) {
+        throw new Error(
+          `Failed to fetch account injection: ${res.status} ${res.statusText}`,
+        );
+      }
+      const body = await res.json() as T;
+      return body;
+    },
   };
 }
 

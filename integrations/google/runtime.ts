@@ -1,4 +1,5 @@
-import { type AccessTokenCredential, type CommonAccountInjectionOptions, registerAccountInjection } from "../../runtimeSupport.ts";
+import type { CommonAccountInjectionOptions } from "../../common.ts";
+import { type AccessTokenCredential, type AccountFetcher, registerAccountInjection } from "../../runtimeSupport.ts";
 
 export interface GoogleAccountInjectionOptions extends CommonAccountInjectionOptions {
   /**
@@ -6,16 +7,6 @@ export interface GoogleAccountInjectionOptions extends CommonAccountInjectionOpt
    *
    * @example "user@gmail.com"
    */
-  accountEmailAddress?: string;
-  scopes: string[];
-}
-
-/**
- * Internal configuration for Google account injections.
- * @internal
- */
-export interface GoogleAccountInjectionConfig {
-  /** Optional email address filter */
   accountEmailAddress?: string;
   scopes: string[];
 }
@@ -33,7 +24,7 @@ export class Google {
    * import { glue } from "jsr:@streak-glue/runtime";
    *
    * // Create a credential fetcher
-   * const googleCredFetcher = glue.google.getCredentialFetcher();
+   * const googleCredFetcher = glue.google.createCredentialFetcher();
    *
    * // Use the fetcher to get credentials when needed
    * glue.webhook.onGet(async (_event) => {
@@ -43,12 +34,11 @@ export class Google {
    * });
    * ```
    */
-  getCredentialFetcher(options: GoogleAccountInjectionOptions): () => Promise<AccessTokenCredential> {
-    const config: GoogleAccountInjectionConfig = {
-      accountEmailAddress: options.accountEmailAddress,
+  createCredentialFetcher(options: GoogleAccountInjectionOptions): AccountFetcher<AccessTokenCredential> {
+    return registerAccountInjection<AccessTokenCredential>("google", {
+      description: options.description,
+      selector: options.accountEmailAddress,
       scopes: options.scopes,
-    };
-    const fetcher = registerAccountInjection<AccessTokenCredential>("google", config, options);
-    return fetcher;
+    });
   }
 }

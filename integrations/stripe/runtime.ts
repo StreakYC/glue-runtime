@@ -1,5 +1,7 @@
+import z from "zod";
 import type { Stripe as StripeLib } from "stripe";
-import { type CommonTriggerOptions, registerEventListener } from "../../runtimeSupport.ts";
+import { registerEventListener } from "../../runtimeSupport.ts";
+import { CommonTriggerOptions } from "../../common.ts";
 
 /**
  * Union type of all possible Stripe webhook event types.
@@ -11,29 +13,24 @@ import { type CommonTriggerOptions, registerEventListener } from "../../runtimeS
  */
 export type StripeEventType = StripeLib.Event.Type;
 
-/**
- * Options specific to Stripe event triggers.
- *
- * Extends the common trigger options with Stripe-specific configuration
- * for selecting appropriate account.
- */
-export type StripeTriggerOptions = CommonTriggerOptions & {
+export interface StripeTriggerOptions extends CommonTriggerOptions {
   /**
    * Optional label to select appropriate account.
    */
   accountLabel?: string;
-};
+}
 
-/**
- * Internal configuration for Stripe event listeners.
- * @internal
- */
-export interface StripeConfig {
+export interface StripeTriggerBackendConfig extends CommonTriggerOptions {
   /** Array of Stripe event types to listen for */
   events: StripeEventType[];
   /** Optional account label for the account */
   accountLabel?: string;
 }
+
+export const StripeTriggerBackendConfig = CommonTriggerOptions.extend({
+  events: z.array(z.string()),
+  accountLabel: z.string().optional(),
+}) as z.ZodType<StripeTriggerBackendConfig>; // doing a cast only because we have a looser type for events
 
 /**
  * Represents a typed Stripe webhook event.
@@ -83,9 +80,6 @@ export type StripeEvent<T extends StripeEventType> = Extract<
  *   provisionUserAccess(event.data.object);
  * });
  * ```
- *
- * @see https://stripe.com/docs/webhooks
- * @see https://stripe.com/docs/api/events
  */
 export class Stripe {
   /**
@@ -126,17 +120,17 @@ export class Stripe {
    *
    * @see https://stripe.com/docs/api/events/types - Full list of event types
    */
-  // generic events
   onEvents<T extends StripeEventType>(
     events: T[],
     fn: (event: StripeEvent<T>) => void,
     options?: StripeTriggerOptions,
   ): void {
-    const config: StripeConfig = {
+    const config: StripeTriggerBackendConfig = {
+      ...options,
       events,
       accountLabel: options?.accountLabel,
     };
-    registerEventListener("stripe", fn, config, options);
+    registerEventListener("stripe", fn, config);
   }
 
   /**
@@ -144,26 +138,6 @@ export class Stripe {
    *
    * Triggered when a new customer is created in your Stripe account,
    * either through the API, dashboard, or during checkout.
-   *
-   * @param fn - Handler function called when a customer is created
-   * @param options - Optional trigger configuration
-   *
-   * @example
-   * ```typescript
-   * glue.stripe.onCustomerCreated((event) => {
-   *   const customer = event.data.object;
-   *
-   *   // Add to your database
-   *   await createUserRecord({
-   *     stripeCustomerId: customer.id,
-   *     email: customer.email,
-   *     name: customer.name
-   *   });
-   *
-   *   // Send welcome email
-   *   await sendWelcomeEmail(customer.email);
-   * });
-   * ```
    */
   onCustomerCreated(
     fn: (event: StripeEvent<"customer.created">) => void,
@@ -177,30 +151,6 @@ export class Stripe {
    *
    * Triggered when a new subscription is created for a customer.
    * This typically happens after successful payment during checkout.
-   *
-   * @param fn - Handler function called when a subscription is created
-   * @param options - Optional trigger configuration
-   *
-   * @example
-   * ```typescript
-   * glue.stripe.onSubscriptionCreated((event) => {
-   *   const subscription = event.data.object;
-   *
-   *   // Grant access based on subscription
-   *   await grantUserAccess({
-   *     customerId: subscription.customer,
-   *     planId: subscription.items.data[0].price.id,
-   *     status: subscription.status
-   *   });
-   *
-   *   // Track in analytics
-   *   analytics.track("Subscription Started", {
-   *     customerId: subscription.customer,
-   *     planId: subscription.items.data[0].price.id,
-   *     mrr: subscription.items.data[0].price.unit_amount
-   *   });
-   * });
-   * ```
    */
   onSubscriptionCreated(
     fn: (event: StripeEvent<"customer.subscription.created">) => void,
@@ -214,31 +164,6 @@ export class Stripe {
    *
    * Triggered when a subscription is canceled or expires. The subscription
    * may still be active until the end of the current period.
-   *
-   * @param fn - Handler function called when a subscription is canceled
-   * @param options - Optional trigger configuration
-   *
-   * @example
-   * ```typescript
-   * glue.stripe.onSubscriptionCanceled((event) => {
-   *   const subscription = event.data.object;
-   *
-   *   // Check if immediate cancellation or end of period
-   *   if (subscription.status === "canceled") {
-   *     // Immediately revoke access
-   *     await revokeUserAccess(subscription.customer);
-   *   } else {
-   *     // Schedule access removal for period end
-   *     await scheduleAccessRevocation(
-   *       subscription.customer,
-   *       new Date(subscription.current_period_end * 1000)
-   *     );
-   *   }
-   *
-   *   // Send cancellation email
-   *   await sendCancellationEmail(subscription.customer);
-   * });
-   * ```
    */
   onSubscriptionCanceled(
     fn: (event: StripeEvent<"customer.subscription.deleted">) => void,
@@ -252,33 +177,6 @@ export class Stripe {
    *
    * Triggered when a payment attempt fails. This could be due to
    * insufficient funds, declined card, or other payment issues.
-   *
-   * @param fn - Handler function called when a payment fails
-   * @param options - Optional trigger configuration
-   *
-   * @example
-   * ```typescript
-   * glue.stripe.onPaymentFailed((event) => {
-   *   const paymentIntent = event.data.object;
-   *   const error = paymentIntent.last_payment_error;
-   *
-   *   // Log failure reason
-   *   console.error(`Payment failed: ${error?.message}`);
-   *
-   *   // Notify customer
-   *   await sendPaymentFailedEmail({
-   *     customerId: paymentIntent.customer,
-   *     amount: paymentIntent.amount,
-   *     currency: paymentIntent.currency,
-   *     reason: error?.message
-   *   });
-   *
-   *   // Update subscription status if needed
-   *   if (paymentIntent.invoice) {
-   *     await handleFailedSubscriptionPayment(paymentIntent.invoice);
-   *   }
-   * });
-   * ```
    */
   onPaymentFailed(
     fn: (event: StripeEvent<"payment_intent.payment_failed">) => void,
@@ -292,38 +190,6 @@ export class Stripe {
    *
    * Triggered when a payment is successfully processed and funds
    * have been captured.
-   *
-   * @param fn - Handler function called when a payment succeeds
-   * @param options - Optional trigger configuration
-   *
-   * @example
-   * ```typescript
-   * glue.stripe.onPaymentSucceeded((event) => {
-   *   const paymentIntent = event.data.object;
-   *
-   *   // Send receipt
-   *   await sendPaymentReceipt({
-   *     customerId: paymentIntent.customer,
-   *     amount: paymentIntent.amount,
-   *     currency: paymentIntent.currency,
-   *     paymentMethodId: paymentIntent.payment_method
-   *   });
-   *
-   *   // Update order status
-   *   if (paymentIntent.metadata.orderId) {
-   *     await updateOrderStatus(
-   *       paymentIntent.metadata.orderId,
-   *       "paid"
-   *     );
-   *   }
-   *
-   *   // Track revenue
-   *   analytics.track("Payment Completed", {
-   *     amount: paymentIntent.amount / 100, // Convert from cents
-   *     currency: paymentIntent.currency
-   *   });
-   * });
-   * ```
    */
   onPaymentSucceeded(
     fn: (event: StripeEvent<"payment_intent.succeeded">) => void,

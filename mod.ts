@@ -64,7 +64,8 @@ export type { CronEvent } from "./integrations/cron/runtime.ts";
 export type { BoxEventType, StreakAccountInjectionOptions, StreakEvent, StreakTriggerOptions } from "./integrations/streak/runtime.ts";
 export type { StripeEvent, StripeTriggerOptions } from "./integrations/stripe/runtime.ts";
 export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/intercom/runtime.ts";
-export type { AccessTokenCredential, ApiKeyCredential, CommonTriggerOptions } from "./runtimeSupport.ts";
+export type { AccessTokenCredential, AccountFetcher, ApiKeyCredential } from "./runtimeSupport.ts";
+export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./common.ts";
 
 /**
  * The main Glue runtime class that provides access to all event sources.
@@ -73,11 +74,7 @@ export type { AccessTokenCredential, ApiKeyCredential, CommonTriggerOptions } fr
  * providing a unified interface for registering event listeners across
  * different platforms and services.
  *
- * @example
- * ```typescript
- * const myGlue = new Glue();
- * myGlue.github.onPullRequestEvent("owner", "repo", handlePR);
- * ```
+ * This class is made available to users through the {@link glue} singleton.
  */
 class Glue {
   /**
@@ -136,7 +133,7 @@ export type { Glue };
  *
  * @example
  * ```typescript
- * import { glue } from "@glue/runtime";
+ * import { glue } from "jsr:@streak-glue/runtime";
  *
  * glue.stripe.onCustomerCreated((event) => {
  *   console.log("New customer:", event.data.object.email);
