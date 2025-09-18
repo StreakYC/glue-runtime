@@ -190,6 +190,9 @@ function scheduleInit() {
     );
   }
   if (hasScheduledInit) {
+    // This is hit when there are multiple registrations (triggers and account
+    // injections) on startup. We don't need to do anything more after the first
+    // time.
     return;
   }
   hasScheduledInit = true;
@@ -222,5 +225,29 @@ function scheduleInit() {
     });
 
     Deno.serve(serveOptions, app.fetch);
+
+    // Connect the lifeline once we're ready
+    if (GLUE_DEV_PORT) {
+      const cliWebsocketAddr = Deno.env.get("GLUE_CLI_WS_ADDR");
+      if (cliWebsocketAddr) {
+        startLifeline(cliWebsocketAddr);
+      }
+    }
   });
+}
+
+/**
+ * Open a websocket connection to the CLI runner so we can exit if the runner
+ * dies.
+ */
+function startLifeline(cliWebsocketAddr: string) {
+  const ws = new WebSocket(cliWebsocketAddr);
+  ws.onclose = (_event) => {
+    // runner died so exit
+    Deno.exit(5); // arbitrary non-default error exit code
+  };
+  ws.onerror = (event) => {
+    console.error((event as ErrorEvent).error);
+    Deno.exit(5);
+  };
 }
