@@ -56,6 +56,7 @@ import * as streakEventSource from "./integrations/streak/runtime.ts";
 import * as stripeEventSource from "./integrations/stripe/runtime.ts";
 import * as cronEventSource from "./integrations/cron/runtime.ts";
 import * as intercomEventSource from "./integrations/intercom/runtime.ts";
+import { Debug } from "./integrations/debug/runtime.ts";
 export type { GoogleAccountInjectionOptions } from "./integrations/google/runtime.ts";
 export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/gmail/runtime.ts";
 export type { GithubEvent, GithubTriggerOptions } from "./integrations/github/runtime.ts";
@@ -121,6 +122,12 @@ class Glue {
    * Tracks events in Intercom workspaces like conversation closures.
    */
   readonly intercom: intercomEventSource.Intercom = new intercomEventSource.Intercom();
+
+  /**
+   * Debug utilities exposing low-level registration helpers.
+   * These APIs are unstable and intended for internal / experimental use.
+   */
+  readonly debug: Debug = new Debug();
 }
 
 export type { Glue };
