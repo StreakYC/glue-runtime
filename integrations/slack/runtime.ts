@@ -37,14 +37,10 @@ export const SlackEventWebhook: z.ZodType<SlackEventWebhook> = z.object({
 });
 
 export interface SlackTriggerOptions extends CommonTriggerOptions {
-  /**
-   * The team ID or workspace to listen for events on
-   */
+  /** Optional team ID or workspace to listen for events on */
   teamId?: string;
 
-  /**
-   * The channel ID to filter events on. If not provided, all channels will be listened to.
-   */
+  /** Optional channel ID to filter events on. If provided, only events from this channel will be listened to.  */
   channelId?: string;
 }
 
@@ -62,7 +58,7 @@ export const SlackTriggerBackendConfig: z.ZodType<SlackTriggerBackendConfig> = C
   channels: z.array(z.string()).optional(),
 });
 
-interface SlackCredentialFetcherOptions extends CommonAccountInjectionOptions {
+export interface SlackCredentialFetcherOptions extends CommonAccountInjectionOptions {
   scopes: string[];
   teamId?: string;
 }
