@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { CommonTriggerOptions } from "../../common.ts";
+import { type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
 import { registerEventListener } from "../../runtimeSupport.ts";
 
-export interface CronTriggerBackendConfig extends CommonTriggerOptions {
+export interface CronTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** The cron expression defining when the event should trigger */
   crontab: string;
 }

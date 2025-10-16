@@ -196,6 +196,14 @@ glue.streak.onBoxStageChanged("pipeline-key", (event) => {
 });
 ```
 
+### Slack
+
+Monitor messages and channel activity
+
+```typescript
+glue.slack.onUserVisibleMessage(); //TODO
+```
+
 ## Common Options
 
 All event sources support common trigger options:
@@ -224,6 +232,7 @@ All event types are fully typed with TypeScript, providing excellent IDE support
 - `CronEvent` - Scheduled task triggers
 - `StripeEvent<T>` - Stripe webhook events
 - `IntercomEvent` - Intercom webhook events
+- `SlackEventWebhook` - Slack webhook events
 - `WebflowEvent<T>` - Webflow webhook events
 - `StreakEvent` - Streak CRM events
 

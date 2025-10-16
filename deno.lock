@@ -6,6 +6,7 @@
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "npm:@octokit/webhooks-types@*": "7.6.1",
     "npm:@octokit/webhooks-types@^7.6.1": "7.6.1",
+    "npm:@slack/types@^2.14.0": "2.16.0",
     "npm:@types/node@*": "22.12.0",
     "npm:octokit@*": "4.1.2_@octokit+core@6.1.4",
     "npm:stripe@*": "18.1.1_@types+node@22.12.0",
@@ -221,6 +222,9 @@
         "@octokit/request-error",
         "@octokit/webhooks-methods"
       ]
+    },
+    "@slack/types@2.16.0": {
+      "integrity": "sha512-bICnyukvdklXhwxprR3uF1+ZFkTvWTZge4evlCS4G1H1HU6QLY68AcjqzQRymf7/5gNt6Y4OBb4NdviheyZcAg=="
     },
     "@types/aws-lambda@8.10.148": {
       "integrity": "sha512-JL+2cfkY9ODQeE06hOxSFNkafjNk4JRBgY837kpoq1GHDttq2U3BA9IzKOWxS4DLjKoymGB4i9uBrlCkjUl1yg=="
@@ -515,6 +519,7 @@
       "jsr:@hono/hono@^4.7.4",
       "jsr:@std/assert@1",
       "npm:@octokit/webhooks-types@^7.6.1",
+      "npm:@slack/types@^2.14.0",
       "npm:stripe@^18.2.0",
       "npm:zod@^3.24.2"
     ]

@@ -1,5 +1,5 @@
 import z from "zod";
-import { type CommonAccountInjectionOptions, CommonTriggerOptions } from "../../common.ts";
+import { type CommonAccountInjectionOptions, type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
 import { type AccountFetcher, type ApiKeyCredential, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
 
 /**
@@ -12,7 +12,7 @@ export interface StreakTriggerOptions extends CommonTriggerOptions {
   emailAddress?: string;
 }
 
-export interface StreakTriggerBackendConfig extends CommonTriggerOptions {
+export interface StreakTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** The Streak pipeline key to monitor for events */
   pipelineKey: string;
   /** The specific box event type to listen for */

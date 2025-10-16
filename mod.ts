@@ -5,7 +5,7 @@
  *
  * This package provides a unified interface for listening to events from various external services
  * and platforms. It allows developers to easily build reactive applications that respond to events
- * from GitHub, Gmail, webhooks, cron schedules, Stripe, Intercom, Webflow, and Streak.
+ * from GitHub, Gmail, webhooks, cron schedules, Stripe, Intercom, Webflow, Slack, and Streak.
  *
  * ## Overview
  *
@@ -42,6 +42,7 @@
  * - **Cron**: Scheduled tasks using cron expressions
  * - **Stripe**: Payment and subscription events
  * - **Intercom**: Customer conversation events
+ * - **Slack**: Slack events
  * - **Webflow**: Website and CMS events
  * - **Streak**: CRM pipeline and box events
  *
@@ -56,6 +57,7 @@ import * as streakEventSource from "./integrations/streak/runtime.ts";
 import * as stripeEventSource from "./integrations/stripe/runtime.ts";
 import * as cronEventSource from "./integrations/cron/runtime.ts";
 import * as intercomEventSource from "./integrations/intercom/runtime.ts";
+import * as slackEventSource from "./integrations/slack/runtime.ts";
 import { Debug } from "./integrations/debug/runtime.ts";
 export type { GoogleAccountInjectionOptions } from "./integrations/google/runtime.ts";
 export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/gmail/runtime.ts";
@@ -65,6 +67,7 @@ export type { CronEvent } from "./integrations/cron/runtime.ts";
 export type { BoxEventType, StreakAccountInjectionOptions, StreakEvent, StreakTriggerOptions } from "./integrations/streak/runtime.ts";
 export type { StripeEvent, StripeTriggerOptions } from "./integrations/stripe/runtime.ts";
 export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/intercom/runtime.ts";
+export type { SlackEventWebhook, SlackTriggerOptions } from "./integrations/slack/runtime.ts";
 export type { AccessTokenCredential, AccountFetcher, ApiKeyCredential } from "./runtimeSupport.ts";
 export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./common.ts";
 
@@ -122,6 +125,12 @@ class Glue {
    * Tracks events in Intercom workspaces like conversation closures.
    */
   readonly intercom: intercomEventSource.Intercom = new intercomEventSource.Intercom();
+
+  /**
+   * Slack event source for all Slack events.
+   * Tracks events in Slack workspaces like messages, channels, users, etc.
+   */
+  readonly slack: slackEventSource.Slack = new slackEventSource.Slack();
 
   /**
    * Debug utilities exposing low-level registration helpers.

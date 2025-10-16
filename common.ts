@@ -45,3 +45,9 @@ export const CommonAccountInjectionOptions: z.ZodObject<
 > = z.object({
   description: z.string().optional(),
 });
+
+// these are the same for now but may not be in the future
+
+/** Common backend config for all trigger configurations */
+export type CommonTriggerBackendConfig = CommonTriggerOptions;
+export const CommonTriggerBackendConfig: z.ZodType<CommonTriggerBackendConfig> = CommonTriggerOptions;
