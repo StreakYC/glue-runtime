@@ -1,5 +1,5 @@
 import z from "zod";
-import { type CommonAccountInjectionOptions, type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
+import { type CommonAccountInjectionOptions, CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
 import { type AccessTokenCredential, type AccountFetcher, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
 import type { SlackEvent } from "@slack/types";
 
@@ -56,7 +56,7 @@ export interface SlackTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** Optional channel IDs to filter events */
   channels?: string[];
 }
-export const SlackTriggerBackendConfig: z.ZodType<SlackTriggerBackendConfig> = CommonTriggerOptions.extend({
+export const SlackTriggerBackendConfig: z.ZodType<SlackTriggerBackendConfig> = CommonTriggerBackendConfig.extend({
   teamId: z.string().optional(),
   events: z.array(z.custom<SlackEventType>()),
   channels: z.array(z.string()).optional(),
@@ -68,7 +68,7 @@ interface SlackCredentialFetcherOptions extends CommonAccountInjectionOptions {
 }
 
 /**
- * Slack event source for all slack events.
+ * Slack event source for all Slack events.
  *
  * Provides methods to register glue handlers for Slack webhook events,
  * allowing you to react to new messages, new channels, new users, etc.
@@ -76,13 +76,13 @@ interface SlackCredentialFetcherOptions extends CommonAccountInjectionOptions {
  * @example
  * ```typescript
  * // Monitor closed conversations
- * glue.slack.onNewUserVisibleMessage((webhook) => {
+ * glue.slack.onNewMessage((webhook) => {
  *   const msg = webhook.event.text;
  *   console.log(msg);
  * });
  *
  * // Listen for multiple event types
- * glue.slack.onUserEvents([
+ * glue.slack.onEvents([
  *   "message",
  *   "channel_created"
  * ], (webhook) => {
@@ -99,7 +99,9 @@ export class Slack {
    * Registers a glue handler for specific Slack webhook events.
    *
    * This is the most flexible method, allowing you to listen for any
-   * combination of Slack event topics.
+   * combination of Slack event topics. These events that are delivered
+   * are based on what is visible to the user that is authenticated with
+   * the account.
    *
    * @param events - Array of Slack event topics to listen for
    * @param fn - Handler function called when any of the specified events occur
@@ -127,10 +129,9 @@ export class Slack {
    */
   onEvents(events: SlackEventType[], fn: (event: SlackEventWebhook) => void, options?: SlackTriggerOptions): void {
     const config: SlackTriggerBackendConfig = {
-      ...options,
       events: events,
       teamId: options?.teamId,
-      channels: undefined,
+      channels: options?.channelId ? [options.channelId] : undefined,
     };
     registerEventListener("slack", fn, config);
   }
@@ -147,6 +148,27 @@ export class Slack {
     this.onEvents(["message"], fn, options);
   }
 
+  /**
+   * Creates a credential fetcher function for Slack API authentication. Use in
+   * conjunction with the Slack client library.
+   *
+   * This method returns a function that, when called, provides access token
+   * credentials for authenticating with the Slack API as a **user**. The function
+   * may only be called within an event handler.
+   *
+   * @example
+   * ```typescript
+   * const fetcher = glue.slack.createUserCredentialFetcher({scopes: ["chat:write"]});
+   * glue.webhook.onGet(async (_event) => {
+   *   const cred = await fetcher.get();
+   *   const client = new WebClient(cred.accessToken);
+   *   client.chat.postMessage({
+   *     channel: "C0123456789",
+   *     text: "Hello, world!",
+   *   });
+   * });
+   * ```
+   */
   createUserCredentialFetcher(options: SlackCredentialFetcherOptions): AccountFetcher<AccessTokenCredential> {
     return registerAccountInjection<AccessTokenCredential>("slack", {
       description: options.description,
@@ -155,6 +177,27 @@ export class Slack {
     });
   }
 
+  /**
+   * Creates a credential fetcher function for Slack API authentication. Use in
+   * conjunction with the Slack client library.
+   *
+   * This method returns a function that, when called, provides access token
+   * credentials for authenticating with the Slack API as a **bot**. The function
+   * may only be called within an event handler.
+   *
+   * @example
+   * ```typescript
+   * const fetcher = glue.slack.createBotCredentialFetcher({scopes: ["chat:write"]});
+   * glue.webhook.onGet(async (_event) => {
+   *   const cred = await fetcher.get();
+   *   const client = new WebClient(cred.accessToken);
+   *   client.chat.postMessage({
+   *     channel: "C0123456789",
+   *     text: "Hello, world!",
+   *   });
+   * });
+   * ```
+   */
   createBotCredentialFetcher(options: SlackCredentialFetcherOptions): AccountFetcher<AccessTokenCredential> {
     return registerAccountInjection<AccessTokenCredential>("slackBot", {
       description: options.description,
@@ -163,6 +206,26 @@ export class Slack {
     });
   }
 
+  /**
+   * Creates a credential fetcher function for Slack API authentication to
+   * send messages as a **user**. Use in conjunction with the Slack client
+   * library.
+   *
+   * The function may only be called within an event handler.
+   *
+   * @example
+   * ```typescript
+   * const fetcher = glue.slack.createUserMessageSendingCredentialFetcher();
+   * glue.webhook.onGet(async (_event) => {
+   *   const cred = await fetcher.get();
+   *   const client = new WebClient(cred.accessToken);
+   *   client.chat.postMessage({
+   *     channel: "C0123456789",
+   *     text: "Hello, world!",
+   *   });
+   * });
+   * ```
+   */
   createUserMessageSendingCredentialFetcher(options?: Omit<SlackCredentialFetcherOptions, "scopes">): AccountFetcher<AccessTokenCredential> {
     return this.createUserCredentialFetcher({
       ...options,
@@ -170,6 +233,26 @@ export class Slack {
     });
   }
 
+  /**
+   * Creates a credential fetcher function for Slack API authentication to
+   * send messages as a **bot**. Use in conjunction with the Slack client
+   * library.
+   *
+   * The function may only be called within an event handler.
+   *
+   * @example
+   * ```typescript
+   * const fetcher = glue.slack.createBotMessageSendingCredentialFetcher();
+   * glue.webhook.onGet(async (_event) => {
+   *   const cred = await fetcher.get();
+   *   const client = new WebClient(cred.accessToken);
+   *   client.chat.postMessage({
+   *     channel: "C0123456789",
+   *     text: "Hello, world!",
+   *   });
+   * });
+   * ```
+   */
   createBotMessageSendingCredentialFetcher(options?: Omit<SlackCredentialFetcherOptions, "scopes">): AccountFetcher<AccessTokenCredential> {
     return this.createBotCredentialFetcher({
       ...options,

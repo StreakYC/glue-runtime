@@ -50,4 +50,4 @@ export const CommonAccountInjectionOptions: z.ZodObject<
 
 /** Common backend config for all trigger configurations */
 export type CommonTriggerBackendConfig = CommonTriggerOptions;
-export const CommonTriggerBackendConfig: z.ZodType<CommonTriggerBackendConfig> = CommonTriggerOptions;
+export const CommonTriggerBackendConfig: typeof CommonTriggerOptions = CommonTriggerOptions;
