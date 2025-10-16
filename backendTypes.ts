@@ -101,6 +101,7 @@ export { CronTriggerBackendConfig } from "./integrations/cron/runtime.ts";
 export { GithubTriggerBackendConfig } from "./integrations/github/runtime.ts";
 export { GmailTriggerBackendConfig } from "./integrations/gmail/runtime.ts";
 export { IntercomTriggerBackendConfig } from "./integrations/intercom/runtime.ts";
+export { SlackEventWebhook, SlackTriggerBackendConfig } from "./integrations/slack/runtime.ts";
 export { StreakTriggerBackendConfig } from "./integrations/streak/runtime.ts";
 export { StripeTriggerBackendConfig } from "./integrations/stripe/runtime.ts";
 export { WebhookTriggerBackendConfig } from "./integrations/webhook/runtime.ts";

@@ -1,5 +1,5 @@
 import z from "zod";
-import { CommonTriggerOptions } from "../../common.ts";
+import { type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
 import { registerEventListener } from "../../runtimeSupport.ts";
 
 export interface IntercomTriggerOptions extends CommonTriggerOptions {
@@ -60,7 +60,7 @@ export interface IntercomEvent {
   workspaceId: string;
 }
 
-export interface IntercomTriggerBackendConfig extends CommonTriggerOptions {
+export interface IntercomTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** Array of Intercom event topics to listen for */
   events: string[];
   /** Optional workspace ID filter */

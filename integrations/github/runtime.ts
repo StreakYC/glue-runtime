@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { WebhookEventMap, WebhookEventName } from "@octokit/webhooks-types";
 import { registerEventListener } from "../../runtimeSupport.ts";
-import { CommonTriggerOptions } from "../../common.ts";
+import { type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
 
 /**
  * Options specific to GitHub event triggers.
@@ -19,7 +19,7 @@ export interface GithubTriggerOptions extends CommonTriggerOptions {
  * Configuration for listening to events on a specific GitHub repository.
  * @internal
  */
-interface GithubRepoTriggerBackendConfig extends CommonTriggerOptions {
+interface GithubRepoTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** The owner (user or organization) of the repository */
   owner: string;
   /** The name of the repository */
@@ -41,7 +41,7 @@ const GithubRepoTriggerBackendConfig: z.ZodType<GithubRepoTriggerBackendConfig> 
  * Configuration for listening to events on a GitHub organization.
  * @internal
  */
-interface GithubOrgTriggerBackendConfig extends CommonTriggerOptions {
+interface GithubOrgTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** The organization name */
   org: string;
   /** Array of GitHub webhook event names to listen for */

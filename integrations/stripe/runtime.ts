@@ -1,7 +1,7 @@
 import z from "zod";
 import type { Stripe as StripeLib } from "stripe";
 import { registerEventListener } from "../../runtimeSupport.ts";
-import { CommonTriggerOptions } from "../../common.ts";
+import { type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
 
 /**
  * Union type of all possible Stripe webhook event types.
@@ -20,7 +20,7 @@ export interface StripeTriggerOptions extends CommonTriggerOptions {
   accountLabel?: string;
 }
 
-export interface StripeTriggerBackendConfig extends CommonTriggerOptions {
+export interface StripeTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** Array of Stripe event types to listen for */
   events: StripeEventType[];
   /** Optional account label for the account */
