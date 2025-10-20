@@ -295,30 +295,26 @@ export class Slack {
   }
 }
 
-const cachedChannelNamesToIds = new Map<string, string>();
+let cachedChannelNamesToIds: Map<string, string> | undefined;
 async function getChannelId(client: WebClient, channelName: string): Promise<string> {
-  // check the cache first
-  if (cachedChannelNamesToIds.has(channelName)) {
-    return cachedChannelNamesToIds.get(channelName)!;
+  const cachedResult = cachedChannelNamesToIds?.get(channelName);
+  if (cachedResult) {
+    return cachedResult;
   }
 
-  // if not in the cache, fetch from the API
-  const channelNameToIds = await getChannelNamesToIds(client);
-  if (!channelNameToIds.has(channelName)) {
+  // if not in the cache, refresh the cache
+  cachedChannelNamesToIds = await getChannelNamesToIds(client);
+
+  const newCachedResult = cachedChannelNamesToIds.get(channelName);
+  if (!newCachedResult) {
     throw new Error("Channel not found");
   }
-
-  // repopulate the cache with fresh data
-  cachedChannelNamesToIds.clear();
-  channelNameToIds.forEach((id, name) => cachedChannelNamesToIds.set(name, id));
-
-  // return the id from the cache
-  return channelNameToIds.get(channelName)!;
+  return newCachedResult;
 }
 
 async function getChannelNamesToIds(client: WebClient): Promise<Map<string, string>> {
-  const channelNameToId = new Map<string, string>();
-  let cursor = "";
+  const channelNamesToId = new Map<string, string>();
+  let cursor: string | undefined;
   while (true) {
     const conversationsList = await client.conversations.list({
       types: "public_channel,private_channel,mpim,im",
@@ -328,11 +324,15 @@ async function getChannelNamesToIds(client: WebClient): Promise<Map<string, stri
     if (!conversationsList.ok) {
       throw new Error("Failed to list Slack channels");
     }
-    conversationsList.channels?.forEach((c) => channelNameToId.set(c.name!, c.id!));
+    conversationsList.channels?.forEach((c) => {
+      if (c.name != null && c.id != null) {
+        channelNamesToId.set(c.name, c.id);
+      }
+    });
     if (!conversationsList.response_metadata?.next_cursor) {
       break;
     }
     cursor = conversationsList.response_metadata.next_cursor;
   }
-  return channelNameToId;
+  return channelNamesToId;
 }
