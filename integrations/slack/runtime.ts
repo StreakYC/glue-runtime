@@ -274,6 +274,8 @@ export class Slack {
    *
    * This method will make the bot join the channel if it is not already.
    *
+   * Requires the following scopes: `chat:write`, `channels:join`, `channels:read`, `groups:read`, `mpim:read`, `im:read`
+   *
    * @param credentialFetcher - The credential fetcher to use to get the access token
    * @param channelName - The name of the channel to send the message to
    * @param text - The text of the message to send
