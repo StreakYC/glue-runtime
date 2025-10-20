@@ -6,12 +6,11 @@
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "npm:@octokit/webhooks-types@*": "7.6.1",
     "npm:@octokit/webhooks-types@^7.6.1": "7.6.1",
-    "npm:@slack/types@^2.14.0": "2.16.0",
-    "npm:@slack/web-api@*": "7.10.0",
-    "npm:@types/node@*": "22.12.0",
+    "npm:@slack/types@^2.17.0": "2.17.0",
+    "npm:@slack/web-api@^7.11.0": "7.11.0",
+    "npm:@types/node@*": "24.2.0",
     "npm:octokit@*": "4.1.2_@octokit+core@6.1.4",
-    "npm:stripe@*": "18.1.1_@types+node@22.12.0",
-    "npm:stripe@^18.2.0": "18.2.0_@types+node@22.12.0",
+    "npm:stripe@^18.2.0": "18.5.0",
     "npm:zod@^3.24.2": "3.24.2"
   },
   "jsr": {
@@ -227,18 +226,18 @@
     "@slack/logger@4.0.0": {
       "integrity": "sha512-Wz7QYfPAlG/DR+DfABddUZeNgoeY7d1J39OCR2jR+v7VBsB8ezulDK5szTnDDPDwLH5IWhLvXIHlCFZV7MSKgA==",
       "dependencies": [
-        "@types/node"
+        "@types/node@24.9.0"
       ]
     },
-    "@slack/types@2.16.0": {
-      "integrity": "sha512-bICnyukvdklXhwxprR3uF1+ZFkTvWTZge4evlCS4G1H1HU6QLY68AcjqzQRymf7/5gNt6Y4OBb4NdviheyZcAg=="
+    "@slack/types@2.17.0": {
+      "integrity": "sha512-30KdPUBGJczlchnV8tKSxFG1yPk6rb8waba6HAoNHOy99zomzovQo6WpH9vQsY0g3RlxgVLojxKMRe0WjEjFWw=="
     },
-    "@slack/web-api@7.10.0": {
-      "integrity": "sha512-kT+07JvOqpYH3b/ttVo3iqKIFiHV2NKmD6QUc/F7HrjCgSdSA10zxqi0euXEF2prB49OU7SfjadzQ0WhNc7tiw==",
+    "@slack/web-api@7.11.0": {
+      "integrity": "sha512-m+dGluB7OTebNqEt7wRXyvUfjUGLBuqN4ZAjEmQvu7oeKmVNBXO+mQbH9nop0f/GCvkGK52aaoOWz0H1ole2xg==",
       "dependencies": [
         "@slack/logger",
         "@slack/types",
-        "@types/node",
+        "@types/node@24.9.0",
         "@types/retry",
         "axios",
         "eventemitter3@5.0.1",
@@ -253,10 +252,16 @@
     "@types/aws-lambda@8.10.148": {
       "integrity": "sha512-JL+2cfkY9ODQeE06hOxSFNkafjNk4JRBgY837kpoq1GHDttq2U3BA9IzKOWxS4DLjKoymGB4i9uBrlCkjUl1yg=="
     },
-    "@types/node@22.12.0": {
-      "integrity": "sha512-Fll2FZ1riMjNmlmJOdAyY5pUbkftXslB5DgEzlIuNaiWhXd00FhWxVC/r4yV/4wBb9JfImTu+jiSvXTkJ7F/gA==",
+    "@types/node@24.2.0": {
+      "integrity": "sha512-3xyG3pMCq3oYCNg7/ZP+E1ooTaGB4cG8JWRsqqOYQdbWNY4zbaV0Ennrd7stjiJEFZCaybcIgpTjJWHRfBSIDw==",
       "dependencies": [
-        "undici-types"
+        "undici-types@7.10.0"
+      ]
+    },
+    "@types/node@24.9.0": {
+      "integrity": "sha512-MKNwXh3seSK8WurXF7erHPJ2AONmMwkI7zAMrXZDPIru8jRqkk6rGDBVbw4mLwfqA+ZZliiDPg05JQ3uW66tKQ==",
+      "dependencies": [
+        "undici-types@7.16.0"
       ]
     },
     "@types/retry@0.12.0": {
@@ -503,31 +508,20 @@
         "side-channel-weakmap"
       ]
     },
-    "stripe@18.1.1_@types+node@22.12.0": {
-      "integrity": "sha512-hlF0ripc2nJrihpsJZQDl3xirS7tpdpS7DlmSNLEDRW8j7Qr215y5DHOI3+aEY/lq6PG8y4GR1RZPtEoIoAs/g==",
+    "stripe@18.5.0": {
+      "integrity": "sha512-Hp+wFiEQtCB0LlNgcFh5uVyKznpDjzyUZ+CNVEf+I3fhlYvh7rZruIg+jOwzJRCpy0ZTPMjlzm7J2/M2N6d+DA==",
       "dependencies": [
-        "@types/node",
         "qs"
-      ],
-      "optionalPeers": [
-        "@types/node"
-      ]
-    },
-    "stripe@18.2.0_@types+node@22.12.0": {
-      "integrity": "sha512-RpOaGh5CLs3SYeVXw1CIQZNwPVADBJtgNyUgu+ZkIvu3u4pkZvNrlKr+WaLoNjSPQWef0dikxDS2AKHBl/l3bg==",
-      "dependencies": [
-        "@types/node",
-        "qs"
-      ],
-      "optionalPeers": [
-        "@types/node"
       ]
     },
     "toad-cache@3.7.0": {
       "integrity": "sha512-/m8M+2BJUpoJdgAHoG+baCwBT+tf2VraSfkBgl0Y00qIWt41DJ8R5B8nsEw0I58YwF5IZH6z24/2TobDKnqSWw=="
     },
-    "undici-types@6.20.0": {
-      "integrity": "sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg=="
+    "undici-types@7.10.0": {
+      "integrity": "sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag=="
+    },
+    "undici-types@7.16.0": {
+      "integrity": "sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw=="
     },
     "universal-github-app-jwt@2.2.2": {
       "integrity": "sha512-dcmbeSrOdTnsjGjUfAlqNDJrhxXizjAz94ija9Qw8YkZ1uu0d+GoZzyH+Jb9tIIqvGsadUfwg+22k5aDqqwzbw=="
@@ -644,8 +638,8 @@
       "jsr:@hono/hono@^4.7.4",
       "jsr:@std/assert@1",
       "npm:@octokit/webhooks-types@^7.6.1",
-      "npm:@slack/types@^2.14.0",
-      "npm:@slack/web-api@*",
+      "npm:@slack/types@^2.17.0",
+      "npm:@slack/web-api@^7.11.0",
       "npm:stripe@^18.2.0",
       "npm:zod@^3.24.2"
     ]
