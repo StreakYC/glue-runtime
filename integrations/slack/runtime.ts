@@ -2,6 +2,7 @@ import z from "zod";
 import { type CommonAccountInjectionOptions, CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
 import { type AccessTokenCredential, type AccountFetcher, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
 import type { AllMessageEvents, GenericMessageEvent, SlackEvent } from "@slack/types";
+import { WebClient } from "@slack/web-api";
 
 /** Various types of events from Slack */
 export type SlackEventType = SlackEvent["type"];
@@ -256,7 +257,80 @@ export class Slack {
   createBotMessageSendingCredentialFetcher(options?: Omit<SlackCredentialFetcherOptions, "scopes">): AccountFetcher<AccessTokenCredential> {
     return this.createBotCredentialFetcher({
       ...options,
-      scopes: ["chat:write", "chat:write.customize"],
+      scopes: [
+        "chat:write",
+        "chat:write.customize",
+        "channels:join",
+        "channels:read",
+        "groups:read",
+        "mpim:read",
+        "im:read",
+      ],
     });
   }
+
+  /**
+   * Sends a message as a bot to a channel. Works for any channel that a bot can join.
+   *
+   * This method will make the bot join the channel if it is not already.
+   *
+   * @param credentialFetcher - The credential fetcher to use to get the access token
+   * @param channelName - The name of the channel to send the message to
+   * @param text - The text of the message to send
+   */
+  async sendMessageAsBot(credentialFetcher: AccountFetcher<AccessTokenCredential>, channelName: string, text: string): Promise<void> {
+    const cred = await credentialFetcher.get();
+    const client = new WebClient(cred.accessToken);
+
+    const channelId = await getChannelId(client, channelName);
+    await client.conversations.join({
+      channel: channelId,
+    });
+    await client.chat.postMessage({
+      channel: channelId,
+      text: text,
+    });
+  }
+}
+
+const cachedChannelNamesToIds = new Map<string, string>();
+async function getChannelId(client: WebClient, channelName: string): Promise<string> {
+  // check the cache first
+  if (cachedChannelNamesToIds.has(channelName)) {
+    return cachedChannelNamesToIds.get(channelName)!;
+  }
+
+  // if not in the cache, fetch from the API
+  const channelNameToIds = await getChannelNamesToIds(client);
+  if (!channelNameToIds.has(channelName)) {
+    throw new Error("Channel not found");
+  }
+
+  // repopulate the cache with fresh data
+  cachedChannelNamesToIds.clear();
+  channelNameToIds.forEach((id, name) => cachedChannelNamesToIds.set(name, id));
+
+  // return the id from the cache
+  return channelNameToIds.get(channelName)!;
+}
+
+async function getChannelNamesToIds(client: WebClient): Promise<Map<string, string>> {
+  const channelNameToId = new Map<string, string>();
+  let cursor = "";
+  while (true) {
+    const conversationsList = await client.conversations.list({
+      types: "public_channel,private_channel,mpim,im",
+      limit: 999,
+      cursor: cursor,
+    });
+    if (!conversationsList.ok) {
+      throw new Error("Failed to list Slack channels");
+    }
+    conversationsList.channels?.forEach((c) => channelNameToId.set(c.name!, c.id!));
+    if (!conversationsList.response_metadata?.next_cursor) {
+      break;
+    }
+    cursor = conversationsList.response_metadata.next_cursor;
+  }
+  return channelNameToId;
 }
