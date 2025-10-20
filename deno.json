@@ -18,7 +18,8 @@
     "hono": "jsr:@hono/hono@^4.7.4",
     "stripe": "npm:stripe@^18.2.0",
     "zod": "npm:zod@^3.24.2",
-    "@slack/types": "npm:@slack/types@^2.14.0"
+    "@slack/types": "npm:@slack/types@^2.14.0",
+    "@slack/web-api": "npm:@slack/web-api"
   },
   "fmt": {
     "lineWidth": 160

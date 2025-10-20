@@ -1,15 +1,15 @@
 import z from "zod";
 import { type CommonAccountInjectionOptions, CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
 import { type AccessTokenCredential, type AccountFetcher, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
-import type { SlackEvent } from "@slack/types";
+import type { AllMessageEvents, GenericMessageEvent, SlackEvent } from "@slack/types";
 
 /** Various types of events from Slack */
 export type SlackEventType = SlackEvent["type"];
 
 /** The webhook payload from Slack for all events */
-export type SlackEventWebhook = {
+export type SlackEventWebhook<T extends SlackEvent> = {
   type: "event_callback";
-  event: SlackEvent;
+  event: T;
   team_id: string;
   event_id: string;
   event_context: string;
@@ -22,7 +22,7 @@ export type SlackEventWebhook = {
 };
 
 /** The webhook payload from Slack for all events */
-export const SlackEventWebhook: z.ZodType<SlackEventWebhook> = z.object({
+export const SlackEventWebhook: z.ZodType<SlackEventWebhook<SlackEvent>> = z.object({
   type: z.literal("event_callback"),
   event: z.custom<SlackEvent>(),
   team_id: z.string(),
@@ -123,7 +123,11 @@ export class Slack {
    *
    * @see https://docs.slack.dev/reference/events - Full list of event types
    */
-  onEvents(events: SlackEventType[], fn: (event: SlackEventWebhook) => void, options?: SlackTriggerOptions): void {
+  onEvents<T extends SlackEventType>(
+    events: T[],
+    fn: (event: SlackEventWebhook<Extract<SlackEvent, { type: T }>>) => void,
+    options?: SlackTriggerOptions,
+  ): void {
     const config: SlackTriggerBackendConfig = {
       events: events,
       teamId: options?.teamId,
@@ -138,10 +142,10 @@ export class Slack {
    * Triggered when a message is posted to a channel visible to the user.
    */
   onNewMessage(
-    fn: (event: SlackEventWebhook) => void,
+    fn: (event: SlackEventWebhook<GenericMessageEvent>) => void,
     options?: SlackTriggerOptions,
   ): void {
-    this.onEvents(["message"], fn, options);
+    this.onEvents(["message"], fn as (event: SlackEventWebhook<AllMessageEvents>) => void, options);
   }
 
   /**
