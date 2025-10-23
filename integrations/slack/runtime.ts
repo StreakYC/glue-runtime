@@ -2,7 +2,7 @@ import z from "zod";
 import { type CommonAccountInjectionOptions, CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
 import { type AccessTokenCredential, type AccountFetcher, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
 import type { AllMessageEvents, GenericMessageEvent, SlackEvent } from "@slack/types";
-import { WebClient } from "@slack/web-api";
+import { type ChatPostMessageResponse, ErrorCode, type WebAPIPlatformError, WebClient } from "@slack/web-api";
 
 /** Various types of events from Slack */
 export type SlackEventType = SlackEvent["type"];
@@ -280,20 +280,31 @@ export class Slack {
    * @param channelName - The name of the channel to send the message to
    * @param text - The text of the message to send
    */
-  async sendMessageAsBot(credentialFetcher: AccountFetcher<AccessTokenCredential>, channelName: string, text: string): Promise<void> {
+  async sendMessageAsBot(credentialFetcher: AccountFetcher<AccessTokenCredential>, channelName: string, text: string): Promise<ChatPostMessageResponse> {
     const cred = await credentialFetcher.get();
     const client = new WebClient(cred.accessToken);
 
     const channelId = await getChannelId(client, channelName);
-    await client.conversations.join({
-      channel: channelId,
-    });
-    await client.chat.postMessage({
-      channel: channelId,
-      text: text,
-    });
+
+    try {
+      return await client.chat.postMessage({ channel: channelId, text: text });
+    } catch (e) {
+      if (isPlatformError(e)) {
+        if (e.data.error === "not_in_channel") {
+          await client.conversations.join({
+            channel: channelId,
+          });
+          return await client.chat.postMessage({ channel: channelId, text: text });
+        }
+      }
+      throw e;
+    }
   }
 }
+
+const isPlatformError = (e: unknown): e is WebAPIPlatformError =>
+  // deno-lint-ignore no-explicit-any
+  typeof e === "object" && e !== null && (e as any).code === ErrorCode.PlatformError;
 
 let cachedChannelNamesToIds: Map<string, string> | undefined;
 async function getChannelId(client: WebClient, channelName: string): Promise<string> {
