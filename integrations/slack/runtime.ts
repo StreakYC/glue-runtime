@@ -277,14 +277,12 @@ export class Slack {
    * Requires the following scopes: `chat:write`, `channels:join`, `channels:read`, `groups:read`, `mpim:read`, `im:read`
    *
    * @param credentialFetcher - The credential fetcher to use to get the access token
-   * @param channelName - The name of the channel to send the message to
+   * @param channelId - The id of the channel to send the message to. You can get channel ids using the `getChannelId` helper function
    * @param text - The text of the message to send
    */
-  async sendMessageAsBot(credentialFetcher: AccountFetcher<AccessTokenCredential>, channelName: string, text: string): Promise<ChatPostMessageResponse> {
+  async sendMessageAsBot(credentialFetcher: AccountFetcher<AccessTokenCredential>, channelId: string, text: string): Promise<ChatPostMessageResponse> {
     const cred = await credentialFetcher.get();
     const client = new WebClient(cred.accessToken);
-
-    const channelId = await getChannelId(client, channelName);
 
     try {
       return await client.chat.postMessage({ channel: channelId, text: text });
@@ -302,12 +300,15 @@ export class Slack {
   }
 }
 
-const isPlatformError = (e: unknown): e is WebAPIPlatformError =>
-  // deno-lint-ignore no-explicit-any
-  typeof e === "object" && e !== null && (e as any).code === ErrorCode.PlatformError;
-
 let cachedChannelNamesToIds: Map<string, string> | undefined;
-async function getChannelId(client: WebClient, channelName: string): Promise<string> {
+/**
+ * The slack API typically uses channel ids in all of its methods. Users typically know the channel name they want to use but not the id.
+ * This function converts the name to an id. This method can be called repeatedly because the channel id to name mapping is cached.
+ * @param client an authenticated slack client
+ * @param channelName name of a channel
+ * @returns the id of the channel or undefined if it doesn't exist.
+ */
+export async function getChannelId(client: WebClient, channelName: string): Promise<string> {
   const cachedResult = cachedChannelNamesToIds?.get(channelName);
   if (cachedResult) {
     return cachedResult;
@@ -322,6 +323,10 @@ async function getChannelId(client: WebClient, channelName: string): Promise<str
   }
   return newCachedResult;
 }
+
+const isPlatformError = (e: unknown): e is WebAPIPlatformError =>
+  // deno-lint-ignore no-explicit-any
+  typeof e === "object" && e !== null && (e as any).code === ErrorCode.PlatformError;
 
 async function getChannelNamesToIds(client: WebClient): Promise<Map<string, string>> {
   const channelNamesToId = new Map<string, string>();
