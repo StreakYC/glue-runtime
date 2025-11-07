@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { WebhookEventMap, WebhookEventName } from "@octokit/webhooks-types";
-import { registerEventListener } from "../../runtimeSupport.ts";
-import { type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
+import { type AccessTokenCredential, type AccountFetcher, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
+import { type CommonAccountInjectionOptions, type CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
 
 /**
  * Options specific to GitHub event triggers.
@@ -62,6 +62,22 @@ export const GithubTriggerBackendConfig: z.ZodType<GithubTriggerBackendConfig> =
   GithubRepoTriggerBackendConfig,
   GithubOrgTriggerBackendConfig,
 ]);
+
+/**
+ * Options specific to GitHub account injections.
+ *
+ * Extends the common account injection options with GitHub-specific configuration.
+ */
+export interface GithubAccountInjectionOptions extends CommonAccountInjectionOptions {
+  /**
+   * Optional GitHub username to select appropriate account.
+   */
+  username?: string;
+  /**
+   * The scopes to request from the GitHub API.
+   */
+  scopes: string[];
+}
 
 /**
  * Represents a GitHub webhook event with its type and payload.
@@ -236,5 +252,32 @@ export class Github {
     options?: GithubTriggerOptions,
   ): void {
     this.onRepoEvent(owner, repo, ["pull_request"], fn, options);
+  }
+
+  /**
+   * Creates a credential fetcher function for Github API authentication. Use in
+   * conjunction with the Github client library.
+   *
+   * This method returns a function that, when called, provides access token
+   * credentials for authenticating with the Github API. The function
+   * may only be called within an event handler.
+   *
+   * @example
+   * ```typescript
+   * const fetcher = glue.github.createCredentialFetcher({scopes: ["repo"]});
+   * glue.webhook.onGet(async (_event) => {
+   *   const cred = await fetcher.get();
+   *   const client = new Octokit({ auth: cred.accessToken });
+   *   const user = await octokit.rest.users.getAuthenticated();
+   *   console.log("User:", user.data);
+   * });
+   * ```
+   */
+  createCredentialFetcher(options: GithubAccountInjectionOptions): AccountFetcher<AccessTokenCredential> {
+    return registerAccountInjection<AccessTokenCredential>("github", {
+      description: options.description,
+      selector: options.username,
+      scopes: options.scopes,
+    });
   }
 }
