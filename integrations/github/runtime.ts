@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { WebhookEventMap, WebhookEventName } from "@octokit/webhooks-types";
 import { type AccessTokenCredential, type AccountFetcher, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
-import { type CommonAccountInjectionOptions, type CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
+import { type CommonAccountInjectionOptions, type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
 
 /**
  * Options specific to GitHub event triggers.
