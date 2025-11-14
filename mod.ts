@@ -58,6 +58,7 @@ import * as stripeEventSource from "./integrations/stripe/runtime.ts";
 import * as cronEventSource from "./integrations/cron/runtime.ts";
 import * as intercomEventSource from "./integrations/intercom/runtime.ts";
 import * as slackEventSource from "./integrations/slack/runtime.ts";
+import * as resendEventSource from "./integrations/resend/runtime.ts";
 import { Debug } from "./integrations/debug/runtime.ts";
 export type { GoogleAccountInjectionOptions } from "./integrations/google/runtime.ts";
 export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/gmail/runtime.ts";
@@ -68,6 +69,7 @@ export type { BoxEventType, StreakAccountInjectionOptions, StreakEvent, StreakTr
 export type { StripeEvent, StripeTriggerOptions } from "./integrations/stripe/runtime.ts";
 export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/intercom/runtime.ts";
 export type { SlackCredentialFetcherOptions, SlackEventWebhook, SlackTriggerOptions } from "./integrations/slack/runtime.ts";
+export type { ResendAccountInjectionOptions } from "./integrations/resend/runtime.ts";
 export type { AccessTokenCredential, AccountFetcher, ApiKeyCredential } from "./runtimeSupport.ts";
 export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./common.ts";
 
@@ -131,6 +133,12 @@ class Glue {
    * Tracks events in Slack workspaces like messages, channels, users, etc.
    */
   readonly slack: slackEventSource.Slack = new slackEventSource.Slack();
+
+  /**
+   * Resend event source for sending emails.
+   * Sends emails using the Resend API.
+   */
+  readonly resend: resendEventSource.Resend = new resendEventSource.Resend();
 
   /**
    * Debug utilities exposing low-level registration helpers.

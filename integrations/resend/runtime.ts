@@ -12,7 +12,7 @@ export interface ResendAccountInjectionOptions extends CommonAccountInjectionOpt
  * @example
  * ```typescript
  * // Get a credential fetcher for Resend
- * const fetcher = glue.resend.createCredentialFetcher({teamName: "team-name"});
+ * const fetcher = glue.resend.createCredentialFetcher({apiKeyName: "api-key-name"});
  *
  * // Send an email
  * glue.webhook.onGet(async (_event) => {
