@@ -3,6 +3,7 @@
   "specifiers": {
     "jsr:@hono/hono@^4.7.4": "4.7.4",
     "jsr:@std/assert@1": "1.0.11",
+    "jsr:@std/async@^1.0.15": "1.0.15",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "npm:@octokit/webhooks-types@*": "7.6.1",
     "npm:@octokit/webhooks-types@^7.6.1": "7.6.1",
@@ -22,6 +23,9 @@
       "dependencies": [
         "jsr:@std/internal"
       ]
+    },
+    "@std/async@1.0.15": {
+      "integrity": "55d1d9d04f99403fe5730ab16bdcc3c47f658a6bf054cafb38a50f046238116e"
     },
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
@@ -637,6 +641,7 @@
     "dependencies": [
       "jsr:@hono/hono@^4.7.4",
       "jsr:@std/assert@1",
+      "jsr:@std/async@^1.0.15",
       "npm:@octokit/webhooks-types@^7.6.1",
       "npm:@slack/types@^2.17.0",
       "npm:@slack/web-api@^7.11.0",

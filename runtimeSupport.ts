@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { retry } from "@std/async/retry";
 import { type AccountInjectionBackendConfig, type Registrations, TriggerEvent } from "./backendTypes.ts";
 import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
 import type { CommonTriggerOptions } from "./common.ts";
@@ -117,15 +118,20 @@ export function registerAccountInjection<T extends AccessTokenCredential | ApiKe
           "Credential fetcher must not be used before any trigger events have been received.",
         );
       }
-      const res = await fetch(
-        `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${encodeURIComponent(glueDeploymentId)}/accountInjections/${encodeURIComponent(type)}/${
-          encodeURIComponent(resolvedLabel)
-        }`,
-        {
-          headers: {
-            "Authorization": glueAuthHeader,
+      const glueDeploymentId_ = glueDeploymentId;
+      const glueAuthHeader_ = glueAuthHeader;
+      // retry on connection errors
+      const res = await retry(() =>
+        fetch(
+          `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${encodeURIComponent(glueDeploymentId_)}/accountInjections/${encodeURIComponent(type)}/${
+            encodeURIComponent(resolvedLabel)
+          }`,
+          {
+            headers: {
+              "Authorization": glueAuthHeader_,
+            },
           },
-        },
+        )
       );
       if (!res.ok) {
         throw new Error(
