@@ -1,6 +1,6 @@
 {
   "name": "@streak-glue/runtime",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "license": "MIT",
   "exports": {
     ".": "./mod.ts",
