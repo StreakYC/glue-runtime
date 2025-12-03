@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { retry } from "@std/async/retry";
-import { type AccountInjectionBackendConfig, type Registrations, TriggerEvent } from "./backendTypes.ts";
+import { type AccessTokenCredential, type AccountInjectionBackendConfig, type ApiKeyCredential, type Registrations, TriggerEvent } from "./backendTypes.ts";
+export type { AccessTokenCredential, ApiKeyCredential };
 import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
 import type { CommonTriggerOptions } from "./common.ts";
 
@@ -25,15 +26,6 @@ const accountInjectionsByType = new Map<
   string,
   Map<string, RegisteredAccountInjection>
 >();
-
-export interface AccessTokenCredential {
-  accessToken: string;
-  expiresAt: number;
-}
-
-export interface ApiKeyCredential {
-  apiKey: string;
-}
 
 let nextAutomaticLabel = 0;
 

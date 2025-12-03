@@ -96,6 +96,17 @@ export const Registrations: z.ZodType<Registrations> = z.object({
 
 export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./common.ts";
 
+/** Represents an account injection credential using an access token */
+export interface AccessTokenCredential {
+  accessToken: string;
+  expiresAt: number;
+}
+
+/** Represents an account injection credential using an API key */
+export interface ApiKeyCredential {
+  apiKey: string;
+}
+
 // integration backend config types
 export { CronTriggerBackendConfig } from "./integrations/cron/runtime.ts";
 export { GithubTriggerBackendConfig } from "./integrations/github/runtime.ts";
