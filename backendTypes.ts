@@ -99,7 +99,7 @@ export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./comm
 /** Represents an account injection credential using an access token */
 export interface AccessTokenCredential {
   accessToken: string;
-  expiresAt: number;
+  expiresAt?: number;
 }
 
 /** Represents an account injection credential using an API key */
