@@ -20,7 +20,7 @@ Deno.test({
       callCount++;
       console.log("debug callback");
     }, { custom: 123 });
-    const _testAccountFetcher = glue.debug.registerRawAccountInjection("testAccount", { scopes: ["foo"] });
+    const _testCredentialFetcher = glue.debug.registerRawAccountInjection("testAccount", { scopes: ["foo"] });
 
     await Promise.resolve();
 

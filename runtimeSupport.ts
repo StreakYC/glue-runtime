@@ -62,7 +62,7 @@ export function registerEventListener<T>(
 /**
  * Used to fetch an account credential or client at runtime.
  */
-export interface AccountFetcher<T> {
+export interface CredentialFetcher<T> {
   /**
    * Fetches the account credential or client. This must only be called within
    * an event handler.
@@ -81,7 +81,7 @@ export interface AccountFetcher<T> {
 export function registerAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
   type: string,
   config: AccountInjectionBackendConfig,
-): AccountFetcher<T> {
+): CredentialFetcher<T> {
   scheduleInit();
   let typeAccountInjections = accountInjectionsByType.get(type);
   if (!typeAccountInjections) {

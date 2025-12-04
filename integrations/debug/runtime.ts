@@ -8,8 +8,8 @@
  */
 import {
   type AccessTokenCredential,
-  type AccountFetcher,
   type ApiKeyCredential,
+  type CredentialFetcher,
   registerAccountInjection,
   registerEventListener,
 } from "../../runtimeSupport.ts";
@@ -43,7 +43,7 @@ export class Debug {
   registerRawAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
     type: string,
     config: AccountInjectionBackendConfig,
-  ): AccountFetcher<T> {
+  ): CredentialFetcher<T> {
     return registerAccountInjection<T>(type, config);
   }
 }

@@ -70,7 +70,7 @@ export type { StripeEvent, StripeTriggerOptions } from "./integrations/stripe/ru
 export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/intercom/runtime.ts";
 export type { SlackCredentialFetcherOptions, SlackEventWebhook, SlackTriggerOptions } from "./integrations/slack/runtime.ts";
 export type { ResendAccountInjectionOptions } from "./integrations/resend/runtime.ts";
-export type { AccessTokenCredential, AccountFetcher, ApiKeyCredential } from "./runtimeSupport.ts";
+export type { AccessTokenCredential, ApiKeyCredential, CredentialFetcher } from "./runtimeSupport.ts";
 export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./common.ts";
 
 /**

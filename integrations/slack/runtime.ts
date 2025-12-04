@@ -1,6 +1,6 @@
 import z from "zod";
 import { type CommonAccountInjectionOptions, CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
-import { type AccessTokenCredential, type AccountFetcher, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
+import { type AccessTokenCredential, type CredentialFetcher, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
 import type { AllMessageEvents, GenericMessageEvent, SlackEvent } from "@slack/types";
 import { type ChatPostMessageResponse, ErrorCode, type WebAPIPlatformError, WebClient } from "@slack/web-api";
 
@@ -170,7 +170,7 @@ export class Slack {
    * });
    * ```
    */
-  createUserCredentialFetcher(options: SlackCredentialFetcherOptions): AccountFetcher<AccessTokenCredential> {
+  createUserCredentialFetcher(options: SlackCredentialFetcherOptions): CredentialFetcher<AccessTokenCredential> {
     return registerAccountInjection<AccessTokenCredential>("slack", {
       description: options.description,
       selector: options.teamId,
@@ -199,7 +199,7 @@ export class Slack {
    * });
    * ```
    */
-  createBotCredentialFetcher(options: SlackCredentialFetcherOptions): AccountFetcher<AccessTokenCredential> {
+  createBotCredentialFetcher(options: SlackCredentialFetcherOptions): CredentialFetcher<AccessTokenCredential> {
     return registerAccountInjection<AccessTokenCredential>("slackBot", {
       description: options.description,
       selector: options.teamId,
@@ -227,7 +227,7 @@ export class Slack {
    * });
    * ```
    */
-  createUserMessageSendingCredentialFetcher(options?: Omit<SlackCredentialFetcherOptions, "scopes">): AccountFetcher<AccessTokenCredential> {
+  createUserMessageSendingCredentialFetcher(options?: Omit<SlackCredentialFetcherOptions, "scopes">): CredentialFetcher<AccessTokenCredential> {
     return this.createUserCredentialFetcher({
       ...options,
       scopes: ["chat:write"],
@@ -254,7 +254,7 @@ export class Slack {
    * });
    * ```
    */
-  createBotMessageSendingCredentialFetcher(options?: Omit<SlackCredentialFetcherOptions, "scopes">): AccountFetcher<AccessTokenCredential> {
+  createBotMessageSendingCredentialFetcher(options?: Omit<SlackCredentialFetcherOptions, "scopes">): CredentialFetcher<AccessTokenCredential> {
     return this.createBotCredentialFetcher({
       ...options,
       scopes: [
@@ -282,7 +282,7 @@ export class Slack {
    * @param threadTs The parent of the message you want to send. Used when you want to thread messages.
    */
   async sendMessageAsBot(
-    credentialFetcher: AccountFetcher<AccessTokenCredential>,
+    credentialFetcher: CredentialFetcher<AccessTokenCredential>,
     channelId: string,
     text: string,
     threadTs?: string,
