@@ -64,9 +64,7 @@ export const GithubTriggerBackendConfig: z.ZodType<GithubTriggerBackendConfig> =
 ]);
 
 /**
- * Options specific to GitHub account injections.
- *
- * Extends the common account injection options with GitHub-specific configuration.
+ * Options for GitHub credential fetchers.
  */
 export interface GithubAccountInjectionOptions extends CommonAccountInjectionOptions {
   /**

@@ -75,8 +75,8 @@ export interface CredentialFetcher<T> {
 
 /**
  * @internal
- * Registers an account injection for a specific service type.
- * This function is used internally by event source implementations.
+ * Registers a credential fetcher for a specific service type. This function is
+ * used internally by event source implementations.
  */
 export function registerAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
   type: string,
@@ -92,7 +92,7 @@ export function registerAccountInjection<T extends AccessTokenCredential | ApiKe
   const resolvedLabel = String(nextAutomaticLabel++);
   if (typeAccountInjections.has(resolvedLabel)) {
     throw new Error(
-      `Account injection with label ${
+      `Credential fetcher with label ${
         JSON.stringify(
           resolvedLabel,
         )
@@ -127,7 +127,7 @@ export function registerAccountInjection<T extends AccessTokenCredential | ApiKe
       );
       if (!res.ok) {
         throw new Error(
-          `Failed to fetch account injection: ${res.status} ${res.statusText}`,
+          `Failed to fetch credential: ${res.status} ${res.statusText}`,
         );
       }
       const body = await res.json() as T;

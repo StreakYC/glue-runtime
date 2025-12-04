@@ -24,10 +24,10 @@ export const CommonTriggerOptions: z.ZodObject<
 });
 
 /**
- * Common options available for all account injection configurations.
+ * Common options available for all credential fetcher configurations.
  */
 export interface CommonAccountInjectionOptions {
-  /** Description that appears for the account injection when configuring a Glue. */
+  /** Description that appears for the credential fetcher when configuring a Glue. */
   description?: string;
 }
 

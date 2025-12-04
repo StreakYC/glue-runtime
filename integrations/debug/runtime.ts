@@ -34,7 +34,7 @@ export class Debug {
   }
 
   /**
-   * Register a raw account injection for an arbitrary integration type.
+   * Register a raw credential fetcher for an arbitrary integration type.
    *
    * NOTE: This must be called at module top-level before the event loop turns
    * (consistent with all other registrations) otherwise an error will be thrown

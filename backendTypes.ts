@@ -63,8 +63,8 @@ export const AccountInjectionBackendConfig: z.ZodType<AccountInjectionBackendCon
 export interface AccountInjectionRegistration {
   type: string;
   /**
-   * The unique label identifying the specific account injection within the glue
-   * deployment.
+   * The unique label identifying the specific credential fetcher within the
+   * glue deployment.
    */
   label: string;
   config: AccountInjectionBackendConfig;
@@ -84,7 +84,7 @@ export const AccountInjectionRegistration: z.ZodType<AccountInjectionRegistratio
 export interface Registrations {
   /** All event trigger registrations in the application */
   triggers: TriggerRegistration[];
-  /** All account injection registrations in the application */
+  /** All credential fetcher registrations in the application */
   accountInjections: AccountInjectionRegistration[];
 }
 
@@ -96,13 +96,13 @@ export const Registrations: z.ZodType<Registrations> = z.object({
 
 export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./common.ts";
 
-/** Represents an account injection credential using an access token */
+/** Represents a credential using an access token */
 export interface AccessTokenCredential {
   accessToken: string;
   expiresAt?: number;
 }
 
-/** Represents an account injection credential using an API key */
+/** Represents a credential using an API key */
 export interface ApiKeyCredential {
   apiKey: string;
 }
