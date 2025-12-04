@@ -1,14 +1,8 @@
 /**
- * @module
+ * Internal types shared between the Glue runtime and the backend API. These
+ * types are not intended for most Glue users to use.
  *
- * Internal types shared between the Glue runtime and the CLI/backend.
- *
- * This module contains the core type definitions used for event registration,
- * trigger configuration, and account injection throughout the Glue system.
- * These types ensure consistency between the runtime library and the backend
- * services that process and execute the registered triggers. These types should
- * not be needed by users creating Glues, its only for internal (to Glue) use.
- * @internal
+ * @module @internal
  */
 
 import { z } from "zod";

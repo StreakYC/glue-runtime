@@ -1,11 +1,3 @@
-/**
- * Debug integration exposing low-level registration helpers.
- *
- * These APIs are intentionally unstable and primarily meant for internal
- * experimentation and tests. They allow registering arbitrary trigger types
- * and account injections without the usual type-safe wrappers provided by
- * first-class integrations.
- */
 import {
   type AccessTokenCredential,
   type ApiKeyCredential,
@@ -16,6 +8,15 @@ import {
 import type { AccountInjectionBackendConfig } from "../../backendTypes.ts";
 import type { CommonTriggerOptions } from "../../common.ts";
 
+/**
+ * Debug integration exposing low-level registration helpers.
+ *
+ * These APIs are intentionally unstable and primarily meant for internal
+ * experimentation and tests. They allow registering arbitrary trigger types and
+ * credential fetchers without going through the usual type-safe wrappers.
+ *
+ * @internal
+ */
 export class Debug {
   /**
    * Register a raw trigger with an arbitrary type string and config object.
