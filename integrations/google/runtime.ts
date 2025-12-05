@@ -1,5 +1,5 @@
 import type { CommonAccountInjectionOptions } from "../../common.ts";
-import { type AccessTokenCredential, type AccountFetcher, registerAccountInjection } from "../../runtimeSupport.ts";
+import { type AccessTokenCredential, type CredentialFetcher, registerAccountInjection } from "../../runtimeSupport.ts";
 
 export interface GoogleAccountInjectionOptions extends CommonAccountInjectionOptions {
   /**
@@ -34,7 +34,7 @@ export class Google {
    * });
    * ```
    */
-  createCredentialFetcher(options: GoogleAccountInjectionOptions): AccountFetcher<AccessTokenCredential> {
+  createCredentialFetcher(options: GoogleAccountInjectionOptions): CredentialFetcher<AccessTokenCredential> {
     return registerAccountInjection<AccessTokenCredential>("google", {
       description: options.description,
       selector: options.accountEmailAddress,

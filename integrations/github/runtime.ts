@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { WebhookEventMap, WebhookEventName } from "@octokit/webhooks-types";
-import { type AccessTokenCredential, type AccountFetcher, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
+import { type AccessTokenCredential, type CredentialFetcher, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
 import { type CommonAccountInjectionOptions, type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
 
 /**
@@ -64,9 +64,7 @@ export const GithubTriggerBackendConfig: z.ZodType<GithubTriggerBackendConfig> =
 ]);
 
 /**
- * Options specific to GitHub account injections.
- *
- * Extends the common account injection options with GitHub-specific configuration.
+ * Options for GitHub credential fetchers.
  */
 export interface GithubAccountInjectionOptions extends CommonAccountInjectionOptions {
   /**
@@ -273,7 +271,7 @@ export class Github {
    * });
    * ```
    */
-  createCredentialFetcher(options: GithubAccountInjectionOptions): AccountFetcher<AccessTokenCredential> {
+  createCredentialFetcher(options: GithubAccountInjectionOptions): CredentialFetcher<AccessTokenCredential> {
     return registerAccountInjection<AccessTokenCredential>("github", {
       description: options.description,
       selector: options.username,

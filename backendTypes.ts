@@ -1,14 +1,8 @@
 /**
- * @module
+ * Internal types shared between the Glue runtime and the backend API. These
+ * types are not intended for most Glue users to use.
  *
- * Internal types shared between the Glue runtime and the CLI/backend.
- *
- * This module contains the core type definitions used for event registration,
- * trigger configuration, and account injection throughout the Glue system.
- * These types ensure consistency between the runtime library and the backend
- * services that process and execute the registered triggers. These types should
- * not be needed by users creating Glues, its only for internal (to Glue) use.
- * @internal
+ * @module @internal
  */
 
 import { z } from "zod";
@@ -63,8 +57,8 @@ export const AccountInjectionBackendConfig: z.ZodType<AccountInjectionBackendCon
 export interface AccountInjectionRegistration {
   type: string;
   /**
-   * The unique label identifying the specific account injection within the glue
-   * deployment.
+   * The unique label identifying the specific credential fetcher within the
+   * glue deployment.
    */
   label: string;
   config: AccountInjectionBackendConfig;
@@ -84,7 +78,7 @@ export const AccountInjectionRegistration: z.ZodType<AccountInjectionRegistratio
 export interface Registrations {
   /** All event trigger registrations in the application */
   triggers: TriggerRegistration[];
-  /** All account injection registrations in the application */
+  /** All credential fetcher registrations in the application */
   accountInjections: AccountInjectionRegistration[];
 }
 
@@ -96,13 +90,13 @@ export const Registrations: z.ZodType<Registrations> = z.object({
 
 export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./common.ts";
 
-/** Represents an account injection credential using an access token */
+/** Represents a credential using an access token */
 export interface AccessTokenCredential {
   accessToken: string;
   expiresAt?: number;
 }
 
-/** Represents an account injection credential using an API key */
+/** Represents a credential using an API key */
 export interface ApiKeyCredential {
   apiKey: string;
 }
