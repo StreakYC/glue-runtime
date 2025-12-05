@@ -1,11 +1,7 @@
 # glue-runtime
 
-A comprehensive event-driven runtime for building serverless integrations with external services.
-
-## Overview
-
-Glue Runtime provides a unified interface for listening to events from various external services and platforms. It allows developers to easily build reactive
-applications that respond to events from GitHub, Gmail, webhooks, cron schedules, Stripe, Intercom, Webflow, and Streak.
+This library contains the APIs for Glue scripts to connect to various services and integrations including GitHub, Gmail, webhooks, cron schedules, Stripe,
+Intercom, Webflow, and Streak. Events from these integrations can trigger your Glue scripts to perform automated tasks.
 
 ## Installation
 
@@ -222,26 +218,7 @@ glue.github.onPullRequestEvent("owner", "repo", handlePR, {
 });
 ```
 
-## Event Types
-
-All event types are fully typed with TypeScript, providing excellent IDE support and type safety:
-
-- `GithubEvent<T>` - GitHub webhook events
-- `GmailMessageEvent` - Gmail new message events
-- `WebhookEvent` - HTTP webhook requests
-- `CronEvent` - Scheduled task triggers
-- `StripeEvent<T>` - Stripe webhook events
-- `IntercomEvent` - Intercom webhook events
-- `SlackEventWebhook` - Slack webhook events
-- `WebflowEvent<T>` - Webflow webhook events
-- `StreakEvent` - Streak CRM events
-
 ## Important Notes
 
-1. **Registration Timing**: All event handlers must be registered at the top level of your application during initialization. You cannot register handlers
-   dynamically after the application has started.
-
-2. **Type Safety**: The package provides full TypeScript support with type inference for event payloads based on the event type.
-
-3. **Error Handling**: Errors thrown in event handlers are automatically caught and logged. The runtime continues processing other events even if one handler
-   fails.
+- **Registration Timing**: All event handlers must be registered at the top level of your application during initialization. You cannot register handlers
+  dynamically after the application has started.
