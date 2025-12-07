@@ -62,7 +62,7 @@ export function registerEventListener<T>(
 /**
  * Used to fetch an account credential or client at runtime.
  */
-export interface AccountFetcher<T> {
+export interface CredentialFetcher<T> {
   /**
    * Fetches the account credential or client. This must only be called within
    * an event handler.
@@ -75,13 +75,13 @@ export interface AccountFetcher<T> {
 
 /**
  * @internal
- * Registers an account injection for a specific service type.
- * This function is used internally by event source implementations.
+ * Registers a credential fetcher for a specific service type. This function is
+ * used internally by event source implementations.
  */
 export function registerAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
   type: string,
   config: AccountInjectionBackendConfig,
-): AccountFetcher<T> {
+): CredentialFetcher<T> {
   scheduleInit();
   let typeAccountInjections = accountInjectionsByType.get(type);
   if (!typeAccountInjections) {
@@ -92,7 +92,7 @@ export function registerAccountInjection<T extends AccessTokenCredential | ApiKe
   const resolvedLabel = String(nextAutomaticLabel++);
   if (typeAccountInjections.has(resolvedLabel)) {
     throw new Error(
-      `Account injection with label ${
+      `Credential fetcher with label ${
         JSON.stringify(
           resolvedLabel,
         )
@@ -127,7 +127,7 @@ export function registerAccountInjection<T extends AccessTokenCredential | ApiKe
       );
       if (!res.ok) {
         throw new Error(
-          `Failed to fetch account injection: ${res.status} ${res.statusText}`,
+          `Failed to fetch credential: ${res.status} ${res.statusText}`,
         );
       }
       const body = await res.json() as T;

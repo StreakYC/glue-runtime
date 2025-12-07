@@ -1,21 +1,22 @@
-/**
- * Debug integration exposing low-level registration helpers.
- *
- * These APIs are intentionally unstable and primarily meant for internal
- * experimentation and tests. They allow registering arbitrary trigger types
- * and account injections without the usual type-safe wrappers provided by
- * first-class integrations.
- */
 import {
   type AccessTokenCredential,
-  type AccountFetcher,
   type ApiKeyCredential,
+  type CredentialFetcher,
   registerAccountInjection,
   registerEventListener,
 } from "../../runtimeSupport.ts";
 import type { AccountInjectionBackendConfig } from "../../backendTypes.ts";
 import type { CommonTriggerOptions } from "../../common.ts";
 
+/**
+ * Debug integration exposing low-level registration helpers.
+ *
+ * These APIs are intentionally unstable and primarily meant for internal
+ * experimentation and tests. They allow registering arbitrary trigger types and
+ * credential fetchers without going through the usual type-safe wrappers.
+ *
+ * @internal
+ */
 export class Debug {
   /**
    * Register a raw trigger with an arbitrary type string and config object.
@@ -34,7 +35,7 @@ export class Debug {
   }
 
   /**
-   * Register a raw account injection for an arbitrary integration type.
+   * Register a raw credential fetcher for an arbitrary integration type.
    *
    * NOTE: This must be called at module top-level before the event loop turns
    * (consistent with all other registrations) otherwise an error will be thrown
@@ -43,7 +44,7 @@ export class Debug {
   registerRawAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
     type: string,
     config: AccountInjectionBackendConfig,
-  ): AccountFetcher<T> {
+  ): CredentialFetcher<T> {
     return registerAccountInjection<T>(type, config);
   }
 }
