@@ -143,6 +143,22 @@ export class Streak {
     this.onBoxEvent("BOX_CHANGE_STAGE", pipelineKey, fn, options);
   }
 
+  /**
+   * Registers a handler for call log or meeting note creation events.
+   *
+   * Triggered when a call log or meeting note is created.
+   * Meeting notes and call logs are actually the same object in
+   * Streak, so there is just one event that this is registered for.
+   * You can check the event.payload.type to determine if it is a call log or a meeting note.
+   *
+   * @param pipelineKey - The Streak pipeline key to monitor
+   * @param fn - Handler function called when a call log or meeting note is created
+   * @param options - Optional trigger configuration
+   */
+  onCallLogOrMeetingNoteCreated(pipelineKey: string, fn: (event: StreakEvent) => void, options?: StreakTriggerOptions): void {
+    this.onBoxEvent("MEETING_CREATE", pipelineKey, fn, options);
+  }
+
   createCredentialFetcher(options?: StreakAccountInjectionOptions): CredentialFetcher<ApiKeyCredential> {
     return registerAccountInjection<ApiKeyCredential>("streak", {
       description: options?.description,
