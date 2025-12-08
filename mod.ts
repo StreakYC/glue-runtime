@@ -10,7 +10,8 @@ import { Streak } from "./integrations/streak/runtime.ts";
 export type { Streak };
 import { Stripe } from "./integrations/stripe/runtime.ts";
 export type { Stripe };
-import * as cronEventSource from "./integrations/cron/runtime.ts";
+import { Cron } from "./integrations/cron/runtime.ts";
+export type { Cron };
 import { Intercom } from "./integrations/intercom/runtime.ts";
 export type { Intercom };
 import { Slack } from "./integrations/slack/runtime.ts";
@@ -60,7 +61,7 @@ class Glue {
    * Cron event source for scheduling recurring tasks.
    * Supports standard cron expressions and convenience methods for common intervals.
    */
-  readonly cron: cronEventSource.Cron = new cronEventSource.Cron();
+  readonly cron: Cron = new Cron();
 
   /**
    * GitHub event source for repository and organization events.
