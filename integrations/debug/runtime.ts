@@ -2,10 +2,10 @@ import {
   type AccessTokenCredential,
   type ApiKeyCredential,
   type CredentialFetcher,
-  registerAccountInjection,
+  registerCredentialFetcher,
   registerEventListener,
 } from "../../runtimeSupport.ts";
-import type { AccountInjectionBackendConfig } from "../../backendTypes.ts";
+import type { CredentialFetcherBackendConfig } from "../../backendTypes.ts";
 import type { CommonTriggerOptions } from "../../common.ts";
 
 /**
@@ -41,10 +41,10 @@ export class Debug {
    * (consistent with all other registrations) otherwise an error will be thrown
    * by the runtime.
    */
-  registerRawAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
+  registerRawCredentialFetcher<T extends AccessTokenCredential | ApiKeyCredential>(
     type: string,
-    config: AccountInjectionBackendConfig,
+    config: CredentialFetcherBackendConfig,
   ): CredentialFetcher<T> {
-    return registerAccountInjection<T>(type, config);
+    return registerCredentialFetcher<T>(type, config);
   }
 }

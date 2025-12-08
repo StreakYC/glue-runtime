@@ -1,7 +1,7 @@
-import type { CommonAccountInjectionOptions } from "../../common.ts";
-import { type ApiKeyCredential, type CredentialFetcher, registerAccountInjection } from "../../runtimeSupport.ts";
+import type { CommonCredentialFetcherOptions } from "../../common.ts";
+import { type ApiKeyCredential, type CredentialFetcher, registerCredentialFetcher } from "../../runtimeSupport.ts";
 
-export interface ResendAccountInjectionOptions extends CommonAccountInjectionOptions {
+export interface ResendCredentialFetcherOptions extends CommonCredentialFetcherOptions {
   /** Optional API key name to select appropriate api key. */
   apiKeyName?: string;
 }
@@ -30,8 +30,8 @@ export interface ResendAccountInjectionOptions extends CommonAccountInjectionOpt
  * @see https://resend.com/docs/api-reference
  */
 export class Resend {
-  createCredentialFetcher(options?: ResendAccountInjectionOptions): CredentialFetcher<ApiKeyCredential> {
-    return registerAccountInjection<ApiKeyCredential>("resend", {
+  createCredentialFetcher(options?: ResendCredentialFetcherOptions): CredentialFetcher<ApiKeyCredential> {
+    return registerCredentialFetcher<ApiKeyCredential>("resend", {
       description: options?.description,
       selector: options?.apiKeyName,
     });
