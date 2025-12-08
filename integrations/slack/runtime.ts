@@ -1,6 +1,6 @@
 import z from "zod";
-import { type CommonAccountInjectionOptions, CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
-import { type AccessTokenCredential, type CredentialFetcher, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
+import { type CommonCredentialFetcherOptions, CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
+import { type AccessTokenCredential, type CredentialFetcher, registerCredentialFetcher, registerEventListener } from "../../runtimeSupport.ts";
 import type { AllMessageEvents, GenericMessageEvent, SlackEvent } from "@slack/types";
 import { type ChatPostMessageResponse, ErrorCode, type WebAPIPlatformError, WebClient } from "@slack/web-api";
 
@@ -59,7 +59,7 @@ export const SlackTriggerBackendConfig: z.ZodType<SlackTriggerBackendConfig> = C
   channels: z.array(z.string()).optional(),
 });
 
-export interface SlackCredentialFetcherOptions extends CommonAccountInjectionOptions {
+export interface SlackCredentialFetcherOptions extends CommonCredentialFetcherOptions {
   scopes: string[];
   teamId?: string;
 }
@@ -171,7 +171,7 @@ export class Slack {
    * ```
    */
   createUserCredentialFetcher(options: SlackCredentialFetcherOptions): CredentialFetcher<AccessTokenCredential> {
-    return registerAccountInjection<AccessTokenCredential>("slack", {
+    return registerCredentialFetcher<AccessTokenCredential>("slack", {
       description: options.description,
       selector: options.teamId,
       scopes: options.scopes,
@@ -200,7 +200,7 @@ export class Slack {
    * ```
    */
   createBotCredentialFetcher(options: SlackCredentialFetcherOptions): CredentialFetcher<AccessTokenCredential> {
-    return registerAccountInjection<AccessTokenCredential>("slackBot", {
+    return registerCredentialFetcher<AccessTokenCredential>("slackBot", {
       description: options.description,
       selector: options.teamId,
       scopes: options.scopes,

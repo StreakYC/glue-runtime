@@ -26,7 +26,7 @@ export const CommonTriggerOptions: z.ZodObject<
 /**
  * Common options available for all credential fetcher configurations.
  */
-export interface CommonAccountInjectionOptions {
+export interface CommonCredentialFetcherOptions {
   /** Description that appears for the credential fetcher when configuring a Glue. */
   description?: string;
 }
@@ -34,14 +34,14 @@ export interface CommonAccountInjectionOptions {
 // This needs this ugly explicit type because otherwise deno's
 // missing-explicit-type lint fails, and it needs to be a ZodObject type instead
 // of ZodType so the `.extend()` method is present.
-export const CommonAccountInjectionOptions: z.ZodObject<
+export const CommonCredentialFetcherOptions: z.ZodObject<
   {
     description: z.ZodOptional<z.ZodString>;
   },
   "strip",
   z.ZodTypeAny,
-  CommonAccountInjectionOptions,
-  CommonAccountInjectionOptions
+  CommonCredentialFetcherOptions,
+  CommonCredentialFetcherOptions
 > = z.object({
   description: z.string().optional(),
 });

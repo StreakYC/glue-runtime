@@ -7,10 +7,17 @@
     "./backendTypes": "./backendTypes.ts"
   },
   "tasks": {
-    "test": "deno test --allow-sys --allow-env=GLUE_DEV_PORT,GLUE_CLI_WS_ADDR --allow-net=127.0.0.1",
+    "test": "deno test -P",
     "check": "deno check",
     "lint": "deno lint",
     "fmt": "deno fmt"
+  },
+  "test": {
+    "permissions": {
+      "sys": true,
+      "env": ["GLUE_DEV_PORT", "GLUE_CLI_WS_ADDR"],
+      "net": ["127.0.0.1"]
+    }
   },
   "imports": {
     "@octokit/webhooks-types": "npm:@octokit/webhooks-types@^7.6.1",

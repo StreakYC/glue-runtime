@@ -3,13 +3,6 @@
 This library contains the APIs for Glue scripts to connect to various services and integrations including GitHub, Gmail, webhooks, cron schedules, Stripe,
 Intercom, Webflow, and Streak. Events from these integrations can trigger your Glue scripts to perform automated tasks.
 
-## Installation
-
-```bash
-# Using Deno
-import { glue } from "jsr:@glue/runtime";
-```
-
 ## Quick Start
 
 ```typescript
@@ -40,7 +33,7 @@ glue dev myGlueFile.ts
 
 ### GitHub
 
-Monitor GitHub repositories and organizations for various events like pull requests, issues, pushes, and more.
+Monitor GitHub repositories and organizations for various events like pull requests, issues, pushed commits, and more.
 
 ```typescript
 // Listen for specific repository events
@@ -197,24 +190,9 @@ glue.streak.onBoxStageChanged("pipeline-key", (event) => {
 Monitor messages and channel activity
 
 ```typescript
-glue.slack.onUserVisibleMessage(); //TODO
-```
-
-## Common Options
-
-All event sources support common trigger options:
-
-```typescript
-interface CommonTriggerOptions {
-  label?: string; // Unique identifier for the trigger
-}
-```
-
-Example:
-
-```typescript
-glue.github.onPullRequestEvent("owner", "repo", handlePR, {
-  label: "pr-reviewer",
+glue.slack.onNewMessage((event) => {
+  const message = event.event;
+  console.log(`New message in ${message.channel}: ${message.text}`);
 });
 ```
 

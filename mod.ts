@@ -19,18 +19,18 @@ import { Resend } from "./integrations/resend/runtime.ts";
 export type { Resend };
 import { Debug } from "./integrations/debug/runtime.ts";
 export type { Debug };
-export type { GoogleAccountInjectionOptions } from "./integrations/google/runtime.ts";
+export type { GoogleCredentialFetcherOptions } from "./integrations/google/runtime.ts";
 export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/gmail/runtime.ts";
 export type { GithubEvent, GithubTriggerOptions } from "./integrations/github/runtime.ts";
 export type { WebhookEvent, WebhookTriggerOptions } from "./integrations/webhook/runtime.ts";
 export type { CronEvent } from "./integrations/cron/runtime.ts";
-export type { BoxEventType, StreakAccountInjectionOptions, StreakEvent, StreakTriggerOptions } from "./integrations/streak/runtime.ts";
+export type { BoxEventType, StreakCredentialFetcherOptions, StreakEvent, StreakTriggerOptions } from "./integrations/streak/runtime.ts";
 export type { StripeEvent, StripeTriggerOptions } from "./integrations/stripe/runtime.ts";
 export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/intercom/runtime.ts";
 export type { SlackCredentialFetcherOptions, SlackEventWebhook, SlackTriggerOptions } from "./integrations/slack/runtime.ts";
-export type { ResendAccountInjectionOptions } from "./integrations/resend/runtime.ts";
+export type { ResendCredentialFetcherOptions } from "./integrations/resend/runtime.ts";
 export type { AccessTokenCredential, ApiKeyCredential, CredentialFetcher } from "./runtimeSupport.ts";
-export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./common.ts";
+export type { CommonCredentialFetcherOptions, CommonTriggerOptions } from "./common.ts";
 
 /**
  * The main Glue runtime class that provides access to all event sources.
