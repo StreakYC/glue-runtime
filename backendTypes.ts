@@ -2,7 +2,8 @@
  * Internal types shared between the Glue runtime and the backend API. These
  * types are not intended for most Glue users to use.
  *
- * @module @internal
+ * @ignore
+ * @module
  */
 
 import { z } from "zod";
