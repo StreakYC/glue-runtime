@@ -1,7 +1,8 @@
 # glue-runtime
 
-This library contains the APIs for Glue scripts to connect to various services and integrations including GitHub, Gmail, webhooks, cron schedules, Stripe,
-Intercom, Webflow, and Streak. Events from these integrations can trigger your Glue scripts to perform automated tasks.
+This library contains the APIs for Glue scripts to connect to various services and integrations
+including GitHub, Gmail, webhooks, cron schedules, Stripe, Intercom, Webflow, and Streak. Events
+from these integrations can trigger your Glue scripts to perform automated tasks.
 
 ## Quick Start
 
@@ -33,7 +34,8 @@ glue dev myGlueFile.ts
 
 ### GitHub
 
-Monitor GitHub repositories and organizations for various events like pull requests, issues, pushed commits, and more.
+Monitor GitHub repositories and organizations for various events like pull requests, issues, pushed
+commits, and more.
 
 ```typescript
 // Listen for specific repository events
@@ -198,5 +200,6 @@ glue.slack.onNewMessage((event) => {
 
 ## Important Notes
 
-- **Registration Timing**: All event handlers must be registered at the top level of your application during initialization. You cannot register handlers
-  dynamically after the application has started.
+- **Registration Timing**: All event handlers must be registered at the top level of your
+  application during initialization. You cannot register handlers dynamically after the application
+  has started.

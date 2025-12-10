@@ -50,10 +50,11 @@ export interface CredentialFetcherBackendConfig extends CommonCredentialFetcherO
   selector?: string;
 }
 
-export const CredentialFetcherBackendConfig: z.ZodType<CredentialFetcherBackendConfig> = CommonCredentialFetcherOptions.extend({
-  scopes: z.array(z.string()).optional(),
-  selector: z.string().optional(),
-});
+export const CredentialFetcherBackendConfig: z.ZodType<CredentialFetcherBackendConfig> =
+  CommonCredentialFetcherOptions.extend({
+    scopes: z.array(z.string()).optional(),
+    selector: z.string().optional(),
+  });
 
 export interface CredentialFetcherRegistration {
   type: string;

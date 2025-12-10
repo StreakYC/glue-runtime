@@ -1,8 +1,22 @@
 import z from "zod";
-import { type CommonCredentialFetcherOptions, CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
-import { type AccessTokenCredential, type CredentialFetcher, registerCredentialFetcher, registerEventListener } from "../../runtimeSupport.ts";
+import {
+  type CommonCredentialFetcherOptions,
+  CommonTriggerBackendConfig,
+  type CommonTriggerOptions,
+} from "../../common.ts";
+import {
+  type AccessTokenCredential,
+  type CredentialFetcher,
+  registerCredentialFetcher,
+  registerEventListener,
+} from "../../runtimeSupport.ts";
 import type { AllMessageEvents, GenericMessageEvent, SlackEvent } from "@slack/types";
-import { type ChatPostMessageResponse, ErrorCode, type WebAPIPlatformError, WebClient } from "@slack/web-api";
+import {
+  type ChatPostMessageResponse,
+  ErrorCode,
+  type WebAPIPlatformError,
+  WebClient,
+} from "@slack/web-api";
 
 /** Various types of events from Slack */
 export type SlackEventType = SlackEvent["type"];
@@ -53,11 +67,12 @@ export interface SlackTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** Optional channel IDs to filter events */
   channels?: string[];
 }
-export const SlackTriggerBackendConfig: z.ZodType<SlackTriggerBackendConfig> = CommonTriggerBackendConfig.extend({
-  teamId: z.string().optional(),
-  events: z.array(z.custom<SlackEventType>()),
-  channels: z.array(z.string()).optional(),
-});
+export const SlackTriggerBackendConfig: z.ZodType<SlackTriggerBackendConfig> =
+  CommonTriggerBackendConfig.extend({
+    teamId: z.string().optional(),
+    events: z.array(z.custom<SlackEventType>()),
+    channels: z.array(z.string()).optional(),
+  });
 
 export interface SlackCredentialFetcherOptions extends CommonCredentialFetcherOptions {
   scopes: string[];
@@ -170,7 +185,9 @@ export class Slack {
    * });
    * ```
    */
-  createUserCredentialFetcher(options: SlackCredentialFetcherOptions): CredentialFetcher<AccessTokenCredential> {
+  createUserCredentialFetcher(
+    options: SlackCredentialFetcherOptions,
+  ): CredentialFetcher<AccessTokenCredential> {
     return registerCredentialFetcher<AccessTokenCredential>("slack", {
       description: options.description,
       selector: options.teamId,
@@ -199,7 +216,9 @@ export class Slack {
    * });
    * ```
    */
-  createBotCredentialFetcher(options: SlackCredentialFetcherOptions): CredentialFetcher<AccessTokenCredential> {
+  createBotCredentialFetcher(
+    options: SlackCredentialFetcherOptions,
+  ): CredentialFetcher<AccessTokenCredential> {
     return registerCredentialFetcher<AccessTokenCredential>("slackBot", {
       description: options.description,
       selector: options.teamId,
@@ -227,7 +246,9 @@ export class Slack {
    * });
    * ```
    */
-  createUserMessageSendingCredentialFetcher(options?: Omit<SlackCredentialFetcherOptions, "scopes">): CredentialFetcher<AccessTokenCredential> {
+  createUserMessageSendingCredentialFetcher(
+    options?: Omit<SlackCredentialFetcherOptions, "scopes">,
+  ): CredentialFetcher<AccessTokenCredential> {
     return this.createUserCredentialFetcher({
       ...options,
       scopes: ["chat:write"],
@@ -254,7 +275,9 @@ export class Slack {
    * });
    * ```
    */
-  createBotMessageSendingCredentialFetcher(options?: Omit<SlackCredentialFetcherOptions, "scopes">): CredentialFetcher<AccessTokenCredential> {
+  createBotMessageSendingCredentialFetcher(
+    options?: Omit<SlackCredentialFetcherOptions, "scopes">,
+  ): CredentialFetcher<AccessTokenCredential> {
     return this.createBotCredentialFetcher({
       ...options,
       scopes: [
@@ -298,7 +321,11 @@ export class Slack {
           await client.conversations.join({
             channel: channelId,
           });
-          return await client.chat.postMessage({ channel: channelId, text: text, thread_ts: threadTs });
+          return await client.chat.postMessage({
+            channel: channelId,
+            text: text,
+            thread_ts: threadTs,
+          });
         }
       }
       throw e;

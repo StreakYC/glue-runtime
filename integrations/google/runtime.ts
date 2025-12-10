@@ -1,5 +1,9 @@
 import type { CommonCredentialFetcherOptions } from "../../common.ts";
-import { type AccessTokenCredential, type CredentialFetcher, registerCredentialFetcher } from "../../runtimeSupport.ts";
+import {
+  type AccessTokenCredential,
+  type CredentialFetcher,
+  registerCredentialFetcher,
+} from "../../runtimeSupport.ts";
 
 export interface GoogleCredentialFetcherOptions extends CommonCredentialFetcherOptions {
   /**
@@ -34,7 +38,9 @@ export class Google {
    * });
    * ```
    */
-  createCredentialFetcher(options: GoogleCredentialFetcherOptions): CredentialFetcher<AccessTokenCredential> {
+  createCredentialFetcher(
+    options: GoogleCredentialFetcherOptions,
+  ): CredentialFetcher<AccessTokenCredential> {
     return registerCredentialFetcher<AccessTokenCredential>("google", {
       description: options.description,
       selector: options.accountEmailAddress,

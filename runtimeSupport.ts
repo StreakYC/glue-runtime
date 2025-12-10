@@ -1,6 +1,12 @@
 import { Hono } from "hono";
 import { retry } from "@std/async/retry";
-import { type AccessTokenCredential, type ApiKeyCredential, type CredentialFetcherBackendConfig, type Registrations, TriggerEvent } from "./backendTypes.ts";
+import {
+  type AccessTokenCredential,
+  type ApiKeyCredential,
+  type CredentialFetcherBackendConfig,
+  type Registrations,
+  TriggerEvent,
+} from "./backendTypes.ts";
 export type { AccessTokenCredential, ApiKeyCredential };
 import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
 import type { CommonTriggerOptions } from "./common.ts";
@@ -115,9 +121,9 @@ export function registerCredentialFetcher<T extends AccessTokenCredential | ApiK
       // retry on connection errors
       const res = await retry(() =>
         fetch(
-          `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${encodeURIComponent(glueDeploymentId_)}/accountInjections/${encodeURIComponent(type)}/${
-            encodeURIComponent(resolvedLabel)
-          }`,
+          `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${
+            encodeURIComponent(glueDeploymentId_)
+          }/accountInjections/${encodeURIComponent(type)}/${encodeURIComponent(resolvedLabel)}`,
           {
             headers: {
               "Authorization": glueAuthHeader_,
@@ -200,7 +206,9 @@ function scheduleInit() {
 
     const GLUE_DEV_PORT = Deno.env.get("GLUE_DEV_PORT");
 
-    const serveOptions: Deno.ServeTcpOptions = GLUE_DEV_PORT ? { hostname: "127.0.0.1", port: Number(GLUE_DEV_PORT) } : {};
+    const serveOptions: Deno.ServeTcpOptions = GLUE_DEV_PORT
+      ? { hostname: "127.0.0.1", port: Number(GLUE_DEV_PORT) }
+      : {};
     serveOptions.onListen = () => {};
 
     const app = new Hono();

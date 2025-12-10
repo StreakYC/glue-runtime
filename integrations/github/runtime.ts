@@ -1,7 +1,16 @@
 import { z } from "zod";
 import type { WebhookEventMap, WebhookEventName } from "@octokit/webhooks-types";
-import { type AccessTokenCredential, type CredentialFetcher, registerCredentialFetcher, registerEventListener } from "../../runtimeSupport.ts";
-import { type CommonCredentialFetcherOptions, type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
+import {
+  type AccessTokenCredential,
+  type CredentialFetcher,
+  registerCredentialFetcher,
+  registerEventListener,
+} from "../../runtimeSupport.ts";
+import {
+  type CommonCredentialFetcherOptions,
+  type CommonTriggerBackendConfig,
+  CommonTriggerOptions,
+} from "../../common.ts";
 
 /**
  * Options specific to GitHub event triggers.
@@ -30,12 +39,13 @@ interface GithubRepoTriggerBackendConfig extends CommonTriggerBackendConfig {
   username?: string;
 }
 
-const GithubRepoTriggerBackendConfig: z.ZodType<GithubRepoTriggerBackendConfig> = CommonTriggerOptions.extend({
-  owner: z.string(),
-  repo: z.string(),
-  events: z.array(z.string()),
-  username: z.string().optional(),
-});
+const GithubRepoTriggerBackendConfig: z.ZodType<GithubRepoTriggerBackendConfig> =
+  CommonTriggerOptions.extend({
+    owner: z.string(),
+    repo: z.string(),
+    events: z.array(z.string()),
+    username: z.string().optional(),
+  });
 
 /**
  * Configuration for listening to events on a GitHub organization.
@@ -50,13 +60,16 @@ interface GithubOrgTriggerBackendConfig extends CommonTriggerBackendConfig {
   username?: string;
 }
 
-const GithubOrgTriggerBackendConfig: z.ZodType<GithubOrgTriggerBackendConfig> = CommonTriggerOptions.extend({
-  org: z.string(),
-  events: z.array(z.string()),
-  username: z.string().optional(),
-});
+const GithubOrgTriggerBackendConfig: z.ZodType<GithubOrgTriggerBackendConfig> = CommonTriggerOptions
+  .extend({
+    org: z.string(),
+    events: z.array(z.string()),
+    username: z.string().optional(),
+  });
 
-export type GithubTriggerBackendConfig = GithubRepoTriggerBackendConfig | GithubOrgTriggerBackendConfig;
+export type GithubTriggerBackendConfig =
+  | GithubRepoTriggerBackendConfig
+  | GithubOrgTriggerBackendConfig;
 
 export const GithubTriggerBackendConfig: z.ZodType<GithubTriggerBackendConfig> = z.union([
   GithubRepoTriggerBackendConfig,
@@ -271,7 +284,9 @@ export class Github {
    * });
    * ```
    */
-  createCredentialFetcher(options: GithubCredentialFetcherOptions): CredentialFetcher<AccessTokenCredential> {
+  createCredentialFetcher(
+    options: GithubCredentialFetcherOptions,
+  ): CredentialFetcher<AccessTokenCredential> {
     return registerCredentialFetcher<AccessTokenCredential>("github", {
       description: options.description,
       selector: options.username,

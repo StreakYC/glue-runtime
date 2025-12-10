@@ -1,5 +1,9 @@
 import type { CommonCredentialFetcherOptions } from "../../common.ts";
-import { type ApiKeyCredential, type CredentialFetcher, registerCredentialFetcher } from "../../runtimeSupport.ts";
+import {
+  type ApiKeyCredential,
+  type CredentialFetcher,
+  registerCredentialFetcher,
+} from "../../runtimeSupport.ts";
 
 export interface ResendCredentialFetcherOptions extends CommonCredentialFetcherOptions {
   /** Optional API key name to select appropriate api key. */
@@ -30,7 +34,9 @@ export interface ResendCredentialFetcherOptions extends CommonCredentialFetcherO
  * @see https://resend.com/docs/api-reference
  */
 export class Resend {
-  createCredentialFetcher(options?: ResendCredentialFetcherOptions): CredentialFetcher<ApiKeyCredential> {
+  createCredentialFetcher(
+    options?: ResendCredentialFetcherOptions,
+  ): CredentialFetcher<ApiKeyCredential> {
     return registerCredentialFetcher<ApiKeyCredential>("resend", {
       description: options?.description,
       selector: options?.apiKeyName,
