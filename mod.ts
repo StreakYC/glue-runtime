@@ -27,8 +27,8 @@ export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/gmai
 export type {
   DriveChangeEvent,
   DriveChangesTriggerOptions,
-  DriveFileChangeEvent,
-  DriveFileTriggerOptions,
+  DriveSingleFileChangeEvent,
+  DriveSingleFileTriggerOptions,
 } from "./integrations/drive/runtime.ts";
 export type { GithubEvent, GithubTriggerOptions } from "./integrations/github/runtime.ts";
 export type { WebhookEvent, WebhookTriggerOptions } from "./integrations/webhook/runtime.ts";

@@ -5,7 +5,7 @@ import type { drive_v3 } from "@googleapis/drive";
 
 export type DriveChangeEvent = drive_v3.Schema$Change;
 
-export interface DriveFileChangeEvent {
+export interface DriveSingleFileChangeEvent {
   type: "update" | "trash" | "untrash" | "remove";
 }
 
@@ -26,7 +26,7 @@ export interface DriveChangesTriggerOptions
  * Options for registering a trigger to listen to changes in a specific Google
  * Drive file.
  */
-export interface DriveFileTriggerOptions extends CommonTriggerOptions {
+export interface DriveSingleFileTriggerOptions extends CommonTriggerOptions {
   /**
    * Optional email address to select appropriate account.
    *
@@ -73,19 +73,20 @@ const DriveChangesTriggerBackendConfig: z.ZodType<DriveChangesTriggerBackendConf
   spaces: z.string().optional(),
 });
 
-interface DriveFileTriggerBackendConfig {
+interface DriveSingleFileTriggerBackendConfig {
   type: "file";
   fileId: string;
 }
 
-const DriveFileTriggerBackendConfig: z.ZodType<DriveFileTriggerBackendConfig> = z.object({
-  type: z.literal("file"),
-  fileId: z.string(),
-});
+const DriveSingleFileTriggerBackendConfig: z.ZodType<DriveSingleFileTriggerBackendConfig> = z
+  .object({
+    type: z.literal("file"),
+    fileId: z.string(),
+  });
 
 export interface DriveTriggerBackendConfig extends CommonTriggerOptions {
   accountEmailAddress?: string;
-  watchConfig: DriveChangesTriggerBackendConfig | DriveFileTriggerBackendConfig;
+  watchConfig: DriveChangesTriggerBackendConfig | DriveSingleFileTriggerBackendConfig;
 }
 
 export const DriveTriggerBackendConfig: z.ZodType<DriveTriggerBackendConfig> = CommonTriggerOptions
@@ -93,7 +94,7 @@ export const DriveTriggerBackendConfig: z.ZodType<DriveTriggerBackendConfig> = C
     accountEmailAddress: z.string().optional(),
     watchConfig: z.union([
       DriveChangesTriggerBackendConfig,
-      DriveFileTriggerBackendConfig,
+      DriveSingleFileTriggerBackendConfig,
     ]),
   });
 
@@ -127,8 +128,8 @@ export class Drive {
    * Registers a glue handler for changes in a specific Google Drive file.
    */
   onFileChanged(
-    fn: (event: DriveFileChangeEvent) => void,
-    options: DriveFileTriggerOptions,
+    fn: (event: DriveSingleFileChangeEvent) => void,
+    options: DriveSingleFileTriggerOptions,
   ): void {
     const backendConfig: DriveTriggerBackendConfig = {
       description: options.description,
