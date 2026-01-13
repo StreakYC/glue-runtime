@@ -20,8 +20,16 @@ import { Resend } from "./integrations/resend/runtime.ts";
 export type { Resend };
 import { Debug } from "./integrations/debug/runtime.ts";
 export type { Debug };
+import { Drive } from "./integrations/drive/runtime.ts";
+export type { Drive };
 export type { GoogleCredentialFetcherOptions } from "./integrations/google/runtime.ts";
 export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/gmail/runtime.ts";
+export type {
+  DriveChangeEvent,
+  DriveChangesTriggerOptions,
+  DriveSingleFileChangeEvent,
+  DriveSingleFileTriggerOptions,
+} from "./integrations/drive/runtime.ts";
 export type { GithubEvent, GithubTriggerOptions } from "./integrations/github/runtime.ts";
 export type { WebhookEvent, WebhookTriggerOptions } from "./integrations/webhook/runtime.ts";
 export type { CronEvent } from "./integrations/cron/runtime.ts";
@@ -56,6 +64,11 @@ export type { CommonCredentialFetcherOptions, CommonTriggerOptions } from "./com
  * This class is made available to users through the {@link glue} singleton.
  */
 class Glue {
+  /**
+   * Google Drive event source for listening to changes in Drive.
+   */
+  readonly drive: Drive = new Drive();
+
   /**
    * Gmail event source for listening to email events.
    * Allows you to react to new emails in connected Gmail accounts.
