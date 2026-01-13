@@ -107,6 +107,7 @@ export interface ApiKeyCredential {
 export { CronTriggerBackendConfig } from "./integrations/cron/runtime.ts";
 export { GithubTriggerBackendConfig } from "./integrations/github/runtime.ts";
 export { GmailTriggerBackendConfig } from "./integrations/gmail/runtime.ts";
+export { DriveTriggerBackendConfig } from "./integrations/drive/runtime.ts";
 export { IntercomTriggerBackendConfig } from "./integrations/intercom/runtime.ts";
 export { SlackEventWebhook, SlackTriggerBackendConfig } from "./integrations/slack/runtime.ts";
 export { StreakTriggerBackendConfig } from "./integrations/streak/runtime.ts";

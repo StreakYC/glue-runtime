@@ -20,6 +20,7 @@
     }
   },
   "imports": {
+    "@googleapis/drive": "npm:@googleapis/drive@^20.0.0",
     "@octokit/webhooks-types": "npm:@octokit/webhooks-types@^7.6.1",
     "@std/assert": "jsr:@std/assert@1",
     "@std/async": "jsr:@std/async@^1.0.15",
