@@ -7,9 +7,10 @@ export interface CronTriggerBackendConfig extends CommonTriggerBackendConfig {
   crontab: string;
 }
 
-export const CronTriggerBackendConfig: z.ZodType<CronTriggerBackendConfig> = CommonTriggerOptions.extend({
-  crontab: z.string(),
-});
+export const CronTriggerBackendConfig: z.ZodType<CronTriggerBackendConfig> = CommonTriggerOptions
+  .extend({
+    crontab: z.string(),
+  });
 
 /**
  * Represents a cron scheduled event handed to your glue handler.
@@ -138,7 +139,11 @@ export class Cron {
    *
    * @throws Will create an invalid cron expression if minutes > 60 or doesn't divide evenly into 60
    */
-  everyXMinutes(minutes: number, fn: (event: CronEvent) => void, options?: CommonTriggerOptions): void {
+  everyXMinutes(
+    minutes: number,
+    fn: (event: CronEvent) => void,
+    options?: CommonTriggerOptions,
+  ): void {
     const crontab = `*/${minutes} * * * *`;
     this.onCron(crontab, fn, options);
   }

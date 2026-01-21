@@ -67,10 +67,11 @@ export interface IntercomTriggerBackendConfig extends CommonTriggerBackendConfig
   workspaceId?: string;
 }
 
-export const IntercomTriggerBackendConfig: z.ZodType<IntercomTriggerBackendConfig> = CommonTriggerOptions.extend({
-  events: z.array(z.string()),
-  workspaceId: z.string().optional(),
-});
+export const IntercomTriggerBackendConfig: z.ZodType<IntercomTriggerBackendConfig> =
+  CommonTriggerOptions.extend({
+    events: z.array(z.string()),
+    workspaceId: z.string().optional(),
+  });
 
 /**
  * Intercom event source for customer conversation and contact events.

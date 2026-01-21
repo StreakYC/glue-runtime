@@ -24,9 +24,10 @@ export interface GmailTriggerOptions extends CommonTriggerOptions {
 
 export type GmailTriggerBackendConfig = GmailTriggerOptions;
 
-export const GmailTriggerBackendConfig: z.ZodType<GmailTriggerBackendConfig> = CommonTriggerOptions.extend({
-  accountEmailAddress: z.string().optional(),
-});
+export const GmailTriggerBackendConfig: z.ZodType<GmailTriggerBackendConfig> = CommonTriggerOptions
+  .extend({
+    accountEmailAddress: z.string().optional(),
+  });
 
 /**
  * Gmail event source for listening to email events.

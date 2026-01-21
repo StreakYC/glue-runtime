@@ -1,6 +1,15 @@
 import z from "zod";
-import { type CommonAccountInjectionOptions, type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
-import { type ApiKeyCredential, type CredentialFetcher, registerAccountInjection, registerEventListener } from "../../runtimeSupport.ts";
+import {
+  type CommonCredentialFetcherOptions,
+  type CommonTriggerBackendConfig,
+  CommonTriggerOptions,
+} from "../../common.ts";
+import {
+  type ApiKeyCredential,
+  type CredentialFetcher,
+  registerCredentialFetcher,
+  registerEventListener,
+} from "../../runtimeSupport.ts";
 
 /**
  * Options specific to Streak event triggers.
@@ -27,7 +36,7 @@ export const StreakTriggerBackendConfig = CommonTriggerOptions.extend({
   emailAddress: z.string().optional(),
 }) as z.ZodType<StreakTriggerBackendConfig>; // doing a cast only because we have a looser type for event
 
-export interface StreakAccountInjectionOptions extends CommonAccountInjectionOptions {
+export interface StreakCredentialFetcherOptions extends CommonCredentialFetcherOptions {
   /** Optional email address to select appropriate account. */
   emailAddress?: string;
 }
@@ -155,12 +164,18 @@ export class Streak {
    * @param fn - Handler function called when a call log or meeting note is created
    * @param options - Optional trigger configuration
    */
-  onCallLogOrMeetingNoteCreated(pipelineKey: string, fn: (event: StreakEvent) => void, options?: StreakTriggerOptions): void {
+  onCallLogOrMeetingNoteCreated(
+    pipelineKey: string,
+    fn: (event: StreakEvent) => void,
+    options?: StreakTriggerOptions,
+  ): void {
     this.onBoxEvent("MEETING_CREATE", pipelineKey, fn, options);
   }
 
-  createCredentialFetcher(options?: StreakAccountInjectionOptions): CredentialFetcher<ApiKeyCredential> {
-    return registerAccountInjection<ApiKeyCredential>("streak", {
+  createCredentialFetcher(
+    options?: StreakCredentialFetcherOptions,
+  ): CredentialFetcher<ApiKeyCredential> {
+    return registerCredentialFetcher<ApiKeyCredential>("streak", {
       description: options?.description,
       selector: options?.emailAddress,
     });

@@ -2,11 +2,12 @@
  * Internal types shared between the Glue runtime and the backend API. These
  * types are not intended for most Glue users to use.
  *
- * @module @internal
+ * @ignore
+ * @module
  */
 
 import { z } from "zod";
-import { CommonAccountInjectionOptions } from "./common.ts";
+import { CommonCredentialFetcherOptions } from "./common.ts";
 
 export interface TriggerEvent {
   /** The event source type (e.g., "github", "stripe", "webhook") */
@@ -44,31 +45,32 @@ export const TriggerRegistration: z.ZodType<TriggerRegistration> = z.object({
   config: z.object({}).passthrough().optional(),
 });
 
-export interface AccountInjectionBackendConfig extends CommonAccountInjectionOptions {
+export interface CredentialFetcherBackendConfig extends CommonCredentialFetcherOptions {
   scopes?: string[];
   selector?: string;
 }
 
-export const AccountInjectionBackendConfig: z.ZodType<AccountInjectionBackendConfig> = CommonAccountInjectionOptions.extend({
-  scopes: z.array(z.string()).optional(),
-  selector: z.string().optional(),
-});
+export const CredentialFetcherBackendConfig: z.ZodType<CredentialFetcherBackendConfig> =
+  CommonCredentialFetcherOptions.extend({
+    scopes: z.array(z.string()).optional(),
+    selector: z.string().optional(),
+  });
 
-export interface AccountInjectionRegistration {
+export interface CredentialFetcherRegistration {
   type: string;
   /**
    * The unique label identifying the specific credential fetcher within the
    * glue deployment.
    */
   label: string;
-  config: AccountInjectionBackendConfig;
+  config: CredentialFetcherBackendConfig;
 }
 
-export const AccountInjectionRegistration: z.ZodType<AccountInjectionRegistration> = z
+export const CredentialFetcherRegistration: z.ZodType<CredentialFetcherRegistration> = z
   .object({
     type: z.string(),
     label: z.string(),
-    config: AccountInjectionBackendConfig,
+    config: CredentialFetcherBackendConfig,
   });
 
 /**
@@ -79,16 +81,16 @@ export interface Registrations {
   /** All event trigger registrations in the application */
   triggers: TriggerRegistration[];
   /** All credential fetcher registrations in the application */
-  accountInjections: AccountInjectionRegistration[];
+  accountInjections: CredentialFetcherRegistration[];
 }
 
 export const Registrations: z.ZodType<Registrations> = z.object({
   triggers: z.array(TriggerRegistration),
-  accountInjections: z.array(AccountInjectionRegistration),
+  accountInjections: z.array(CredentialFetcherRegistration),
   // TODO secretInjections
 });
 
-export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./common.ts";
+export type { CommonCredentialFetcherOptions, CommonTriggerOptions } from "./common.ts";
 
 /** Represents a credential using an access token */
 export interface AccessTokenCredential {
@@ -105,6 +107,7 @@ export interface ApiKeyCredential {
 export { CronTriggerBackendConfig } from "./integrations/cron/runtime.ts";
 export { GithubTriggerBackendConfig } from "./integrations/github/runtime.ts";
 export { GmailTriggerBackendConfig } from "./integrations/gmail/runtime.ts";
+export { DriveTriggerBackendConfig } from "./integrations/drive/runtime.ts";
 export { IntercomTriggerBackendConfig } from "./integrations/intercom/runtime.ts";
 export { SlackEventWebhook, SlackTriggerBackendConfig } from "./integrations/slack/runtime.ts";
 export { StreakTriggerBackendConfig } from "./integrations/streak/runtime.ts";

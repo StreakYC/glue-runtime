@@ -29,10 +29,16 @@ function serializeValue(value: unknown, stack?: unknown[]): string {
   }
   try {
     if (value instanceof Set) {
-      return `Set(${value.size}) { ${Array.from(value).map((x) => serializeValue(x, stack)).join(", ")} }`;
+      return `Set(${value.size}) { ${
+        Array.from(value).map((x) => serializeValue(x, stack)).join(", ")
+      } }`;
     }
     if (value instanceof Map) {
-      return `Map(${value.size}) { ${Array.from(value).map(([k, v]) => `${serializeValue(k, stack)} => ${serializeValue(v, stack)}`).join(", ")} }`;
+      return `Map(${value.size}) { ${
+        Array.from(value).map(([k, v]) =>
+          `${serializeValue(k, stack)} => ${serializeValue(v, stack)}`
+        ).join(", ")
+      } }`;
     }
     return JSON.stringify(value);
   } catch {

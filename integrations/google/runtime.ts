@@ -1,7 +1,11 @@
-import type { CommonAccountInjectionOptions } from "../../common.ts";
-import { type AccessTokenCredential, type CredentialFetcher, registerAccountInjection } from "../../runtimeSupport.ts";
+import type { CommonCredentialFetcherOptions } from "../../common.ts";
+import {
+  type AccessTokenCredential,
+  type CredentialFetcher,
+  registerCredentialFetcher,
+} from "../../runtimeSupport.ts";
 
-export interface GoogleAccountInjectionOptions extends CommonAccountInjectionOptions {
+export interface GoogleCredentialFetcherOptions extends CommonCredentialFetcherOptions {
   /**
    * Optional email address to select appropriate account.
    *
@@ -34,8 +38,10 @@ export class Google {
    * });
    * ```
    */
-  createCredentialFetcher(options: GoogleAccountInjectionOptions): CredentialFetcher<AccessTokenCredential> {
-    return registerAccountInjection<AccessTokenCredential>("google", {
+  createCredentialFetcher(
+    options: GoogleCredentialFetcherOptions,
+  ): CredentialFetcher<AccessTokenCredential> {
+    return registerCredentialFetcher<AccessTokenCredential>("google", {
       description: options.description,
       selector: options.accountEmailAddress,
       scopes: options.scopes,

@@ -10,7 +10,8 @@ import { Streak } from "./integrations/streak/runtime.ts";
 export type { Streak };
 import { Stripe } from "./integrations/stripe/runtime.ts";
 export type { Stripe };
-import * as cronEventSource from "./integrations/cron/runtime.ts";
+import { Cron } from "./integrations/cron/runtime.ts";
+export type { Cron };
 import { Intercom } from "./integrations/intercom/runtime.ts";
 export type { Intercom };
 import { Slack } from "./integrations/slack/runtime.ts";
@@ -19,18 +20,39 @@ import { Resend } from "./integrations/resend/runtime.ts";
 export type { Resend };
 import { Debug } from "./integrations/debug/runtime.ts";
 export type { Debug };
-export type { GoogleAccountInjectionOptions } from "./integrations/google/runtime.ts";
+import { Drive } from "./integrations/drive/runtime.ts";
+export type { Drive };
+export type { GoogleCredentialFetcherOptions } from "./integrations/google/runtime.ts";
 export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/gmail/runtime.ts";
+export type {
+  DriveChangeEvent,
+  DriveChangesTriggerOptions,
+  DriveSingleFileChangeEvent,
+  DriveSingleFileTriggerOptions,
+} from "./integrations/drive/runtime.ts";
 export type { GithubEvent, GithubTriggerOptions } from "./integrations/github/runtime.ts";
 export type { WebhookEvent, WebhookTriggerOptions } from "./integrations/webhook/runtime.ts";
 export type { CronEvent } from "./integrations/cron/runtime.ts";
-export type { BoxEventType, StreakAccountInjectionOptions, StreakEvent, StreakTriggerOptions } from "./integrations/streak/runtime.ts";
+export type {
+  BoxEventType,
+  StreakCredentialFetcherOptions,
+  StreakEvent,
+  StreakTriggerOptions,
+} from "./integrations/streak/runtime.ts";
 export type { StripeEvent, StripeTriggerOptions } from "./integrations/stripe/runtime.ts";
 export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/intercom/runtime.ts";
-export type { SlackCredentialFetcherOptions, SlackEventWebhook, SlackTriggerOptions } from "./integrations/slack/runtime.ts";
-export type { ResendAccountInjectionOptions } from "./integrations/resend/runtime.ts";
-export type { AccessTokenCredential, ApiKeyCredential, CredentialFetcher } from "./runtimeSupport.ts";
-export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./common.ts";
+export type {
+  SlackCredentialFetcherOptions,
+  SlackEventWebhook,
+  SlackTriggerOptions,
+} from "./integrations/slack/runtime.ts";
+export type { ResendCredentialFetcherOptions } from "./integrations/resend/runtime.ts";
+export type {
+  AccessTokenCredential,
+  ApiKeyCredential,
+  CredentialFetcher,
+} from "./runtimeSupport.ts";
+export type { CommonCredentialFetcherOptions, CommonTriggerOptions } from "./common.ts";
 
 /**
  * The main Glue runtime class that provides access to all event sources.
@@ -42,6 +64,11 @@ export type { CommonAccountInjectionOptions, CommonTriggerOptions } from "./comm
  * This class is made available to users through the {@link glue} singleton.
  */
 class Glue {
+  /**
+   * Google Drive event source for listening to changes in Drive.
+   */
+  readonly drive: Drive = new Drive();
+
   /**
    * Gmail event source for listening to email events.
    * Allows you to react to new emails in connected Gmail accounts.
@@ -60,7 +87,7 @@ class Glue {
    * Cron event source for scheduling recurring tasks.
    * Supports standard cron expressions and convenience methods for common intervals.
    */
-  readonly cron: cronEventSource.Cron = new cronEventSource.Cron();
+  readonly cron: Cron = new Cron();
 
   /**
    * GitHub event source for repository and organization events.

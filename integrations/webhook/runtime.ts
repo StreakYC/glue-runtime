@@ -14,9 +14,10 @@ export interface WebhookTriggerOptions extends CommonTriggerOptions {
 
 export type WebhookTriggerBackendConfig = WebhookTriggerOptions;
 
-export const WebhookTriggerBackendConfig: z.ZodType<WebhookTriggerBackendConfig> = CommonTriggerOptions.extend({
-  method: z.string().optional(),
-});
+export const WebhookTriggerBackendConfig: z.ZodType<WebhookTriggerBackendConfig> =
+  CommonTriggerOptions.extend({
+    method: z.string().optional(),
+  });
 
 /**
  * Represents an incoming webhook HTTP request event.

@@ -1,6 +1,12 @@
 import { Hono } from "hono";
 import { retry } from "@std/async/retry";
-import { type AccessTokenCredential, type AccountInjectionBackendConfig, type ApiKeyCredential, type Registrations, TriggerEvent } from "./backendTypes.ts";
+import {
+  type AccessTokenCredential,
+  type ApiKeyCredential,
+  type CredentialFetcherBackendConfig,
+  type Registrations,
+  TriggerEvent,
+} from "./backendTypes.ts";
 export type { AccessTokenCredential, ApiKeyCredential };
 import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
 import type { CommonTriggerOptions } from "./common.ts";
@@ -17,14 +23,14 @@ interface RegisteredEvent {
   config: unknown;
 }
 
-interface RegisteredAccountInjection {
-  config: AccountInjectionBackendConfig;
+interface RegisteredCredentialFetcher {
+  config: CredentialFetcherBackendConfig;
 }
 
 const eventListenersByType = new Map<string, Map<string, RegisteredEvent>>();
-const accountInjectionsByType = new Map<
+const credentialFetchersByType = new Map<
   string,
-  Map<string, RegisteredAccountInjection>
+  Map<string, RegisteredCredentialFetcher>
 >();
 
 let nextAutomaticLabel = 0;
@@ -78,19 +84,19 @@ export interface CredentialFetcher<T> {
  * Registers a credential fetcher for a specific service type. This function is
  * used internally by event source implementations.
  */
-export function registerAccountInjection<T extends AccessTokenCredential | ApiKeyCredential>(
+export function registerCredentialFetcher<T extends AccessTokenCredential | ApiKeyCredential>(
   type: string,
-  config: AccountInjectionBackendConfig,
+  config: CredentialFetcherBackendConfig,
 ): CredentialFetcher<T> {
   scheduleInit();
-  let typeAccountInjections = accountInjectionsByType.get(type);
-  if (!typeAccountInjections) {
-    typeAccountInjections = new Map();
-    accountInjectionsByType.set(type, typeAccountInjections);
+  let credentialFetchersOfType = credentialFetchersByType.get(type);
+  if (!credentialFetchersOfType) {
+    credentialFetchersOfType = new Map();
+    credentialFetchersByType.set(type, credentialFetchersOfType);
   }
 
   const resolvedLabel = String(nextAutomaticLabel++);
-  if (typeAccountInjections.has(resolvedLabel)) {
+  if (credentialFetchersOfType.has(resolvedLabel)) {
     throw new Error(
       `Credential fetcher with label ${
         JSON.stringify(
@@ -99,7 +105,7 @@ export function registerAccountInjection<T extends AccessTokenCredential | ApiKe
       } already registered`,
     );
   }
-  typeAccountInjections.set(resolvedLabel, {
+  credentialFetchersOfType.set(resolvedLabel, {
     config,
   });
 
@@ -115,9 +121,9 @@ export function registerAccountInjection<T extends AccessTokenCredential | ApiKe
       // retry on connection errors
       const res = await retry(() =>
         fetch(
-          `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${encodeURIComponent(glueDeploymentId_)}/accountInjections/${encodeURIComponent(type)}/${
-            encodeURIComponent(resolvedLabel)
-          }`,
+          `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${
+            encodeURIComponent(glueDeploymentId_)
+          }/accountInjections/${encodeURIComponent(type)}/${encodeURIComponent(resolvedLabel)}`,
           {
             headers: {
               "Authorization": glueAuthHeader_,
@@ -149,7 +155,7 @@ function getRegistrations(): Registrations {
         ),
     ),
     accountInjections: Array.from(
-      accountInjectionsByType.entries()
+      credentialFetchersByType.entries()
         .flatMap(([type, requests]) =>
           requests.entries().map(([label, { config }]) => ({
             type,
@@ -200,7 +206,9 @@ function scheduleInit() {
 
     const GLUE_DEV_PORT = Deno.env.get("GLUE_DEV_PORT");
 
-    const serveOptions: Deno.ServeTcpOptions = GLUE_DEV_PORT ? { hostname: "127.0.0.1", port: Number(GLUE_DEV_PORT) } : {};
+    const serveOptions: Deno.ServeTcpOptions = GLUE_DEV_PORT
+      ? { hostname: "127.0.0.1", port: Number(GLUE_DEV_PORT) }
+      : {};
     serveOptions.onListen = () => {};
 
     const app = new Hono();
