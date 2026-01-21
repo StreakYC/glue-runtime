@@ -277,18 +277,25 @@ export class Slack {
    * Requires the following scopes: `chat:write`, `channels:join`, `channels:read`, `groups:read`, `mpim:read`, `im:read`
    *
    * @param credentialFetcher The credential fetcher to use to get the access token
-   * @param channelId The id of the channel to send the message to. You can get channel ids using the `getChannelId` helper function
+   * @param channel The channel to send the message to. You can provide the channel name directly or an object that has the channel id. You can get channel ids using the `getChannelId` helper function
    * @param text The text of the message to send
    * @param threadTs The parent of the message you want to send. Used when you want to thread messages.
    */
   async sendMessageAsBot(
     credentialFetcher: CredentialFetcher<AccessTokenCredential>,
-    channelId: string,
+    channel: string | { id: string },
     text: string,
     threadTs?: string,
   ): Promise<ChatPostMessageResponse> {
     const cred = await credentialFetcher.get();
     const client = new WebClient(cred.accessToken);
+
+    let channelId: string;
+    if (typeof channel === "string") {
+      channelId = await this.getChannelId(client, channel);
+    } else {
+      channelId = channel.id;
+    }
 
     try {
       return await client.chat.postMessage({ channel: channelId, text: text, thread_ts: threadTs });
