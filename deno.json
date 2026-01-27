@@ -10,7 +10,15 @@
     "test": "deno test -P",
     "check": "deno check",
     "lint": "deno lint",
-    "fmt": "deno fmt"
+    "fmt": "deno fmt",
+    "deploy": {
+      "description": "Commits and pushes the current version to the remote",
+      "command": "git push && git push --tags",
+      "dependencies": [
+        "bump-patch"
+      ]
+    },
+    "bump-patch": "deno run --allow-read=deno.json --allow-write=deno.json --allow-run=git jsr:@kellnerd/bump@0.1.1 -c v -t v patch"
   },
   "test": {
     "permissions": {
