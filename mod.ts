@@ -22,6 +22,8 @@ import { Debug } from "./integrations/debug/runtime.ts";
 export type { Debug };
 import { Drive } from "./integrations/drive/runtime.ts";
 export type { Drive };
+import { Sheets } from "./integrations/sheets/runtime.ts";
+export type { Sheets };
 export type { GoogleCredentialFetcherOptions } from "./integrations/google/runtime.ts";
 export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/gmail/runtime.ts";
 export type {
@@ -30,6 +32,13 @@ export type {
   DriveSingleFileChangeEvent,
   DriveSingleFileTriggerOptions,
 } from "./integrations/drive/runtime.ts";
+export type {
+  SheetNewCommentEvent,
+  SheetNewRowEvent,
+  SheetNewWorksheetEvent,
+  SheetRowUpdateEvent,
+  SheetsTriggerOptions,
+} from "./integrations/sheets/runtime.ts";
 export type { GithubEvent, GithubTriggerOptions } from "./integrations/github/runtime.ts";
 export type { WebhookEvent, WebhookTriggerOptions } from "./integrations/webhook/runtime.ts";
 export type { CronEvent } from "./integrations/cron/runtime.ts";
@@ -68,6 +77,11 @@ class Glue {
    * Google Drive event source for listening to changes in Drive.
    */
   readonly drive: Drive = new Drive();
+
+  /**
+   * Google Sheets event source for listening to changes in Sheets.
+   */
+  readonly sheets: Sheets = new Sheets();
 
   /**
    * Gmail event source for listening to email events.
