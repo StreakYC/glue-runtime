@@ -1,6 +1,6 @@
 {
   "name": "@streak-glue/runtime",
-  "version": "0.2.20",
+  "version": "0.2.21",
   "license": "MIT",
   "exports": {
     ".": "./mod.ts",
@@ -23,8 +23,13 @@
   "test": {
     "permissions": {
       "sys": true,
-      "env": ["GLUE_DEV_PORT", "GLUE_CLI_WS_ADDR"],
-      "net": ["127.0.0.1"]
+      "env": [
+        "GLUE_DEV_PORT",
+        "GLUE_CLI_WS_ADDR"
+      ],
+      "net": [
+        "127.0.0.1"
+      ]
     }
   },
   "imports": {
