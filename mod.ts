@@ -34,9 +34,9 @@ export type {
 } from "./integrations/drive/runtime.ts";
 export type {
   SheetNewCommentEvent,
+  SheetNewOrUpdatedRowEvent,
   SheetNewRowEvent,
   SheetNewWorksheetEvent,
-  SheetRowUpdateEvent,
   SheetsTriggerOptions,
 } from "./integrations/sheets/runtime.ts";
 export type { GithubEvent, GithubTriggerOptions } from "./integrations/github/runtime.ts";

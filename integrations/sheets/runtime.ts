@@ -31,7 +31,7 @@ export interface SheetNewRowEvent {
   rowValues: unknown[];
 }
 
-export interface SheetRowUpdateEvent {
+export interface SheetNewOrUpdatedRowEvent {
   sheetId: number;
   sheetTitle: string;
   type: "newRow" | "updatedRow";
@@ -94,7 +94,7 @@ export class Sheets {
    * Registers a glue handler for new or updated rows in a Google Sheet.
    */
   onNewOrUpdatedRow(
-    fn: (event: SheetRowUpdateEvent) => void,
+    fn: (event: SheetNewOrUpdatedRowEvent) => void,
     options: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
