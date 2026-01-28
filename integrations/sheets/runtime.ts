@@ -64,10 +64,6 @@ export interface SheetsTriggerOptions extends CommonTriggerOptions {
    * @example "user@gmail.com"
    */
   accountEmailAddress?: string;
-  /**
-   * The ID of the Google Sheets file to watch.
-   */
-  fileId: string;
 }
 
 /**
@@ -76,15 +72,17 @@ export interface SheetsTriggerOptions extends CommonTriggerOptions {
 export class Sheets {
   /**
    * Registers a glue handler for new rows added to a Google Sheet.
+   * @param fileId The ID of the Google Sheets file to watch.
    */
   onNewRow(
+    fileId: string,
     fn: (event: SheetNewRowEvent) => void,
-    options: SheetsTriggerOptions,
+    options?: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
-      description: options.description,
-      accountEmailAddress: options.accountEmailAddress,
-      fileId: options.fileId,
+      description: options?.description,
+      accountEmailAddress: options?.accountEmailAddress,
+      fileId,
       type: "newRow",
     };
     registerEventListener("sheets", fn, backendConfig);
@@ -92,15 +90,17 @@ export class Sheets {
 
   /**
    * Registers a glue handler for new or updated rows in a Google Sheet.
+   * @param fileId The ID of the Google Sheets file to watch.
    */
   onNewOrUpdatedRow(
+    fileId: string,
     fn: (event: SheetNewOrUpdatedRowEvent) => void,
-    options: SheetsTriggerOptions,
+    options?: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
-      description: options.description,
-      accountEmailAddress: options.accountEmailAddress,
-      fileId: options.fileId,
+      description: options?.description,
+      accountEmailAddress: options?.accountEmailAddress,
+      fileId,
       type: "newOrUpdatedRow",
     };
     registerEventListener("sheets", fn, backendConfig);
@@ -108,15 +108,17 @@ export class Sheets {
 
   /**
    * Registers a glue handler for new comments added to a Google Sheet.
+   * @param fileId The ID of the Google Sheets file to watch.
    */
   onNewComment(
+    fileId: string,
     fn: (event: SheetNewCommentEvent) => void,
-    options: SheetsTriggerOptions,
+    options?: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
-      description: options.description,
-      accountEmailAddress: options.accountEmailAddress,
-      fileId: options.fileId,
+      description: options?.description,
+      accountEmailAddress: options?.accountEmailAddress,
+      fileId,
       type: "newComment",
     };
     registerEventListener("sheets", fn, backendConfig);
@@ -124,15 +126,17 @@ export class Sheets {
 
   /**
    * Registers a glue handler for new worksheets added to a Google Sheet.
+   * @param fileId The ID of the Google Sheets file to watch.
    */
   onNewSheet(
+    fileId: string,
     fn: (event: SheetNewWorksheetEvent) => void,
-    options: SheetsTriggerOptions,
+    options?: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
-      description: options.description,
-      accountEmailAddress: options.accountEmailAddress,
-      fileId: options.fileId,
+      description: options?.description,
+      accountEmailAddress: options?.accountEmailAddress,
+      fileId,
       type: "newSheet",
     };
     registerEventListener("sheets", fn, backendConfig);
