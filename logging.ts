@@ -110,4 +110,4 @@ export async function runInLoggingContext<T>(
   return { logs, error };
 }
 
-type Awaitable<T> = T | Promise<T>;
+type Awaitable<T> = PromiseLike<T> | T;
