@@ -10,10 +10,10 @@
     "npm:@octokit/webhooks-types@^7.6.1": "7.6.1",
     "npm:@slack/types@^2.17.0": "2.17.0",
     "npm:@slack/web-api@^7.11.0": "7.11.0",
-    "npm:@types/node@*": "24.2.0",
+    "npm:@types/node@*": "24.9.0",
     "npm:octokit@*": "4.1.2_@octokit+core@6.1.4",
-    "npm:stripe@^18.2.0": "18.5.0_@types+node@24.2.0",
-    "npm:zod@^3.24.2": "3.24.2"
+    "npm:stripe@^18.2.0": "18.5.0_@types+node@24.9.0",
+    "npm:zod@^4.3.6": "4.3.6"
   },
   "jsr": {
     "@hono/hono@4.7.4": {
@@ -251,7 +251,7 @@
     "@slack/logger@4.0.0": {
       "integrity": "sha512-Wz7QYfPAlG/DR+DfABddUZeNgoeY7d1J39OCR2jR+v7VBsB8ezulDK5szTnDDPDwLH5IWhLvXIHlCFZV7MSKgA==",
       "dependencies": [
-        "@types/node@24.9.0"
+        "@types/node"
       ]
     },
     "@slack/types@2.17.0": {
@@ -262,7 +262,7 @@
       "dependencies": [
         "@slack/logger",
         "@slack/types",
-        "@types/node@24.9.0",
+        "@types/node",
         "@types/retry",
         "axios",
         "eventemitter3@5.0.1",
@@ -277,16 +277,10 @@
     "@types/aws-lambda@8.10.148": {
       "integrity": "sha512-JL+2cfkY9ODQeE06hOxSFNkafjNk4JRBgY837kpoq1GHDttq2U3BA9IzKOWxS4DLjKoymGB4i9uBrlCkjUl1yg=="
     },
-    "@types/node@24.2.0": {
-      "integrity": "sha512-3xyG3pMCq3oYCNg7/ZP+E1ooTaGB4cG8JWRsqqOYQdbWNY4zbaV0Ennrd7stjiJEFZCaybcIgpTjJWHRfBSIDw==",
-      "dependencies": [
-        "undici-types@7.10.0"
-      ]
-    },
     "@types/node@24.9.0": {
       "integrity": "sha512-MKNwXh3seSK8WurXF7erHPJ2AONmMwkI7zAMrXZDPIru8jRqkk6rGDBVbw4mLwfqA+ZZliiDPg05JQ3uW66tKQ==",
       "dependencies": [
-        "undici-types@7.16.0"
+        "undici-types"
       ]
     },
     "@types/retry@0.12.0": {
@@ -827,21 +821,18 @@
         "ansi-regex@6.2.2"
       ]
     },
-    "stripe@18.5.0_@types+node@24.2.0": {
+    "stripe@18.5.0_@types+node@24.9.0": {
       "integrity": "sha512-Hp+wFiEQtCB0LlNgcFh5uVyKznpDjzyUZ+CNVEf+I3fhlYvh7rZruIg+jOwzJRCpy0ZTPMjlzm7J2/M2N6d+DA==",
       "dependencies": [
-        "@types/node@24.2.0",
+        "@types/node",
         "qs"
       ],
       "optionalPeers": [
-        "@types/node@24.2.0"
+        "@types/node"
       ]
     },
     "toad-cache@3.7.0": {
       "integrity": "sha512-/m8M+2BJUpoJdgAHoG+baCwBT+tf2VraSfkBgl0Y00qIWt41DJ8R5B8nsEw0I58YwF5IZH6z24/2TobDKnqSWw=="
-    },
-    "undici-types@7.10.0": {
-      "integrity": "sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag=="
     },
     "undici-types@7.16.0": {
       "integrity": "sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw=="
@@ -881,8 +872,8 @@
         "strip-ansi@7.1.2"
       ]
     },
-    "zod@3.24.2": {
-      "integrity": "sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ=="
+    "zod@4.3.6": {
+      "integrity": "sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg=="
     }
   },
   "redirects": {
@@ -995,7 +986,7 @@
       "npm:@slack/types@^2.17.0",
       "npm:@slack/web-api@^7.11.0",
       "npm:stripe@^18.2.0",
-      "npm:zod@^3.24.2"
+      "npm:zod@^4.3.6"
     ]
   }
 }

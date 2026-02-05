@@ -39,7 +39,7 @@
     "@std/async": "jsr:@std/async@^1.0.15",
     "hono": "jsr:@hono/hono@^4.7.4",
     "stripe": "npm:stripe@^18.2.0",
-    "zod": "npm:zod@^3.24.2",
+    "zod": "npm:zod@^4.3.6",
     "@slack/types": "npm:@slack/types@^2.17.0",
     "@slack/web-api": "npm:@slack/web-api@^7.11.0"
   },
