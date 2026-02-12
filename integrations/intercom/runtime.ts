@@ -194,11 +194,11 @@ export class Intercom {
    * ```
    */
   createCredentialFetcher(
-    options: IntercomCredentialFetcherOptions,
+    options?: IntercomCredentialFetcherOptions,
   ): CredentialFetcher<AccessTokenCredential> {
     return registerCredentialFetcher<AccessTokenCredential>("intercom", {
-      description: options.description,
-      selector: options.workspaceId,
+      description: options?.description,
+      selector: options?.workspaceId,
     });
   }
 }
