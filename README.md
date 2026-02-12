@@ -136,12 +136,23 @@ Monitor customer conversations and support interactions.
 
 ```typescript
 glue.intercom.onConversationClosed((event) => {
-  const conversation = event.data.item;
+  const conversation = event.data.item; // Intercom.Conversation
+  console.log(event.app_id); // Workspace ID
+  console.log(event.id); // Webhook delivery ID
+  console.log(event.created_at); // Delivery timestamp
   // Track support metrics
 });
 
-glue.intercom.onEvent(["contact.created"], (event) => {
-  // Sync new contacts
+const intercomTopics = ["contact.created", "conversation.admin.closed"] as const;
+glue.intercom.onEvent(intercomTopics, (event) => {
+  switch (event.topic) {
+    case "contact.created":
+      // event.data.item is Intercom.Contact
+      break;
+    case "conversation.admin.closed":
+      // event.data.item is Intercom.Conversation
+      break;
+  }
 });
 ```
 

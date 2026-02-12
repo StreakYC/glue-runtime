@@ -11,6 +11,7 @@
     "npm:@slack/types@^2.17.0": "2.17.0",
     "npm:@slack/web-api@^7.11.0": "7.11.0",
     "npm:@types/node@*": "24.9.0",
+    "npm:intercom-client@^7.0.3": "7.0.3",
     "npm:octokit@*": "4.1.2_@octokit+core@6.1.4",
     "npm:stripe@^18.2.0": "18.5.0_@types+node@24.9.0",
     "npm:zod@^4.3.6": "4.3.6"
@@ -529,6 +530,7 @@
         "package-json-from-dist",
         "path-scurry"
       ],
+      "deprecated": true,
       "bin": true
     },
     "google-auth-library@10.5.0": {
@@ -587,6 +589,9 @@
         "agent-base",
         "debug"
       ]
+    },
+    "intercom-client@7.0.3": {
+      "integrity": "sha512-2rsNxBNqDqA0rZ0E/VsWa+/Ao+/nOxKNj9P7gUiQoOGY88eULTJUNtT9oNnT4Dq2+6dr0vvvo+I8ZNzN30Xj7A=="
     },
     "is-electron@2.2.2": {
       "integrity": "sha512-FO/Rhvz5tuw4MCWkpMzHFKWD2LsfHzIb7i6MdPYZ/KW7AlxawyLkqdy+jPZP1WubqEADE3O4FUENlJHDfQASRg=="
@@ -985,6 +990,7 @@
       "npm:@octokit/webhooks-types@^7.6.1",
       "npm:@slack/types@^2.17.0",
       "npm:@slack/web-api@^7.11.0",
+      "npm:intercom-client@^7.0.3",
       "npm:stripe@^18.2.0",
       "npm:zod@^4.3.6"
     ]

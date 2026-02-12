@@ -1,4 +1,5 @@
 import z from "zod";
+import type { Intercom as IntercomTypes } from "intercom-client";
 import { type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
 import { registerEventListener } from "../../runtimeSupport.ts";
 
@@ -9,56 +10,41 @@ export interface IntercomTriggerOptions extends CommonTriggerOptions {
   workspaceId?: string;
 }
 
-/**
- * Represents an Intercom webhook event.
- *
- * Contains information about the event type, the affected object,
- * and the workspace where the event occurred.
- *
- * @example
- * ```typescript
- * function handleIntercomEvent(event: IntercomEvent) {
- *   console.log(`Event ${event.topic} in workspace ${event.workspaceId}`);
- *   console.log(`Affected ${event.data.type}:`, event.data.item);
- * }
- * ```
- */
-export interface IntercomEvent {
-  /**
-   * The type of event that occurred.
-   * Common topics include:
-   * - "conversation.admin.closed"
-   * - "conversation.admin.opened"
-   * - "conversation.admin.assigned"
-   * - "contact.created"
-   * - "contact.deleted"
-   * - "company.created"
-   *
-   * @see https://developers.intercom.com/intercom-api-reference/reference/webhook-topics
-   */
-  topic: string;
-
-  /**
-   * The event payload containing the affected object.
-   */
-  data: {
-    /**
-     * The type of Intercom object affected by this event.
-     * Common types: "conversation", "contact", "company", "tag", etc.
-     */
-    type: string;
-    /**
-     * The actual Intercom object data.
-     * Structure varies based on the object type.
-     */
-    item: Record<string, unknown>;
-  };
-
-  /**
-   * The Intercom workspace ID where this event occurred.
-   */
-  workspaceId: string;
+interface IntercomWebhookTypeMap {
+  admin: IntercomTypes.Admin;
+  article: IntercomTypes.Article;
+  company: IntercomTypes.Company;
+  contact: IntercomTypes.Contact;
+  conversation: IntercomTypes.Conversation;
+  conversation_part: IntercomTypes.ConversationPart;
+  event: IntercomTypes.DataEvent;
+  job: IntercomTypes.Jobs;
+  note: IntercomTypes.Note;
+  segment: IntercomTypes.Segment;
+  tag: IntercomTypes.Tag;
+  team: IntercomTypes.Team;
+  ticket: IntercomTypes.Ticket;
+  visitor: IntercomTypes.Visitor;
 }
+
+export type IntercomEvent<TTopic extends string> = {
+  [K in TTopic]: {
+    type: "notification_event";
+    topic: K;
+    id: string;
+    app_id: string;
+    created_at: number;
+    delivery_attempts: number;
+    first_sent_at: number;
+    data: {
+      item: K extends `${infer Prefix}.${string}`
+        ? Prefix extends keyof IntercomWebhookTypeMap
+          ? IntercomWebhookTypeMap[Prefix] & { type: Prefix }
+        : unknown
+        : unknown;
+    };
+  };
+}[TTopic];
 
 export interface IntercomTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** Array of Intercom event topics to listen for */
@@ -84,19 +70,19 @@ export const IntercomTriggerBackendConfig: z.ZodType<IntercomTriggerBackendConfi
  * ```typescript
  * // Monitor closed conversations
  * glue.intercom.onConversationClosed((event) => {
- *   const conversation = event.data.item;
+ *   const conversation = event.data.item; // typed Intercom.Conversation
  *   logConversationMetrics(conversation);
  * });
  *
  * // Listen for multiple event types
  * glue.intercom.onEvent([
  *   "contact.created",
- *   "contact.tag.created"
+ *   "conversation.admin.closed"
  * ], (event) => {
  *   if (event.topic === "contact.created") {
  *     syncNewContactToCRM(event.data.item);
  *   } else {
- *     updateContactTags(event.data.item);
+ *     updateResolutionMetrics(event.data.item);
  *   }
  * });
  * ```
@@ -141,9 +127,9 @@ export class Intercom {
    *
    * @see https://developers.intercom.com/intercom-api-reference/reference/webhook-topics - Full list of event types
    */
-  onEvent(
-    events: string[],
-    fn: (event: IntercomEvent) => void,
+  onEvent<T extends string>(
+    events: T[],
+    fn: (event: IntercomEvent<T>) => void,
     options?: IntercomTriggerOptions,
   ): void {
     const config: IntercomTriggerBackendConfig = {
@@ -162,7 +148,7 @@ export class Intercom {
    * surveys, or updating external systems.
    */
   onConversationClosed(
-    fn: (event: IntercomEvent) => void,
+    fn: (event: IntercomEvent<"conversation.admin.closed">) => void,
     options?: IntercomTriggerOptions,
   ): void {
     this.onEvent(["conversation.admin.closed"], fn, options);
