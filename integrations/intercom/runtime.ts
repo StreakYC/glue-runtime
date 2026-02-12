@@ -1,7 +1,16 @@
 import z from "zod";
 import type { Intercom as IntercomTypes } from "intercom-client";
-import { type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
-import { registerEventListener } from "../../runtimeSupport.ts";
+import {
+  type CommonCredentialFetcherOptions,
+  type CommonTriggerBackendConfig,
+  CommonTriggerOptions,
+} from "../../common.ts";
+import {
+  type AccessTokenCredential,
+  type CredentialFetcher,
+  registerCredentialFetcher,
+  registerEventListener,
+} from "../../runtimeSupport.ts";
 
 export interface IntercomTriggerOptions extends CommonTriggerOptions {
   /**
@@ -58,6 +67,16 @@ export const IntercomTriggerBackendConfig: z.ZodType<IntercomTriggerBackendConfi
     events: z.array(z.string()),
     workspaceId: z.string().optional(),
   });
+
+/**
+ * Options for Intercom credential fetchers.
+ */
+export interface IntercomCredentialFetcherOptions extends CommonCredentialFetcherOptions {
+  /**
+   * Optional Intercom workspace ID to select appropriate account.
+   */
+  workspaceId?: string;
+}
 
 /**
  * Intercom event source for customer conversation and contact events.
@@ -152,5 +171,34 @@ export class Intercom {
     options?: IntercomTriggerOptions,
   ): void {
     this.onEvent(["conversation.admin.closed"], fn, options);
+  }
+
+  /**
+   * Creates a credential fetcher function for Intercom API authentication. Use in
+   * conjunction with the Intercom client library.
+   *
+   * This method returns a function that, when called, provides access token
+   * credentials for authenticating with the Intercom API. The function
+   * may only be called within an event handler.
+   *
+   * @example
+   * ```typescript
+   * import { IntercomClient } from "npm:intercom-client";
+   * const fetcher = glue.intercom.createCredentialFetcher();
+   * glue.webhook.onGet(async (_event) => {
+   *   const cred = await fetcher.get();
+   *   const client = new IntercomClient({ auth: cred.accessToken });
+   *   const user = await client.admins.identify();
+   *   console.log("User:", user.app);
+   * });
+   * ```
+   */
+  createCredentialFetcher(
+    options: IntercomCredentialFetcherOptions,
+  ): CredentialFetcher<AccessTokenCredential> {
+    return registerCredentialFetcher<AccessTokenCredential>("intercom", {
+      description: options.description,
+      selector: options.workspaceId,
+    });
   }
 }
