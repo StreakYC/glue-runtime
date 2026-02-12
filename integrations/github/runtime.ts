@@ -106,12 +106,14 @@ export interface GithubCredentialFetcherOptions extends CommonCredentialFetcherO
  * }
  * ```
  */
-export interface GithubEvent<T extends WebhookEventName> {
-  /** The type of GitHub webhook event */
-  event: T;
-  /** The event payload, typed according to the event type */
-  payload: WebhookEventMap[T];
-}
+export type GithubEvent<T extends WebhookEventName> = {
+  [K in T]: {
+    /** The type of GitHub webhook event */
+    event: K;
+    /** The event payload, typed according to the event type */
+    payload: WebhookEventMap[K];
+  };
+}[T];
 
 /**
  * GitHub event source for listening to repository and organization events.

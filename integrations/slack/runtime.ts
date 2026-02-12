@@ -21,6 +21,11 @@ import {
 /** Various types of events from Slack */
 export type SlackEventType = SlackEvent["type"];
 
+// This type has a generic parameter directly specifying the event by type
+// instead of using the type's name so that our `Slack.onNewMessage` method can
+// specify a SlackEventWebhook with a more specific message event type
+// (`GenericMessageEvent`) than what you get by when you use
+// `Extract<SlackEvent, { type: T }>` (`AllMessageEvents`).
 /** The webhook payload from Slack for all events */
 export type SlackEventWebhook<T extends SlackEvent> = {
   type: "event_callback";
