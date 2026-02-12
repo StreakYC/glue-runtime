@@ -18,6 +18,8 @@ import { Slack } from "./integrations/slack/runtime.ts";
 export type { Slack };
 import { Resend } from "./integrations/resend/runtime.ts";
 export type { Resend };
+import { OpenAI } from "./integrations/openai/runtime.ts";
+export type { OpenAI };
 import { Debug } from "./integrations/debug/runtime.ts";
 export type { Debug };
 import { Drive } from "./integrations/drive/runtime.ts";
@@ -56,6 +58,7 @@ export type {
   SlackTriggerOptions,
 } from "./integrations/slack/runtime.ts";
 export type { ResendCredentialFetcherOptions } from "./integrations/resend/runtime.ts";
+export type { OpenAICredentialFetcherOptions } from "./integrations/openai/runtime.ts";
 export type {
   AccessTokenCredential,
   ApiKeyCredential,
@@ -138,6 +141,12 @@ class Glue {
    * Sends emails using the Resend API.
    */
   readonly resend: Resend = new Resend();
+
+  /**
+   * OpenAI service for fetching API credentials.
+   * Use with the OpenAI SDK to call OpenAI APIs from trigger handlers.
+   */
+  readonly openai: OpenAI = new OpenAI();
 
   /**
    * Debug utilities exposing low-level registration helpers.

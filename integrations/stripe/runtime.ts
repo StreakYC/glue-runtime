@@ -1,7 +1,16 @@
 import z from "zod";
 import type { Stripe as StripeLib } from "stripe";
-import { registerEventListener } from "../../runtimeSupport.ts";
-import { type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
+import {
+  type ApiKeyCredential,
+  type CredentialFetcher,
+  registerCredentialFetcher,
+  registerEventListener,
+} from "../../runtimeSupport.ts";
+import {
+  type CommonCredentialFetcherOptions,
+  type CommonTriggerBackendConfig,
+  CommonTriggerOptions,
+} from "../../common.ts";
 
 /**
  * Union type of all possible Stripe webhook event types.
@@ -197,4 +206,18 @@ export class Stripe {
   ): void {
     this.onEvents(["payment_intent.succeeded"], fn, options);
   }
+
+  createCredentialFetcher(
+    options?: StripeCredentialFetcherOptions,
+  ): CredentialFetcher<ApiKeyCredential> {
+    return registerCredentialFetcher<ApiKeyCredential>("stripe", {
+      description: options?.description,
+      selector: options?.apiKeyName,
+    });
+  }
+}
+
+export interface StripeCredentialFetcherOptions extends CommonCredentialFetcherOptions {
+  /** Optional API key name to select appropriate api key. */
+  apiKeyName?: string;
 }
