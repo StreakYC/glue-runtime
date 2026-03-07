@@ -119,8 +119,8 @@ export function registerCredentialFetcher<T extends AccessTokenCredential | ApiK
       const glueDeploymentId_ = glueDeploymentId;
       const glueAuthHeader_ = glueAuthHeader;
       // retry on connection errors
-      const res = await retry(() =>
-        fetch(
+      const res = await retry(async () => {
+        const res = await fetch(
           `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${
             encodeURIComponent(glueDeploymentId_)
           }/accountInjections/${encodeURIComponent(type)}/${encodeURIComponent(resolvedLabel)}`,
@@ -129,8 +129,15 @@ export function registerCredentialFetcher<T extends AccessTokenCredential | ApiK
               "Authorization": glueAuthHeader_,
             },
           },
-        )
-      );
+        );
+        // retry on 5xx errors from backend, which may be transient
+        if (res.status >= 500 && res.status < 600) {
+          throw new Error(
+            `Failed to fetch credential: ${res.status} ${res.statusText}`,
+          );
+        }
+        return res;
+      });
       if (!res.ok) {
         throw new Error(
           `Failed to fetch credential: ${res.status} ${res.statusText}`,
