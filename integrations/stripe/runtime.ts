@@ -135,11 +135,10 @@ export class Stripe {
     options?: StripeTriggerOptions,
   ): void {
     const config: StripeTriggerBackendConfig = {
-      ...options,
       events,
       accountLabel: options?.accountLabel,
     };
-    registerEventListener("stripe", fn, config);
+    registerEventListener("stripe", fn, options, config);
   }
 
   /**

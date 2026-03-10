@@ -152,11 +152,10 @@ export class Intercom {
     options?: IntercomTriggerOptions,
   ): void {
     const config: IntercomTriggerBackendConfig = {
-      ...options,
       events,
       workspaceId: options?.workspaceId,
     };
-    registerEventListener("intercom", fn, config);
+    registerEventListener("intercom", fn, options, config);
   }
 
   /**

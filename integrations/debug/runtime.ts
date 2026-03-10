@@ -6,7 +6,7 @@ import {
   registerEventListener,
 } from "../../runtimeSupport.ts";
 import type { CredentialFetcherBackendConfig } from "../../backendTypes.ts";
-import type { CommonTriggerOptions } from "../../common.ts";
+import type { CommonTriggerBackendConfig } from "../../common.ts";
 
 /**
  * Debug integration exposing low-level registration helpers.
@@ -29,9 +29,9 @@ export class Debug {
     type: string,
     fn: (event: unknown) => void,
     // Allow any shape; extra keys are preserved because runtime doesn't validate.
-    config?: Record<string, unknown>,
+    config?: CommonTriggerBackendConfig & Record<string, unknown>,
   ): void {
-    registerEventListener(type, fn, config as unknown as CommonTriggerOptions | undefined);
+    registerEventListener(type, fn, config, config ?? {});
   }
 
   /**

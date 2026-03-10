@@ -80,12 +80,11 @@ export class Sheets {
     options?: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
-      description: options?.description,
       accountEmailAddress: options?.accountEmailAddress,
       fileId,
       type: "newRow",
     };
-    registerEventListener("sheets", fn, backendConfig);
+    registerEventListener("sheets", fn, options, backendConfig);
   }
 
   /**
@@ -98,12 +97,11 @@ export class Sheets {
     options?: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
-      description: options?.description,
       accountEmailAddress: options?.accountEmailAddress,
       fileId,
       type: "newOrUpdatedRow",
     };
-    registerEventListener("sheets", fn, backendConfig);
+    registerEventListener("sheets", fn, options, backendConfig);
   }
 
   /**
@@ -116,12 +114,11 @@ export class Sheets {
     options?: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
-      description: options?.description,
       accountEmailAddress: options?.accountEmailAddress,
       fileId,
       type: "newComment",
     };
-    registerEventListener("sheets", fn, backendConfig);
+    registerEventListener("sheets", fn, options, backendConfig);
   }
 
   /**
@@ -134,11 +131,10 @@ export class Sheets {
     options?: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
-      description: options?.description,
       accountEmailAddress: options?.accountEmailAddress,
       fileId,
       type: "newSheet",
     };
-    registerEventListener("sheets", fn, backendConfig);
+    registerEventListener("sheets", fn, options, backendConfig);
   }
 }

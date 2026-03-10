@@ -154,7 +154,7 @@ export class Slack {
       teamId: options?.teamId,
       channels: options?.channelId ? [options.channelId] : undefined,
     };
-    registerEventListener("slack", fn, config);
+    registerEventListener("slack", fn, options, config);
   }
 
   /**

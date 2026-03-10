@@ -106,12 +106,11 @@ export class Streak {
     options?: StreakTriggerOptions,
   ): void {
     const config: StreakTriggerBackendConfig = {
-      ...options,
       pipelineKey,
       event,
       emailAddress: options?.emailAddress,
     };
-    registerEventListener("streak", fn, config);
+    registerEventListener("streak", fn, options, config);
   }
 
   /**

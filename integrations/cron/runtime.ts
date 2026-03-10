@@ -105,8 +105,8 @@ export class Cron {
    * @see https://crontab.guru/ - Interactive cron expression editor
    */
   onCron(crontab: string, fn: (event: CronEvent) => void, options?: CommonTriggerOptions): void {
-    const config: CronTriggerBackendConfig = { ...options, crontab };
-    registerEventListener("cron", fn, config);
+    const config: CronTriggerBackendConfig = { crontab };
+    registerEventListener("cron", fn, options, config);
   }
 
   /**

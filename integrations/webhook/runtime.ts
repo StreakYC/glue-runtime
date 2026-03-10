@@ -82,7 +82,10 @@ export class Webhook {
     fn: (event: WebhookEvent) => void,
     options?: WebhookTriggerOptions,
   ): void {
-    registerEventListener("webhook", fn, options);
+    const config: WebhookTriggerBackendConfig = {
+      method: options?.method,
+    };
+    registerEventListener("webhook", fn, options, config);
   }
 
   /**
@@ -100,10 +103,9 @@ export class Webhook {
     options?: CommonTriggerOptions,
   ): void {
     const config: WebhookTriggerOptions = {
-      ...options,
       method: "GET",
     };
-    registerEventListener("webhook", fn, config);
+    registerEventListener("webhook", fn, options, config);
   }
 
   /**
@@ -122,9 +124,8 @@ export class Webhook {
     options?: CommonTriggerOptions,
   ): void {
     const config: WebhookTriggerOptions = {
-      ...options,
       method: "POST",
     };
-    registerEventListener("webhook", fn, config);
+    registerEventListener("webhook", fn, options, config);
   }
 }

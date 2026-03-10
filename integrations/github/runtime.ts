@@ -179,12 +179,11 @@ export class Github {
     options?: GithubTriggerOptions,
   ): void {
     const config: GithubRepoTriggerBackendConfig = {
-      ...options,
       owner,
       repo,
       events,
     };
-    registerEventListener("github", fn, config);
+    registerEventListener("github", fn, options, config);
   }
 
   /**
@@ -218,11 +217,10 @@ export class Github {
     options?: GithubTriggerOptions,
   ): void {
     const config: GithubOrgTriggerBackendConfig = {
-      ...options,
       org,
       events,
     };
-    registerEventListener("github", fn, config);
+    registerEventListener("github", fn, options, config);
   }
 
   /**

@@ -54,6 +54,9 @@ export class Gmail {
     fn: (event: GmailMessageEvent) => void,
     options?: GmailTriggerOptions,
   ): void {
-    registerEventListener("gmail", fn, options);
+    const config: GmailTriggerBackendConfig = {
+      accountEmailAddress: options?.accountEmailAddress,
+    };
+    registerEventListener("gmail", fn, options, config);
   }
 }

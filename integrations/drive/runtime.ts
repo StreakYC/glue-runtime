@@ -110,7 +110,6 @@ export class Drive {
     options?: DriveChangesTriggerOptions,
   ): void {
     const backendConfig: DriveTriggerBackendConfig = {
-      description: options?.description,
       accountEmailAddress: options?.accountEmailAddress,
       watchConfig: {
         type: "changes",
@@ -121,7 +120,7 @@ export class Drive {
         spaces: options?.spaces,
       },
     };
-    registerEventListener("drive", fn, backendConfig);
+    registerEventListener("drive", fn, options, backendConfig);
   }
 
   /**
@@ -132,13 +131,12 @@ export class Drive {
     options: DriveSingleFileTriggerOptions,
   ): void {
     const backendConfig: DriveTriggerBackendConfig = {
-      description: options.description,
       accountEmailAddress: options.accountEmailAddress,
       watchConfig: {
         type: "file",
         fileId: options.fileId,
       },
     };
-    registerEventListener("drive", fn, backendConfig);
+    registerEventListener("drive", fn, options, backendConfig);
   }
 }
