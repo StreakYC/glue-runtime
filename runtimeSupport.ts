@@ -76,8 +76,14 @@ export function registerEventListener<T>(
     description: commonTriggerOptions?.description,
   };
 
+  const typedCallback = callback as RegisteredEvent["fn"];
+
+  const effectiveCallback: RegisteredEvent["fn"] = commonTriggerOptions?.retryOnFailure
+    ? async (event: unknown) => await retry(() => typedCallback(event))
+    : typedCallback;
+
   specificEventListeners.set(resolvedLabel, {
-    fn: callback as RegisteredEvent["fn"],
+    fn: effectiveCallback,
     config: fullBackendConfig,
   });
 }
