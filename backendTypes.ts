@@ -46,7 +46,7 @@ export interface TriggerRegistration {
 export const TriggerRegistration: z.ZodType<TriggerRegistration> = z.object({
   type: z.string(),
   label: z.string(),
-  config: z.object({}).passthrough().optional(),
+  config: z.looseObject({}).optional(),
 });
 
 export interface CredentialFetcherBackendConfig extends CommonCredentialFetcherOptions {
