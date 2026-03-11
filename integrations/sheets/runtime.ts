@@ -1,9 +1,9 @@
 import z from "zod";
-import { CommonTriggerOptions } from "../../common.ts";
+import { CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
 import { registerEventListener } from "../../runtimeSupport.ts";
 import type { drive_v3 } from "@googleapis/drive";
 
-export interface SheetsTriggerBackendConfig extends CommonTriggerOptions {
+export interface SheetsTriggerBackendConfig extends CommonTriggerBackendConfig {
   accountEmailAddress?: string;
   fileId: string;
   type: "newRow" | "newOrUpdatedRow" | "newComment" | "newSheet";
@@ -13,9 +13,8 @@ export interface SheetsTriggerBackendConfig extends CommonTriggerOptions {
    */
   // includeHeaderRow?: boolean;
 }
-
 export const SheetsTriggerBackendConfig: z.ZodType<SheetsTriggerBackendConfig> =
-  CommonTriggerOptions
+  CommonTriggerBackendConfig
     .extend({
       accountEmailAddress: z.string().optional(),
       fileId: z.string(),
@@ -80,12 +79,11 @@ export class Sheets {
     options?: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
-      description: options?.description,
       accountEmailAddress: options?.accountEmailAddress,
       fileId,
       type: "newRow",
     };
-    registerEventListener("sheets", fn, backendConfig);
+    registerEventListener("sheets", fn, options, backendConfig);
   }
 
   /**
@@ -98,12 +96,11 @@ export class Sheets {
     options?: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
-      description: options?.description,
       accountEmailAddress: options?.accountEmailAddress,
       fileId,
       type: "newOrUpdatedRow",
     };
-    registerEventListener("sheets", fn, backendConfig);
+    registerEventListener("sheets", fn, options, backendConfig);
   }
 
   /**
@@ -116,12 +113,11 @@ export class Sheets {
     options?: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
-      description: options?.description,
       accountEmailAddress: options?.accountEmailAddress,
       fileId,
       type: "newComment",
     };
-    registerEventListener("sheets", fn, backendConfig);
+    registerEventListener("sheets", fn, options, backendConfig);
   }
 
   /**
@@ -134,11 +130,10 @@ export class Sheets {
     options?: SheetsTriggerOptions,
   ): void {
     const backendConfig: SheetsTriggerBackendConfig = {
-      description: options?.description,
       accountEmailAddress: options?.accountEmailAddress,
       fileId,
       type: "newSheet",
     };
-    registerEventListener("sheets", fn, backendConfig);
+    registerEventListener("sheets", fn, options, backendConfig);
   }
 }

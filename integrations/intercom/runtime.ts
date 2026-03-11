@@ -2,8 +2,8 @@ import z from "zod";
 import type { Intercom as IntercomTypes } from "intercom-client";
 import {
   type CommonCredentialFetcherOptions,
-  type CommonTriggerBackendConfig,
-  CommonTriggerOptions,
+  CommonTriggerBackendConfig,
+  type CommonTriggerOptions,
 } from "../../common.ts";
 import {
   type AccessTokenCredential,
@@ -63,7 +63,7 @@ export interface IntercomTriggerBackendConfig extends CommonTriggerBackendConfig
 }
 
 export const IntercomTriggerBackendConfig: z.ZodType<IntercomTriggerBackendConfig> =
-  CommonTriggerOptions.extend({
+  CommonTriggerBackendConfig.extend({
     events: z.array(z.string()),
     workspaceId: z.string().optional(),
   });
@@ -152,11 +152,10 @@ export class Intercom {
     options?: IntercomTriggerOptions,
   ): void {
     const config: IntercomTriggerBackendConfig = {
-      ...options,
       events,
       workspaceId: options?.workspaceId,
     };
-    registerEventListener("intercom", fn, config);
+    registerEventListener("intercom", fn, options, config);
   }
 
   /**

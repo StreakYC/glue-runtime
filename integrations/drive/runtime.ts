@@ -1,5 +1,5 @@
 import z from "zod";
-import { CommonTriggerOptions } from "../../common.ts";
+import { CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
 import { registerEventListener } from "../../runtimeSupport.ts";
 import type { drive_v3 } from "@googleapis/drive";
 
@@ -84,19 +84,19 @@ const DriveSingleFileTriggerBackendConfig: z.ZodType<DriveSingleFileTriggerBacke
     fileId: z.string(),
   });
 
-export interface DriveTriggerBackendConfig extends CommonTriggerOptions {
+export interface DriveTriggerBackendConfig extends CommonTriggerBackendConfig {
   accountEmailAddress?: string;
   watchConfig: DriveChangesTriggerBackendConfig | DriveSingleFileTriggerBackendConfig;
 }
-
-export const DriveTriggerBackendConfig: z.ZodType<DriveTriggerBackendConfig> = CommonTriggerOptions
-  .extend({
-    accountEmailAddress: z.string().optional(),
-    watchConfig: z.union([
-      DriveChangesTriggerBackendConfig,
-      DriveSingleFileTriggerBackendConfig,
-    ]),
-  });
+export const DriveTriggerBackendConfig: z.ZodType<DriveTriggerBackendConfig> =
+  CommonTriggerBackendConfig
+    .extend({
+      accountEmailAddress: z.string().optional(),
+      watchConfig: z.union([
+        DriveChangesTriggerBackendConfig,
+        DriveSingleFileTriggerBackendConfig,
+      ]),
+    });
 
 /**
  * Event source for listening to changes in Google Drive.
@@ -110,7 +110,6 @@ export class Drive {
     options?: DriveChangesTriggerOptions,
   ): void {
     const backendConfig: DriveTriggerBackendConfig = {
-      description: options?.description,
       accountEmailAddress: options?.accountEmailAddress,
       watchConfig: {
         type: "changes",
@@ -121,7 +120,7 @@ export class Drive {
         spaces: options?.spaces,
       },
     };
-    registerEventListener("drive", fn, backendConfig);
+    registerEventListener("drive", fn, options, backendConfig);
   }
 
   /**
@@ -132,13 +131,12 @@ export class Drive {
     options: DriveSingleFileTriggerOptions,
   ): void {
     const backendConfig: DriveTriggerBackendConfig = {
-      description: options.description,
       accountEmailAddress: options.accountEmailAddress,
       watchConfig: {
         type: "file",
         fileId: options.fileId,
       },
     };
-    registerEventListener("drive", fn, backendConfig);
+    registerEventListener("drive", fn, options, backendConfig);
   }
 }

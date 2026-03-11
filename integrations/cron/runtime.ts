@@ -1,16 +1,16 @@
 import { z } from "zod";
-import { type CommonTriggerBackendConfig, CommonTriggerOptions } from "../../common.ts";
+import { CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
 import { registerEventListener } from "../../runtimeSupport.ts";
 
 export interface CronTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** The cron expression defining when the event should trigger */
   crontab: string;
 }
-
-export const CronTriggerBackendConfig: z.ZodType<CronTriggerBackendConfig> = CommonTriggerOptions
-  .extend({
-    crontab: z.string(),
-  });
+export const CronTriggerBackendConfig: z.ZodType<CronTriggerBackendConfig> =
+  CommonTriggerBackendConfig
+    .extend({
+      crontab: z.string(),
+    });
 
 /**
  * Represents a cron scheduled event handed to your glue handler.
@@ -105,8 +105,8 @@ export class Cron {
    * @see https://crontab.guru/ - Interactive cron expression editor
    */
   onCron(crontab: string, fn: (event: CronEvent) => void, options?: CommonTriggerOptions): void {
-    const config: CronTriggerBackendConfig = { ...options, crontab };
-    registerEventListener("cron", fn, config);
+    const config: CronTriggerBackendConfig = { crontab };
+    registerEventListener("cron", fn, options, config);
   }
 
   /**

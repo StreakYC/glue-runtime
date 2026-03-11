@@ -1,8 +1,8 @@
 import z from "zod";
 import {
   type CommonCredentialFetcherOptions,
-  type CommonTriggerBackendConfig,
-  CommonTriggerOptions,
+  CommonTriggerBackendConfig,
+  type CommonTriggerOptions,
 } from "../../common.ts";
 import {
   type ApiKeyCredential,
@@ -29,8 +29,7 @@ export interface StreakTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** Optional email address to select appropriate Streak account. */
   emailAddress?: string;
 }
-
-export const StreakTriggerBackendConfig = CommonTriggerOptions.extend({
+export const StreakTriggerBackendConfig = CommonTriggerBackendConfig.extend({
   pipelineKey: z.string(),
   event: z.string(),
   emailAddress: z.string().optional(),
@@ -106,12 +105,11 @@ export class Streak {
     options?: StreakTriggerOptions,
   ): void {
     const config: StreakTriggerBackendConfig = {
-      ...options,
       pipelineKey,
       event,
       emailAddress: options?.emailAddress,
     };
-    registerEventListener("streak", fn, config);
+    registerEventListener("streak", fn, options, config);
   }
 
   /**

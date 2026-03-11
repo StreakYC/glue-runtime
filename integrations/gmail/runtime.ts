@@ -1,5 +1,5 @@
 import z from "zod";
-import { CommonTriggerOptions } from "../../common.ts";
+import { CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
 import { registerEventListener } from "../../runtimeSupport.ts";
 
 /**
@@ -22,12 +22,14 @@ export interface GmailTriggerOptions extends CommonTriggerOptions {
   accountEmailAddress?: string;
 }
 
-export type GmailTriggerBackendConfig = GmailTriggerOptions;
-
-export const GmailTriggerBackendConfig: z.ZodType<GmailTriggerBackendConfig> = CommonTriggerOptions
-  .extend({
-    accountEmailAddress: z.string().optional(),
-  });
+export interface GmailTriggerBackendConfig extends CommonTriggerBackendConfig {
+  accountEmailAddress?: string;
+}
+export const GmailTriggerBackendConfig: z.ZodType<GmailTriggerBackendConfig> =
+  CommonTriggerBackendConfig
+    .extend({
+      accountEmailAddress: z.string().optional(),
+    });
 
 /**
  * Gmail event source for listening to email events.
@@ -54,6 +56,9 @@ export class Gmail {
     fn: (event: GmailMessageEvent) => void,
     options?: GmailTriggerOptions,
   ): void {
-    registerEventListener("gmail", fn, options);
+    const config: GmailTriggerBackendConfig = {
+      accountEmailAddress: options?.accountEmailAddress,
+    };
+    registerEventListener("gmail", fn, options, config);
   }
 }

@@ -2,6 +2,10 @@
  * Internal types shared between the Glue runtime and the backend API. These
  * types are not intended for most Glue users to use.
  *
+ * This file exports all the *TriggerBackendConfig types, the *Event types,
+ * types returned by the runtime's internal HTTP API used by glue-backend, and
+ * the types returned by glue-backend's credential fetcher endpoints.
+ *
  * @ignore
  * @module
  */
@@ -42,7 +46,7 @@ export interface TriggerRegistration {
 export const TriggerRegistration: z.ZodType<TriggerRegistration> = z.object({
   type: z.string(),
   label: z.string(),
-  config: z.object({}).passthrough().optional(),
+  config: z.looseObject({}).optional(),
 });
 
 export interface CredentialFetcherBackendConfig extends CommonCredentialFetcherOptions {
@@ -90,7 +94,9 @@ export const Registrations: z.ZodType<Registrations> = z.object({
   // TODO secretInjections
 });
 
-export type { CommonCredentialFetcherOptions, CommonTriggerOptions } from "./common.ts";
+// This is exported so we can implement new *TriggerBackendConfig types in
+// glue-backend first before moving them into glue-runtime.
+export { CommonTriggerBackendConfig } from "./common.ts";
 
 /** Represents a credential using an access token */
 export interface AccessTokenCredential {

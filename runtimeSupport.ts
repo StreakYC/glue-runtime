@@ -9,7 +9,7 @@ import {
 } from "./backendTypes.ts";
 export type { AccessTokenCredential, ApiKeyCredential };
 import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
-import type { CommonTriggerOptions } from "./common.ts";
+import type { CommonTriggerBackendConfig, CommonTriggerOptions } from "./common.ts";
 
 patchConsoleGlobal();
 
@@ -37,13 +37,24 @@ let nextAutomaticLabel = 0;
 
 /**
  * @internal
- * Registers an event listener for a specific event type.
- * This function is used internally by event source implementations.
+ * Registers an event listener for a specific event type. This function is used
+ * internally by event source implementations.
+ * @param eventName The name of the event source in glue-backend.
+ * @param callback The user's callback function.
+ * @param commonTriggerOptions Common trigger options. This should be passed in
+ * from the user as-is. Extra properties will be ignored.
+ * @param backendConfig The backend config for this trigger. This generally
+ * should be of a type that extends {@link CommonTriggerBackendConfig} specific
+ * to the event source. The caller should ensure this object only includes the
+ * properties that are expected by glue-backend. Properties that are part of
+ * {@link CommonTriggerOptions} do not need to be included here, as they will be
+ * taken from the `commonTriggerOptions` parameter automatically.
  */
 export function registerEventListener<T>(
   eventName: string,
   callback: (event: T) => void,
-  options: CommonTriggerOptions | undefined,
+  commonTriggerOptions: CommonTriggerOptions | undefined,
+  backendConfig: CommonTriggerBackendConfig,
 ) {
   scheduleInit();
 
@@ -59,9 +70,21 @@ export function registerEventListener<T>(
       `Event listener with label ${JSON.stringify(resolvedLabel)} already registered`,
     );
   }
+
+  const fullBackendConfig: CommonTriggerBackendConfig = {
+    ...backendConfig,
+    description: commonTriggerOptions?.description,
+  };
+
+  const typedCallback = callback as RegisteredEvent["fn"];
+
+  const effectiveCallback: RegisteredEvent["fn"] = commonTriggerOptions?.retryOnFailure
+    ? async (event: unknown) => await retry(() => typedCallback(event))
+    : typedCallback;
+
   specificEventListeners.set(resolvedLabel, {
-    fn: callback as RegisteredEvent["fn"],
-    config: options ?? {},
+    fn: effectiveCallback,
+    config: fullBackendConfig,
   });
 }
 

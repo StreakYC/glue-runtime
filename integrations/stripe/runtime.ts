@@ -8,8 +8,8 @@ import {
 } from "../../runtimeSupport.ts";
 import {
   type CommonCredentialFetcherOptions,
-  type CommonTriggerBackendConfig,
-  CommonTriggerOptions,
+  CommonTriggerBackendConfig,
+  type CommonTriggerOptions,
 } from "../../common.ts";
 
 /**
@@ -35,8 +35,7 @@ export interface StripeTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** Optional account label for the account */
   accountLabel?: string;
 }
-
-export const StripeTriggerBackendConfig = CommonTriggerOptions.extend({
+export const StripeTriggerBackendConfig = CommonTriggerBackendConfig.extend({
   events: z.array(z.string()),
   accountLabel: z.string().optional(),
 }) as z.ZodType<StripeTriggerBackendConfig>; // doing a cast only because we have a looser type for events
@@ -135,11 +134,10 @@ export class Stripe {
     options?: StripeTriggerOptions,
   ): void {
     const config: StripeTriggerBackendConfig = {
-      ...options,
       events,
       accountLabel: options?.accountLabel,
     };
-    registerEventListener("stripe", fn, config);
+    registerEventListener("stripe", fn, options, config);
   }
 
   /**
