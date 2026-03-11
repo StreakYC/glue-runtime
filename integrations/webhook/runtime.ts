@@ -1,5 +1,5 @@
 import z from "zod";
-import { CommonTriggerOptions } from "../../common.ts";
+import { CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
 import { registerEventListener } from "../../runtimeSupport.ts";
 
 export interface WebhookTriggerOptions extends CommonTriggerOptions {
@@ -12,10 +12,11 @@ export interface WebhookTriggerOptions extends CommonTriggerOptions {
   method?: string;
 }
 
-export type WebhookTriggerBackendConfig = WebhookTriggerOptions;
-
+export interface WebhookTriggerBackendConfig extends CommonTriggerBackendConfig {
+  method?: string;
+}
 export const WebhookTriggerBackendConfig: z.ZodType<WebhookTriggerBackendConfig> =
-  CommonTriggerOptions.extend({
+  CommonTriggerBackendConfig.extend({
     method: z.string().optional(),
   });
 
@@ -102,7 +103,7 @@ export class Webhook {
     fn: (event: WebhookEvent) => void,
     options?: CommonTriggerOptions,
   ): void {
-    const config: WebhookTriggerOptions = {
+    const config: WebhookTriggerBackendConfig = {
       method: "GET",
     };
     registerEventListener("webhook", fn, options, config);
@@ -123,7 +124,7 @@ export class Webhook {
     fn: (event: WebhookEvent) => void,
     options?: CommonTriggerOptions,
   ): void {
-    const config: WebhookTriggerOptions = {
+    const config: WebhookTriggerBackendConfig = {
       method: "POST",
     };
     registerEventListener("webhook", fn, options, config);

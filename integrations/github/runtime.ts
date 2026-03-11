@@ -8,8 +8,8 @@ import {
 } from "../../runtimeSupport.ts";
 import {
   type CommonCredentialFetcherOptions,
-  type CommonTriggerBackendConfig,
-  CommonTriggerOptions,
+  CommonTriggerBackendConfig,
+  type CommonTriggerOptions,
 } from "../../common.ts";
 
 /**
@@ -38,9 +38,8 @@ interface GithubRepoTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** Optional username filter */
   username?: string;
 }
-
 const GithubRepoTriggerBackendConfig: z.ZodType<GithubRepoTriggerBackendConfig> =
-  CommonTriggerOptions.extend({
+  CommonTriggerBackendConfig.extend({
     owner: z.string(),
     repo: z.string(),
     events: z.array(z.string()),
@@ -60,12 +59,13 @@ interface GithubOrgTriggerBackendConfig extends CommonTriggerBackendConfig {
   username?: string;
 }
 
-const GithubOrgTriggerBackendConfig: z.ZodType<GithubOrgTriggerBackendConfig> = CommonTriggerOptions
-  .extend({
-    org: z.string(),
-    events: z.array(z.string()),
-    username: z.string().optional(),
-  });
+const GithubOrgTriggerBackendConfig: z.ZodType<GithubOrgTriggerBackendConfig> =
+  CommonTriggerBackendConfig
+    .extend({
+      org: z.string(),
+      events: z.array(z.string()),
+      username: z.string().optional(),
+    });
 
 export type GithubTriggerBackendConfig =
   | GithubRepoTriggerBackendConfig

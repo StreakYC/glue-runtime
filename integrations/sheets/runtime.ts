@@ -1,9 +1,9 @@
 import z from "zod";
-import { CommonTriggerOptions } from "../../common.ts";
+import { CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
 import { registerEventListener } from "../../runtimeSupport.ts";
 import type { drive_v3 } from "@googleapis/drive";
 
-export interface SheetsTriggerBackendConfig extends CommonTriggerOptions {
+export interface SheetsTriggerBackendConfig extends CommonTriggerBackendConfig {
   accountEmailAddress?: string;
   fileId: string;
   type: "newRow" | "newOrUpdatedRow" | "newComment" | "newSheet";
@@ -13,9 +13,8 @@ export interface SheetsTriggerBackendConfig extends CommonTriggerOptions {
    */
   // includeHeaderRow?: boolean;
 }
-
 export const SheetsTriggerBackendConfig: z.ZodType<SheetsTriggerBackendConfig> =
-  CommonTriggerOptions
+  CommonTriggerBackendConfig
     .extend({
       accountEmailAddress: z.string().optional(),
       fileId: z.string(),
