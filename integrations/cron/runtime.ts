@@ -5,12 +5,28 @@ import { registerEventListener } from "../../runtimeSupport.ts";
 export interface CronTriggerBackendConfig extends CommonTriggerBackendConfig {
   /** The cron expression defining when the event should trigger */
   crontab: string;
+
+  /** The timezone to use for the cron expression */
+  timezone?: string;
 }
 export const CronTriggerBackendConfig: z.ZodType<CronTriggerBackendConfig> =
   CommonTriggerBackendConfig
     .extend({
       crontab: z.string(),
+      timezone: z.string().optional(),
     });
+
+/**
+ * Options for registering a cron trigger.
+ */
+export interface CronTriggerOptions extends CommonTriggerOptions {
+  /**
+   * The timezone to use for the cron expression.
+   *
+   * @example "America/New_York"
+   */
+  timezone?: string;
+}
 
 /**
  * Represents a cron scheduled event handed to your glue handler.
@@ -104,8 +120,8 @@ export class Cron {
    *
    * @see https://crontab.guru/ - Interactive cron expression editor
    */
-  onCron(crontab: string, fn: (event: CronEvent) => void, options?: CommonTriggerOptions): void {
-    const config: CronTriggerBackendConfig = { crontab };
+  onCron(crontab: string, fn: (event: CronEvent) => void, options?: CronTriggerOptions): void {
+    const config: CronTriggerBackendConfig = { crontab, timezone: options?.timezone };
     registerEventListener("cron", fn, options, config);
   }
 
