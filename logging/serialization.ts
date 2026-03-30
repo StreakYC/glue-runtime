@@ -30,7 +30,7 @@ function serializeValue(value: unknown, stack?: unknown[]): string {
     if (value instanceof Error) {
       let errString = value.stack ?? String(value);
       const { cause } = value;
-      if (cause) {
+      if (cause !== undefined) {
         errString += ` {\n${indentLines(`cause: ${serializeValue(cause, stack)}`)}\n}`;
       }
       return errString;
