@@ -1,5 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { serializeConsoleArgumentsToString } from "./serialization.ts";
+import { indentLines } from "./indentLines.ts";
 
 Deno.test("serializeConsoleArgumentsToString", () => {
   const text = serializeConsoleArgumentsToString([
@@ -31,6 +32,20 @@ Deno.test("serializeConsoleArgumentsToString handles errors", () => {
   const err = new Error("Test");
   const text = serializeConsoleArgumentsToString([err]);
   assertEquals(text, `${err.stack}`);
+});
+
+Deno.test("serializeConsoleArgumentsToString handles errors with cause property", () => {
+  const cause = new Error("Cause");
+  const err = new Error("Test", { cause });
+  const text = serializeConsoleArgumentsToString([err]);
+  assertEquals(text, `${err.stack} {\n${indentLines(`cause: ${cause.stack}`)}\n}`);
+});
+
+Deno.test("serializeConsoleArgumentsToString handles errors with self-referential cause property", () => {
+  const err = new Error("Test");
+  err.cause = err;
+  const text = serializeConsoleArgumentsToString([err]);
+  assertEquals(text, `${err.stack} {\n${indentLines(`cause: [Circular reference]`)}\n}`);
 });
 
 Deno.test("serializeConsoleArgumentsToString handles Sets", () => {

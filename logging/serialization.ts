@@ -1,3 +1,5 @@
+import { indentLines } from "./indentLines.ts";
+
 function serializeValue(value: unknown, stack?: unknown[]): string {
   if (
     value == null ||
@@ -12,9 +14,6 @@ function serializeValue(value: unknown, stack?: unknown[]): string {
   if (typeof value === "function") {
     return value.name ? `[Function: ${value.name}]` : "[Function (anonymous)]";
   }
-  if (value instanceof Error) {
-    return value.stack ?? String(value);
-  }
 
   // potentially recursive and fallible cases below
 
@@ -28,6 +27,14 @@ function serializeValue(value: unknown, stack?: unknown[]): string {
     stack.push(value);
   }
   try {
+    if (value instanceof Error) {
+      let errString = value.stack ?? String(value);
+      const { cause } = value;
+      if (cause) {
+        errString += ` {\n${indentLines(`cause: ${serializeValue(cause, stack)}`)}\n}`;
+      }
+      return errString;
+    }
     if (value instanceof Set) {
       return `Set(${value.size}) { ${
         Array.from(value).map((x) => serializeValue(x, stack)).join(", ")
