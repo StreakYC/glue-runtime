@@ -32,6 +32,10 @@
       ]
     }
   },
+  "minimumDependencyAge": {
+    "age": "P3D",
+    "exclude": []
+  },
   "imports": {
     "@googleapis/drive": "npm:@googleapis/drive@^20.0.0",
     "@octokit/webhooks-types": "npm:@octokit/webhooks-types@^7.6.1",
