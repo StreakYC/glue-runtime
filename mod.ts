@@ -51,7 +51,11 @@ export type {
   StreakTriggerOptions,
 } from "./integrations/streak/runtime.ts";
 export type { StripeEvent, StripeTriggerOptions } from "./integrations/stripe/runtime.ts";
-export type { IntercomEvent, IntercomTriggerOptions } from "./integrations/intercom/runtime.ts";
+export type {
+  IntercomConversationPartTag,
+  IntercomEvent,
+  IntercomTriggerOptions,
+} from "./integrations/intercom/runtime.ts";
 export type {
   SlackCredentialFetcherOptions,
   SlackEventWebhook,
