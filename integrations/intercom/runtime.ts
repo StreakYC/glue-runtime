@@ -19,6 +19,13 @@ export interface IntercomTriggerOptions extends CommonTriggerOptions {
   workspaceId?: string;
 }
 
+export interface IntercomConversationPartTag {
+  type: "conversation_part_tag";
+  created_at: number;
+  conversation: IntercomTypes.Conversation;
+  tag: IntercomTypes.Tag;
+}
+
 interface IntercomWebhookTypeMap {
   admin: IntercomTypes.Admin;
   article: IntercomTypes.Article;
@@ -26,6 +33,7 @@ interface IntercomWebhookTypeMap {
   contact: IntercomTypes.Contact;
   conversation: IntercomTypes.Conversation;
   conversation_part: IntercomTypes.ConversationPart;
+  "conversation_part.tag": IntercomConversationPartTag;
   event: IntercomTypes.DataEvent;
   job: IntercomTypes.Jobs;
   note: IntercomTypes.Note;
@@ -35,6 +43,35 @@ interface IntercomWebhookTypeMap {
   ticket: IntercomTypes.Ticket;
   visitor: IntercomTypes.Visitor;
 }
+
+/** Extracts the longest prefix of TTopic that matches a key in
+ * IntercomWebhookTypeMap. */
+type IntercomWebhookPrefix<TTopic extends string> = TTopic extends
+  `${infer Prefix}.${infer Subtopic}.${string}`
+  ? (`${Prefix}.${Subtopic}` extends keyof IntercomWebhookTypeMap ? `${Prefix}.${Subtopic}`
+    : Prefix extends keyof IntercomWebhookTypeMap ? Prefix
+    : undefined)
+  : (TTopic extends `${infer Prefix}.${string}`
+    ? Prefix extends keyof IntercomWebhookTypeMap ? Prefix
+    : undefined
+    : undefined);
+
+/**
+ * Add {type: TPrefix} to the payload type unless it has a type property that
+ * TPrefix can't be cast to. This fixes the types in the type map that are
+ * missing the type property or have it set to something overly generic like
+ * `string` or `string | undefined`, but allows more specific types to remain
+ * intact.
+ */
+type IntercomWebhookPayload<TPrefix extends keyof IntercomWebhookTypeMap> =
+  IntercomWebhookTypeMap[TPrefix] extends { type: infer TType }
+    ? (TPrefix extends TType ? IntercomWebhookTypeMap[TPrefix] & { type: TPrefix }
+      : IntercomWebhookTypeMap[TPrefix])
+    : IntercomWebhookTypeMap[TPrefix] & { type: TPrefix };
+
+type IntercomWebhookItem<TTopic extends string> = IntercomWebhookPrefix<TTopic> extends
+  infer TPrefix extends keyof IntercomWebhookTypeMap ? IntercomWebhookPayload<TPrefix>
+  : unknown;
 
 export type IntercomEvent<TTopic extends string> = {
   [K in TTopic]: {
@@ -46,11 +83,7 @@ export type IntercomEvent<TTopic extends string> = {
     delivery_attempts: number;
     first_sent_at: number;
     data: {
-      item: K extends `${infer Prefix}.${string}`
-        ? Prefix extends keyof IntercomWebhookTypeMap
-          ? IntercomWebhookTypeMap[Prefix] & { type: Prefix }
-        : unknown
-        : unknown;
+      item: IntercomWebhookItem<K>;
     };
   };
 }[TTopic];
@@ -144,7 +177,7 @@ export class Intercom {
    * });
    * ```
    *
-   * @see https://developers.intercom.com/intercom-api-reference/reference/webhook-topics - Full list of event types
+   * @see https://developers.intercom.com/docs/references/webhooks/webhook-models - Full list of event types
    */
   onEvent<T extends string>(
     events: T[],
