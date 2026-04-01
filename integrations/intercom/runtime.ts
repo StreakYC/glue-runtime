@@ -186,7 +186,7 @@ export class Intercom {
    * });
    * ```
    *
-   * @see https://developers.intercom.com/intercom-api-reference/reference/webhook-topics - Full list of event types
+   * @see https://developers.intercom.com/docs/references/webhooks/webhook-models - Full list of event types
    */
   onEvent<T extends string>(
     events: T[],
