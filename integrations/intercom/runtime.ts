@@ -33,6 +33,7 @@ interface IntercomWebhookTypeMap {
   contact: IntercomTypes.Contact;
   conversation: IntercomTypes.Conversation;
   conversation_part: IntercomTypes.ConversationPart;
+  "conversation_part.tag": IntercomConversationPartTag;
   event: IntercomTypes.DataEvent;
   job: IntercomTypes.Jobs;
   note: IntercomTypes.Note;
@@ -43,17 +44,11 @@ interface IntercomWebhookTypeMap {
   visitor: IntercomTypes.Visitor;
 }
 
-/** Contains webhook topics that contain one period. Needs to be separate for
- * the type inference to work simply. */
-interface IntercomWebhookSubtopicTypeMap {
-  "conversation_part.tag": IntercomConversationPartTag;
-}
-
 /** Extracts the longest prefix of TTopic that matches a key in
- * IntercomWebhookSubtopicTypeMap or IntercomWebhookTypeMap. */
+ * IntercomWebhookTypeMap. */
 type IntercomWebhookPrefix<TTopic extends string> = TTopic extends
   `${infer Prefix}.${infer Subtopic}.${string}`
-  ? (`${Prefix}.${Subtopic}` extends keyof IntercomWebhookSubtopicTypeMap ? `${Prefix}.${Subtopic}`
+  ? (`${Prefix}.${Subtopic}` extends keyof IntercomWebhookTypeMap ? `${Prefix}.${Subtopic}`
     : Prefix extends keyof IntercomWebhookTypeMap ? Prefix
     : undefined)
   : (TTopic extends `${infer Prefix}.${string}`
@@ -68,18 +63,14 @@ type IntercomWebhookPrefix<TTopic extends string> = TTopic extends
  * `string` or `string | undefined`, but allows more specific types to remain
  * intact.
  */
-type IntercomWebhookPayload<TMap, TPrefix extends keyof TMap> = TMap[TPrefix] extends
-  { type: infer TType }
-  ? (TPrefix extends TType ? TMap[TPrefix] & { type: TPrefix } : TMap[TPrefix])
-  : TMap[TPrefix] & { type: TPrefix };
+type IntercomWebhookPayload<TPrefix extends keyof IntercomWebhookTypeMap> =
+  IntercomWebhookTypeMap[TPrefix] extends { type: infer TType }
+    ? (TPrefix extends TType ? IntercomWebhookTypeMap[TPrefix] & { type: TPrefix }
+      : IntercomWebhookTypeMap[TPrefix])
+    : IntercomWebhookTypeMap[TPrefix] & { type: TPrefix };
 
 type IntercomWebhookItem<TTopic extends string> = IntercomWebhookPrefix<TTopic> extends
-  infer TPrefix extends string
-  ? TPrefix extends keyof IntercomWebhookSubtopicTypeMap
-    ? IntercomWebhookPayload<IntercomWebhookSubtopicTypeMap, TPrefix>
-  : TPrefix extends keyof IntercomWebhookTypeMap
-    ? IntercomWebhookPayload<IntercomWebhookTypeMap, TPrefix>
-  : unknown
+  infer TPrefix extends keyof IntercomWebhookTypeMap ? IntercomWebhookPayload<TPrefix>
   : unknown;
 
 export type IntercomEvent<TTopic extends string> = {
