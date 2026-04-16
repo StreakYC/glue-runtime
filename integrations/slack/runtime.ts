@@ -120,8 +120,8 @@ export class Slack {
    * based on what is visible to the user that is authenticated with the
    * account.
    *
-   * Only events that are visible to users are available. Events for bots/apps,
-   * such as `app_mention`, are not supported.
+   * Only events that are visible to users are available. Events for bots or
+   * apps, such as `app_mention`, are not supported.
    *
    * @param events - Array of Slack event topics to listen for
    * @param fn - Handler function called when any of the specified events occur
