@@ -19,7 +19,7 @@ import {
 } from "@slack/web-api";
 
 /** Various types of events from Slack */
-export type SlackEventType = SlackEvent["type"];
+export type SlackEventType = Exclude<SlackEvent["type"], `app_${string}`>;
 
 // This type has a generic parameter directly specifying the event by type
 // instead of using the type's name so that our `Slack.onNewMessage` method can
@@ -116,13 +116,17 @@ export class Slack {
    * Registers a glue handler for specific Slack webhook events.
    *
    * This is the most flexible method, allowing you to listen for any
-   * combination of Slack event topics. These events that are delivered
-   * are based on what is visible to the user that is authenticated with
-   * the account.
+   * combination of Slack event topics. These events that are delivered are
+   * based on what is visible to the user that is authenticated with the
+   * account.
+   *
+   * Only events that are visible to users are available. Events for bots/apps,
+   * such as `app_mention`, are not supported.
    *
    * @param events - Array of Slack event topics to listen for
    * @param fn - Handler function called when any of the specified events occur
-   * @param options - Optional trigger configuration including workspace filtering
+   * @param options - Optional trigger configuration including workspace
+   * filtering
    *
    * @example
    * ```typescript
