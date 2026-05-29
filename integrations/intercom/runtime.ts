@@ -206,12 +206,12 @@ export class Intercom {
   }
 
   /**
-   * Creates a credential fetcher function for Intercom API authentication. Use in
-   * conjunction with the Intercom client library.
+   * Creates a credential fetcher for Intercom API authentication. This can be
+   * used with the Intercom client library.
    *
-   * This method returns a function that, when called, provides access token
-   * credentials for authenticating with the Intercom API. The function
-   * may only be called within an event handler.
+   * This method returns an object with a `.get()` method that provides access
+   * token credentials for authenticating with the Intercom API. The `.get()`
+   * method may only be called within an event handler.
    *
    * @example
    * ```typescript

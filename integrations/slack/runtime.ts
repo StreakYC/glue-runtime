@@ -174,12 +174,12 @@ export class Slack {
   }
 
   /**
-   * Creates a credential fetcher function for Slack API authentication. Use in
-   * conjunction with the Slack client library.
+   * Creates a credential fetcher for Slack API authentication as a **user**.
+   * This can be used in conjunction with the Slack client library.
    *
-   * This method returns a function that, when called, provides access token
-   * credentials for authenticating with the Slack API as a **user**. The function
-   * may only be called within an event handler.
+   * This method returns an object with a `.get()` method that provides access
+   * token credentials for authenticating with the Slack API as a **user**. The
+   * `.get()` method may only be called within an event handler.
    *
    * @example
    * ```typescript
@@ -205,12 +205,12 @@ export class Slack {
   }
 
   /**
-   * Creates a credential fetcher function for Slack API authentication. Use in
-   * conjunction with the Slack client library.
+   * Creates a credential fetcher for Slack API authentication as a **bot**.
+   * This can be used in conjunction with the Slack client library.
    *
-   * This method returns a function that, when called, provides access token
-   * credentials for authenticating with the Slack API as a **bot**. The function
-   * may only be called within an event handler.
+   * This method returns an object with a `.get()` method that provides access
+   * token credentials for authenticating with the Slack API as a **bot**. The
+   * `.get()` method may only be called within an event handler.
    *
    * @example
    * ```typescript
@@ -236,11 +236,13 @@ export class Slack {
   }
 
   /**
-   * Creates a credential fetcher function for Slack API authentication to
-   * send messages as a **user**. Use in conjunction with the Slack client
+   * Creates a credential fetcher for Slack API authentication to send messages
+   * as a **user**. This can be used in conjunction with the Slack client
    * library.
    *
-   * The function may only be called within an event handler.
+   * This method returns an object with a `.get()` method that provides access
+   * token credentials for authenticating with the Slack API as a **user**. The
+   * `.get()` method may only be called within an event handler.
    *
    * @example
    * ```typescript
@@ -265,11 +267,13 @@ export class Slack {
   }
 
   /**
-   * Creates a credential fetcher function for Slack API authentication to
-   * send messages as a **bot**. Use in conjunction with the Slack client
+   * Creates a credential fetcher for Slack API authentication to send messages
+   * as a **bot**. This can be used in conjunction with the Slack client
    * library.
    *
-   * The function may only be called within an event handler.
+   * This method returns an object with a `.get()` method that provides access
+   * token credentials for authenticating with the Slack API as a **bot**. The
+   * `.get()` method may only be called within an event handler.
    *
    * @example
    * ```typescript
@@ -302,16 +306,22 @@ export class Slack {
   }
 
   /**
-   * Sends a message as a bot to a channel. Works for any channel that a bot can join.
+   * Sends a message as a bot to a channel. Works for any channel that a bot can
+   * join.
    *
    * This method will make the bot join the channel if it is not already.
    *
-   * Requires the following scopes: `chat:write`, `channels:join`, `channels:read`, `groups:read`, `mpim:read`, `im:read`
+   * Requires the following scopes: `chat:write`, `channels:join`,
+   * `channels:read`, `groups:read`, `mpim:read`, `im:read`
    *
-   * @param credentialFetcher The credential fetcher to use to get the access token
-   * @param channel The channel to send the message to. You can provide the channel name directly or an object that has the channel id. You can get channel ids using the `getChannelId` helper function
+   * @param credentialFetcher The credential fetcher to use to get the access
+   * token
+   * @param channel The channel to send the message to. You can provide the
+   * channel name directly or an object that has the channel id. You can get
+   * channel ids using the `getChannelId` helper function
    * @param text The text of the message to send
-   * @param threadTs The parent of the message you want to send. Used when you want to thread messages.
+   * @param threadTs The parent of the message you want to send. Used when you
+   * want to thread messages.
    */
   async sendMessageAsBot(
     credentialFetcher: CredentialFetcher<AccessTokenCredential>,
@@ -349,8 +359,10 @@ export class Slack {
   }
 
   /**
-   * The slack API typically uses channel ids in all of its methods. Users typically know the channel name they want to use but not the id.
-   * This function converts the name to an id. This method can be called repeatedly because the channel id to name mapping is cached.
+   * The Slack API typically uses channel ids in all of its methods. Users
+   * typically know the channel name they want to use but not the id. This
+   * function converts the name to an id. This method can be called repeatedly
+   * because the channel id to name mapping is cached.
    * @param client an authenticated slack client
    * @param channelName name of a channel
    * @returns the id of the channel or undefined if it doesn't exist.
