@@ -77,6 +77,32 @@ export const CredentialFetcherRegistration: z.ZodType<CredentialFetcherRegistrat
     config: CredentialFetcherBackendConfig,
   });
 
+export interface SecretInjectionBackendConfig {
+  /** Description that appears for the secret when configuring a Glue. */
+  description?: string;
+  /** The user-provided name identifying which secret to inject. */
+  name: string;
+}
+
+export const SecretInjectionBackendConfig: z.ZodType<SecretInjectionBackendConfig> = z.object({
+  description: z.string().optional(),
+  name: z.string(),
+});
+
+export interface SecretInjectionRegistration {
+  /**
+   * The unique label identifying the specific secret fetcher within the glue
+   * deployment.
+   */
+  label: string;
+  config: SecretInjectionBackendConfig;
+}
+
+export const SecretInjectionRegistration: z.ZodType<SecretInjectionRegistration> = z.object({
+  label: z.string(),
+  config: SecretInjectionBackendConfig,
+});
+
 /**
  * Container for all registrations in a Glue application. This is the type that
  * the runtime serves on the `/__glue__/getRegistrations` to the backend.
@@ -86,12 +112,14 @@ export interface Registrations {
   triggers: TriggerRegistration[];
   /** All credential fetcher registrations in the application */
   accountInjections: CredentialFetcherRegistration[];
+  /** All secret fetcher registrations in the application */
+  secretInjections: SecretInjectionRegistration[];
 }
 
 export const Registrations: z.ZodType<Registrations> = z.object({
   triggers: z.array(TriggerRegistration),
   accountInjections: z.array(CredentialFetcherRegistration),
-  // TODO secretInjections
+  secretInjections: z.array(SecretInjectionRegistration),
 });
 
 // This is exported so we can implement new *TriggerBackendConfig types in

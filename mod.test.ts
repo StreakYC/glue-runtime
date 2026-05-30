@@ -23,6 +23,13 @@ Deno.test({
     const _testCredentialFetcher = glue.debug.registerRawCredentialFetcher("testAccount", {
       scopes: ["foo"],
     });
+    const _delayedTask = glue.tasks.createDelayedTask((event: { value: number }) => {
+      callCount++;
+      console.log(`delayed task callback: ${event.value}`);
+    });
+    const _secretFetcher = glue.secrets.createSecretFetcher("mySecret", {
+      description: "a test secret",
+    });
 
     await Promise.resolve();
 
@@ -45,6 +52,13 @@ Deno.test({
         triggers: [
           { type: "webhook", label: "0", config: {} },
           { type: "internalTest", label: "1", config: { custom: 123 } },
+          { type: "delayedTask", label: "task-0", config: {} },
+        ],
+        secretInjections: [
+          {
+            label: "3",
+            config: { name: "mySecret", description: "a test secret" },
+          },
         ],
       });
     });
@@ -109,6 +123,37 @@ Deno.test({
         ],
       });
       assertEquals(callCount, 2);
+    });
+
+    await t.step("triggerEvent (delayedTask)", async () => {
+      const response = await fetch(
+        `http://127.0.0.1:${freePort}/__glue__/triggerEvent`,
+        {
+          method: "POST",
+          body: JSON.stringify(
+            {
+              type: "delayedTask",
+              label: "task-0",
+              data: { value: 42 },
+            } satisfies TriggerEvent,
+          ),
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.status}`);
+      }
+      const body = await response.json();
+      assertEquals(body, {
+        logs: [
+          {
+            text: "delayed task callback: 42\n",
+            timestamp: body.logs[0]?.timestamp,
+            type: "stdout",
+          },
+        ],
+      });
+      assertEquals(callCount, 3);
     });
   },
 });

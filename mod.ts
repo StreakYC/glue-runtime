@@ -26,6 +26,10 @@ import { Drive } from "./integrations/drive/runtime.ts";
 export type { Drive };
 import { Sheets } from "./integrations/sheets/runtime.ts";
 export type { Sheets };
+import { Tasks } from "./tasks.ts";
+export type { Tasks };
+import { Secrets } from "./secrets.ts";
+export type { Secrets };
 export type { GoogleCredentialFetcherOptions } from "./integrations/google/runtime.ts";
 export type { GmailMessageEvent, GmailTriggerOptions } from "./integrations/gmail/runtime.ts";
 export type {
@@ -69,6 +73,8 @@ export type {
   ApiKeyCredential,
   CredentialFetcher,
 } from "./runtimeSupport.ts";
+export type { DelayedTask, DelayedTaskSchedule } from "./tasks.ts";
+export type { SecretFetcher, SecretFetcherOptions } from "./secrets.ts";
 export type { CommonCredentialFetcherOptions, CommonTriggerOptions } from "./common.ts";
 
 /**
@@ -158,6 +164,18 @@ class Glue {
    * These APIs are unstable and intended for internal / experimental use.
    */
   readonly debug: Debug = new Debug();
+
+  /**
+   * Tasks utilities to allow work to be scheduled to run later from inside an
+   * event handler.
+   */
+  readonly tasks: Tasks = new Tasks();
+
+  /**
+   * Allow fetching named secret values at runtime. Secrets are an alternative
+   * to environment variables for Glue scripts.
+   */
+  readonly secrets: Secrets = new Secrets();
 }
 
 export type { Glue };
