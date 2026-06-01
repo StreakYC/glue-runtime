@@ -113,13 +113,13 @@ export interface Registrations {
   /** All credential fetcher registrations in the application */
   accountInjections: CredentialFetcherRegistration[];
   /** All secret fetcher registrations in the application */
-  secretInjections: SecretInjectionRegistration[];
+  secretInjections?: SecretInjectionRegistration[];
 }
 
 export const Registrations: z.ZodType<Registrations> = z.object({
   triggers: z.array(TriggerRegistration),
   accountInjections: z.array(CredentialFetcherRegistration),
-  secretInjections: z.array(SecretInjectionRegistration),
+  secretInjections: z.array(SecretInjectionRegistration).optional(),
 });
 
 // This is exported so we can implement new *TriggerBackendConfig types in
