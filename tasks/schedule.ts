@@ -22,22 +22,22 @@ export type DelayedTaskSchedule = {
 };
 
 /**
- * Resolves a {@link DelayedTaskSchedule} into the absolute time at which the
- * task should run. A `delay` is added to the current time, with calendar-aware
- * handling for `month` and `year` units.
+ * Adds a {@link DelayedTaskTimePeriod} to `from`, returning the resulting date.
+ * A reference date is required because `month` and `year` units are
+ * calendar-aware and therefore depend on the starting point.
  */
-export function resolveScheduleToDate(when: DelayedTaskSchedule): Date {
-  if ("at" in when) {
-    return when.at;
-  }
-  const match = /^(\d+(?:\.\d+)?) (second|minute|hour|day|week|month|year)s?$/
-    .exec(when.delay);
+export function addDelayedTaskTimePeriod(
+  period: DelayedTaskTimePeriod,
+  from: Date,
+): Date {
+  const match = /^(\d+(?:\.\d+)?|\.\d+) (second|minute|hour|day|week|month|year)s?$/
+    .exec(period);
   if (!match) {
-    throw new Error(`Invalid delay: ${JSON.stringify(when.delay)}`);
+    throw new Error(`Invalid delay: ${JSON.stringify(period)}`);
   }
   const amount = Number(match[1]);
   const unit = match[2] as DelayedTaskTimePeriodUnit;
-  const result = new Date();
+  const result = new Date(from);
   switch (unit) {
     case "second":
       result.setTime(result.getTime() + amount * 1000);
@@ -55,9 +55,15 @@ export function resolveScheduleToDate(when: DelayedTaskSchedule): Date {
       result.setTime(result.getTime() + amount * 7 * 24 * 60 * 60 * 1000);
       break;
     case "month":
+      if (!Number.isInteger(amount)) {
+        throw new Error(`Invalid delay: ${JSON.stringify(period)}`);
+      }
       result.setMonth(result.getMonth() + amount);
       break;
     case "year":
+      if (!Number.isInteger(amount)) {
+        throw new Error(`Invalid delay: ${JSON.stringify(period)}`);
+      }
       result.setFullYear(result.getFullYear() + amount);
       break;
     default:
@@ -65,4 +71,16 @@ export function resolveScheduleToDate(when: DelayedTaskSchedule): Date {
       throw new Error(`Unsupported time unit: ${unit}`);
   }
   return result;
+}
+
+/**
+ * Resolves a {@link DelayedTaskSchedule} into the absolute time at which the
+ * task should run. A `delay` is added to the current time, with calendar-aware
+ * handling for `month` and `year` units.
+ */
+export function resolveScheduleToDate(when: DelayedTaskSchedule): Date {
+  if ("at" in when) {
+    return when.at;
+  }
+  return addDelayedTaskTimePeriod(when.delay, new Date());
 }
