@@ -1,12 +1,21 @@
 import type { CommonTriggerOptions } from "./common.ts";
-import { type DelayedTask, registerDelayedTask } from "./runtimeSupport.ts";
+import type { DelayedTaskSchedule } from "./tasks/schedule.ts";
+import { registerDelayedTask } from "./runtimeSupport.ts";
 
-export type {
-  DelayedTask,
-  DelayedTaskSchedule,
-  DelayedTaskTimePeriod,
-  DelayedTaskTimePeriodUnit,
-} from "./runtimeSupport.ts";
+/**
+ * A reference to a delayed task that can be scheduled to run later from within
+ * an event handler.
+ */
+export interface DelayedTask<T> {
+  /**
+   * Schedules the task to run with the given event payload. May only be called
+   * from within an event handler.
+   *
+   * @throws If called outside of an event handler or if there is an error
+   * scheduling the task.
+   */
+  schedule(event: T, when: DelayedTaskSchedule): Promise<void>;
+}
 
 /**
  * Utilities for scheduling work to run later.

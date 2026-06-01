@@ -11,6 +11,8 @@ import {
 export type { AccessTokenCredential, ApiKeyCredential };
 import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
 import type { CommonTriggerBackendConfig, CommonTriggerOptions } from "./common.ts";
+import type { DelayedTask } from "./tasks.ts";
+import { type DelayedTaskSchedule, resolveScheduleToDate } from "./tasks/schedule.ts";
 
 patchConsoleGlobal();
 
@@ -193,90 +195,6 @@ export function registerCredentialFetcher<T extends AccessTokenCredential | ApiK
  * `/__glue__/triggerEvent` endpoint with this type.
  */
 const DELAYED_TASK_TRIGGER_TYPE = "delayedTask";
-
-export type DelayedTaskTimePeriodUnit =
-  | "second"
-  | "minute"
-  | "hour"
-  | "day"
-  | "week"
-  | "month"
-  | "year";
-
-export type DelayedTaskTimePeriod = `${number} ${DelayedTaskTimePeriodUnit}${"s" | ""}`;
-
-/**
- * Resolves a {@link DelayedTaskSchedule} into the absolute time at which the
- * task should run. A `delay` is added to the current time, with calendar-aware
- * handling for `month` and `year` units.
- */
-function resolveScheduleToDate(when: DelayedTaskSchedule): Date {
-  if ("at" in when) {
-    return when.at;
-  }
-  const match = /^(\d+(?:\.\d+)?) (second|minute|hour|day|week|month|year)s?$/
-    .exec(when.delay);
-  if (!match) {
-    throw new Error(`Invalid delay: ${JSON.stringify(when.delay)}`);
-  }
-  const amount = Number(match[1]);
-  const unit = match[2] as DelayedTaskTimePeriodUnit;
-  const result = new Date();
-  switch (unit) {
-    case "second":
-      result.setTime(result.getTime() + amount * 1000);
-      break;
-    case "minute":
-      result.setTime(result.getTime() + amount * 60 * 1000);
-      break;
-    case "hour":
-      result.setTime(result.getTime() + amount * 60 * 60 * 1000);
-      break;
-    case "day":
-      result.setTime(result.getTime() + amount * 24 * 60 * 60 * 1000);
-      break;
-    case "week":
-      result.setTime(result.getTime() + amount * 7 * 24 * 60 * 60 * 1000);
-      break;
-    case "month":
-      result.setMonth(result.getMonth() + amount);
-      break;
-    case "year":
-      result.setFullYear(result.getFullYear() + amount);
-      break;
-    default:
-      unit satisfies never;
-      throw new Error(`Unsupported time unit: ${unit}`);
-  }
-  return result;
-}
-
-/**
- * Specifies when a delayed task should run. Exactly one of `delay` or `at` must
- * be provided.
- */
-export type DelayedTaskSchedule = {
-  /** Time period after which to run the task. */
-  delay: DelayedTaskTimePeriod;
-} | {
-  /** Absolute time at which to run the task. */
-  at: Date;
-};
-
-/**
- * A reference to a delayed task that can be scheduled to run later from within
- * an event handler.
- */
-export interface DelayedTask<T> {
-  /**
-   * Schedules the task to run with the given event payload. May only be called
-   * from within an event handler.
-   *
-   * @throws If called outside of an event handler or if there is an error
-   * scheduling the task.
-   */
-  schedule(event: T, when: DelayedTaskSchedule): Promise<void>;
-}
 
 /**
  * @internal
