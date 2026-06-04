@@ -73,7 +73,7 @@ export type {
   ApiKeyCredential,
   CredentialFetcher,
 } from "./runtimeSupport.ts";
-export type { DelayedTask } from "./tasks.ts";
+export type { DelayedTask, DelayedTaskScheduleOptions } from "./tasks.ts";
 export type { DelayedTaskSchedule, DelayedTaskTimePeriod } from "./tasks/schedule.ts";
 export type { SecretFetcher, SecretFetcherOptions } from "./secrets.ts";
 export type { CommonCredentialFetcherOptions, CommonTriggerOptions } from "./common.ts";

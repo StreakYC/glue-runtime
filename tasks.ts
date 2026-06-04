@@ -14,7 +14,22 @@ export interface DelayedTask<T> {
    * @throws If called outside of an event handler or if there is an error
    * scheduling the task.
    */
-  schedule(event: T, when: DelayedTaskSchedule): Promise<void>;
+  schedule(
+    event: T,
+    when: DelayedTaskSchedule,
+    options?: DelayedTaskScheduleOptions,
+  ): Promise<void>;
+}
+
+export interface DelayedTaskScheduleOptions {
+  /**
+   * An optional key that ensures idempotency of the scheduled task. If a task
+   * is scheduled with the same idempotency key more than once within a short
+   * time period, only one of those tasks will actually be scheduled to run.
+   * This prevents accidental double-scheduling of tasks due to retries or
+   * duplicate events.
+   */
+  idempotencyKey?: string;
 }
 
 /**

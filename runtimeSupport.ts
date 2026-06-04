@@ -11,7 +11,7 @@ import {
 export type { AccessTokenCredential, ApiKeyCredential };
 import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
 import type { CommonTriggerBackendConfig, CommonTriggerOptions } from "./common.ts";
-import type { DelayedTask } from "./tasks.ts";
+import type { DelayedTask, DelayedTaskScheduleOptions } from "./tasks.ts";
 import { type DelayedTaskSchedule, resolveScheduleToDate } from "./tasks/schedule.ts";
 
 patchConsoleGlobal();
@@ -214,7 +214,11 @@ export function registerDelayedTask<T>(
   );
 
   return {
-    async schedule(event: T, when: DelayedTaskSchedule): Promise<void> {
+    async schedule(
+      event: T,
+      when: DelayedTaskSchedule,
+      options?: DelayedTaskScheduleOptions,
+    ): Promise<void> {
       if (!glueDeploymentId || !glueAuthHeader) {
         throw new Error(
           "DelayedTask.schedule must not be used before any trigger events have been received.",
@@ -225,6 +229,7 @@ export function registerDelayedTask<T>(
       const body = {
         data: event,
         at: resolveScheduleToDate(when).getTime(),
+        idempotencyKey: options?.idempotencyKey ?? `auto-${crypto.randomUUID()}`,
       };
       const res = await retry(async () => {
         const res = await fetch(
