@@ -215,7 +215,7 @@ export function registerDelayedTask<T>(
 
   return {
     async schedule(
-      event: T,
+      data: T,
       when: DelayedTaskSchedule,
       options?: DelayedTaskScheduleOptions,
     ): Promise<void> {
@@ -227,7 +227,7 @@ export function registerDelayedTask<T>(
       const glueDeploymentId_ = glueDeploymentId;
       const glueAuthHeader_ = glueAuthHeader;
       const body = {
-        data: event,
+        data,
         at: resolveScheduleToDate(when).getTime(),
         idempotencyKey: options?.idempotencyKey ?? `auto-${crypto.randomUUID()}`,
       };

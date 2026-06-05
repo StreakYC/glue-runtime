@@ -8,14 +8,14 @@ import { registerDelayedTask } from "./runtimeSupport.ts";
  */
 export interface DelayedTask<T> {
   /**
-   * Schedules the task to run with the given event payload. May only be called
-   * from within an event handler.
+   * Schedules the task to run with the given data. May only be called from
+   * within an event handler.
    *
    * @throws If called outside of an event handler or if there is an error
    * scheduling the task.
    */
   schedule(
-    event: T,
+    data: T,
     when: DelayedTaskSchedule,
     options?: DelayedTaskScheduleOptions,
   ): Promise<void>;
