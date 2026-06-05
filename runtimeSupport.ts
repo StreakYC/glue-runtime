@@ -226,9 +226,14 @@ export function registerDelayedTask<T>(
       }
       const glueDeploymentId_ = glueDeploymentId;
       const glueAuthHeader_ = glueAuthHeader;
+
+      const at = resolveScheduleToDate(when).getTime();
+      if (at - Date.now() > 30 * 24 * 60 * 60 * 1000) {
+        throw new Error("Delayed tasks can not be scheduled more than 30 days in the future.");
+      }
       const body = {
         data,
-        at: resolveScheduleToDate(when).getTime(),
+        at,
         idempotencyKey: options?.idempotencyKey ?? `auto-${crypto.randomUUID()}`,
       };
       const res = await retry(async () => {

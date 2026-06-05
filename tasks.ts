@@ -11,6 +11,8 @@ export interface DelayedTask<T> {
    * Schedules the task to run with the given data. May only be called from
    * within an event handler.
    *
+   * Tasks can not be scheduled more than 30 days in the future.
+   *
    * @throws If called outside of an event handler or if there is an error
    * scheduling the task.
    */
