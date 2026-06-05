@@ -59,6 +59,12 @@ export class Tasks {
    * The type of the parameter passed to the task through the `.schedule()`
    * method must match the type of the task's callback's first parameter.
    *
+   * If a new version of a Glue script is deployed while a delayed task is
+   * scheduled but has not yet run, then the task will eventually be run with
+   * the new version of the Glue script. Tasks are identified by their
+   * registration order, so new calls to `createDelayedTask` should only be
+   * added after existing calls to `createDelayedTask`.
+   *
    * @example
    * ```typescript
    * const reminderTask = glue.tasks.createDelayedTask(
