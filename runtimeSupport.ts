@@ -5,11 +5,14 @@ import {
   type ApiKeyCredential,
   type CredentialFetcherBackendConfig,
   type Registrations,
+  type SecretInjectionBackendConfig,
   TriggerEvent,
 } from "./backendTypes.ts";
 export type { AccessTokenCredential, ApiKeyCredential };
 import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
 import type { CommonTriggerBackendConfig, CommonTriggerOptions } from "./common.ts";
+import type { DelayedTask, DelayedTaskScheduleOptions } from "./tasks.ts";
+import { type DelayedTaskSchedule, resolveScheduleToDate } from "./tasks/schedule.ts";
 
 patchConsoleGlobal();
 
@@ -27,13 +30,21 @@ interface RegisteredCredentialFetcher {
   config: CredentialFetcherBackendConfig;
 }
 
+interface RegisteredSecretFetcher {
+  config: SecretInjectionBackendConfig;
+}
+
+/** RegisteredEvents stored by type and label */
 const eventListenersByType = new Map<string, Map<string, RegisteredEvent>>();
+/** RegisteredCredentialFetchers stored by type and label */
 const credentialFetchersByType = new Map<
   string,
   Map<string, RegisteredCredentialFetcher>
 >();
+const secretFetchersByLabel = new Map<string, RegisteredSecretFetcher>();
 
 let nextAutomaticLabel = 0;
+let nextAutomaticDelayedTaskLabel = 0;
 
 /**
  * @internal
@@ -55,7 +66,7 @@ export function registerEventListener<T>(
   callback: (event: T) => void,
   commonTriggerOptions: CommonTriggerOptions | undefined,
   backendConfig: CommonTriggerBackendConfig,
-) {
+): string {
   scheduleInit();
 
   let specificEventListeners = eventListenersByType.get(eventName);
@@ -64,7 +75,11 @@ export function registerEventListener<T>(
     eventListenersByType.set(eventName, specificEventListeners);
   }
 
-  const resolvedLabel = String(nextAutomaticLabel++);
+  // Delayed tasks use their own label counter with a `task-` prefix so their
+  // labels don't collide with normal trigger labels.
+  const resolvedLabel = eventName === DELAYED_TASK_TRIGGER_TYPE
+    ? `task-${nextAutomaticDelayedTaskLabel++}`
+    : String(nextAutomaticLabel++);
   if (specificEventListeners.has(resolvedLabel)) {
     throw new Error(
       `Event listener with label ${JSON.stringify(resolvedLabel)} already registered`,
@@ -86,6 +101,8 @@ export function registerEventListener<T>(
     fn: effectiveCallback,
     config: fullBackendConfig,
   });
+
+  return resolvedLabel;
 }
 
 /**
@@ -172,6 +189,153 @@ export function registerCredentialFetcher<T extends AccessTokenCredential | ApiK
   };
 }
 
+/**
+ * The reserved trigger type string used for delayed tasks. Delayed tasks reuse
+ * the normal trigger machinery; the backend invokes them via the same
+ * `/__glue__/triggerEvent` endpoint with this type.
+ */
+const DELAYED_TASK_TRIGGER_TYPE = "delayedTask";
+
+/**
+ * @internal
+ * Registers a delayed task. The task is registered as a normal trigger of type
+ * {@link DELAYED_TASK_TRIGGER_TYPE} so it is dispatched via the existing
+ * `/__glue__/triggerEvent` path.
+ */
+export function registerDelayedTask<T>(
+  callback: (event: T) => void | Promise<void>,
+  options?: CommonTriggerOptions,
+): DelayedTask<T> {
+  const label = registerEventListener<T>(
+    DELAYED_TASK_TRIGGER_TYPE,
+    callback as (event: T) => void,
+    options,
+    {},
+  );
+
+  return {
+    async schedule(
+      data: T,
+      when: DelayedTaskSchedule,
+      options?: DelayedTaskScheduleOptions,
+    ): Promise<void> {
+      if (!glueDeploymentId || !glueAuthHeader) {
+        throw new Error(
+          "DelayedTask.schedule must not be used before any trigger events have been received.",
+        );
+      }
+      const glueDeploymentId_ = glueDeploymentId;
+      const glueAuthHeader_ = glueAuthHeader;
+
+      const at = resolveScheduleToDate(when).getTime();
+      if (at - Date.now() > 30 * 24 * 60 * 60 * 1000) {
+        throw new Error("Delayed tasks can not be scheduled more than 30 days in the future.");
+      }
+      const body = {
+        data,
+        at,
+        idempotencyKey: options?.idempotencyKey ?? `auto-${crypto.randomUUID()}`,
+      };
+      const res = await retry(async () => {
+        const res = await fetch(
+          `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${
+            encodeURIComponent(glueDeploymentId_)
+          }/delayedTasks/${encodeURIComponent(label)}/schedule`,
+          {
+            method: "POST",
+            headers: {
+              "Authorization": glueAuthHeader_,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          },
+        );
+        if (res.status >= 500 && res.status < 600) {
+          throw new Error(
+            `Failed to schedule delayed task: ${res.status} ${res.statusText}`,
+          );
+        }
+        return res;
+      });
+      if (!res.ok) {
+        throw new Error(
+          `Failed to schedule delayed task: ${res.status} ${res.statusText}`,
+        );
+      }
+    },
+  };
+}
+
+/**
+ * Used to fetch a named secret value at runtime.
+ */
+export interface SecretFetcher {
+  /**
+   * Fetches the secret value. This must only be called within an event
+   * handler.
+   *
+   * @throws If called outside of an event handler, or if there is an error
+   * fetching the secret.
+   */
+  get(): Promise<string>;
+}
+
+/**
+ * @internal
+ * Registers a secret fetcher. This function is used internally by
+ * `glue.secrets.createSecretFetcher`.
+ */
+export function registerSecretFetcher(
+  config: SecretInjectionBackendConfig,
+): SecretFetcher {
+  scheduleInit();
+
+  const resolvedLabel = String(nextAutomaticLabel++);
+  if (secretFetchersByLabel.has(resolvedLabel)) {
+    throw new Error(
+      `Secret fetcher with label ${JSON.stringify(resolvedLabel)} already registered`,
+    );
+  }
+  secretFetchersByLabel.set(resolvedLabel, { config });
+
+  return {
+    async get(): Promise<string> {
+      if (!glueDeploymentId || !glueAuthHeader) {
+        throw new Error(
+          "Secret fetcher must not be used before any trigger events have been received.",
+        );
+      }
+      const glueDeploymentId_ = glueDeploymentId;
+      const glueAuthHeader_ = glueAuthHeader;
+      const res = await retry(async () => {
+        const res = await fetch(
+          `${Deno.env.get("GLUE_API_SERVER")}/glueInternal/deployments/${
+            encodeURIComponent(glueDeploymentId_)
+          }/secretInjections/${encodeURIComponent(resolvedLabel)}`,
+          {
+            headers: {
+              "Authorization": glueAuthHeader_,
+            },
+          },
+        );
+        if (res.status >= 500 && res.status < 600) {
+          throw new Error(
+            `Failed to fetch secret: ${res.status} ${res.statusText}`,
+          );
+        }
+        return res;
+      });
+      if (!res.ok) {
+        throw new Error(
+          `Failed to fetch secret: ${res.status} ${res.statusText}`,
+        );
+      }
+      const body = await res.json() as { value: string };
+      return body.value;
+    },
+  };
+}
+
 function getRegistrations(): Registrations {
   return {
     triggers: Array.from(
@@ -193,6 +357,12 @@ function getRegistrations(): Registrations {
             config,
           }))
         ),
+    ),
+    secretInjections: Array.from(
+      secretFetchersByLabel.entries().map(([label, { config }]) => ({
+        label,
+        config,
+      })),
     ),
   };
 }

@@ -266,12 +266,12 @@ export class Github {
   }
 
   /**
-   * Creates a credential fetcher function for Github API authentication. Use in
-   * conjunction with the Github client library.
+   * Creates a credential fetcher for Github API authentication. This can be
+   * used with the Github client library.
    *
-   * This method returns a function that, when called, provides access token
-   * credentials for authenticating with the Github API. The function
-   * may only be called within an event handler.
+   * This method returns an object with a `.get()` method that provides access
+   * token credentials for authenticating with the Github API. The `.get()`
+   * method may only be called within an event handler.
    *
    * @example
    * ```typescript
@@ -279,7 +279,7 @@ export class Github {
    * glue.webhook.onGet(async (_event) => {
    *   const cred = await fetcher.get();
    *   const client = new Octokit({ auth: cred.accessToken });
-   *   const user = await octokit.rest.users.getAuthenticated();
+   *   const user = await client.rest.users.getAuthenticated();
    *   console.log("User:", user.data);
    * });
    * ```

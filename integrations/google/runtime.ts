@@ -17,11 +17,11 @@ export interface GoogleCredentialFetcherOptions extends CommonCredentialFetcherO
 
 export class Google {
   /**
-   * Creates a credential fetcher function for Google API authentication.
+   * Creates a credential fetcher for Google API authentication.
    *
-   * This method returns a function that, when called, provides access token
-   * credentials for authenticating with Google APIs. The function may only be
-   * called within an event handler.
+   * This method returns an object with a `.get()` method that provides access
+   * token credentials for authenticating with Google APIs. The `.get()` method
+   * may only be called within an event handler.
    *
    * @example
    * ```typescript
