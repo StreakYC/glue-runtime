@@ -28,7 +28,9 @@ export class Google {
    * import { glue } from "jsr:@streak-glue/runtime";
    *
    * // Create a credential fetcher
-   * const googleCredFetcher = glue.google.createCredentialFetcher();
+   * const googleCredFetcher = glue.google.createCredentialFetcher({
+   *   scopes: ["https://www.googleapis.com/auth/drive.readonly"]
+   * });
    *
    * // Use the fetcher to get credentials when needed
    * glue.webhook.onGet(async (_event) => {
