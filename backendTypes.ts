@@ -77,6 +77,9 @@ export const CredentialFetcherRegistration: z.ZodType<CredentialFetcherRegistrat
     config: CredentialFetcherBackendConfig,
   });
 
+export const SECRET_NAME_MAX_LENGTH = 255;
+export const SECRET_VALUE_MAX_LENGTH = 64 * 1024;
+
 export interface SecretInjectionBackendConfig {
   /** Description that appears for the secret when configuring a Glue. */
   description?: string;
@@ -84,9 +87,11 @@ export interface SecretInjectionBackendConfig {
   name: string;
 }
 
+export const SecretName: z.ZodString = z.string().min(1).max(SECRET_NAME_MAX_LENGTH);
+
 export const SecretInjectionBackendConfig: z.ZodType<SecretInjectionBackendConfig> = z.object({
   description: z.string().optional(),
-  name: z.string(),
+  name: SecretName,
 });
 
 export interface SecretInjectionRegistration {
