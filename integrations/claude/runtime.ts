@@ -17,7 +17,7 @@ export interface ClaudeCredentialFetcherOptions extends CommonCredentialFetcherO
  * ```typescript
  * import Anthropic from "npm:@anthropic-ai/sdk@0.68";
  *
- * const fetcher = glue.claude.createCredentialFetcher({ apiKeyName: "primary-claude" });
+ * const fetcher = glue.claude.createCredentialFetcher({ accountName: "primary-claude" });
  *
  * glue.webhook.onPost(async () => {
  *   const cred = await fetcher.get();
