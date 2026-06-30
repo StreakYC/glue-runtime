@@ -20,6 +20,8 @@ import { Resend } from "./integrations/resend/runtime.ts";
 export type { Resend };
 import { OpenAI } from "./integrations/openai/runtime.ts";
 export type { OpenAI };
+import { Claude } from "./integrations/claude/runtime.ts";
+export type { Claude };
 import { Debug } from "./integrations/debug/runtime.ts";
 export type { Debug };
 import { Drive } from "./integrations/drive/runtime.ts";
@@ -59,6 +61,7 @@ export type {
 } from "./integrations/slack/runtime.ts";
 export type { ResendCredentialFetcherOptions } from "./integrations/resend/runtime.ts";
 export type { OpenAICredentialFetcherOptions } from "./integrations/openai/runtime.ts";
+export type { ClaudeCredentialFetcherOptions } from "./integrations/claude/runtime.ts";
 export type {
   AccessTokenCredential,
   ApiKeyCredential,
@@ -147,6 +150,12 @@ class Glue {
    * Use with the OpenAI SDK to call OpenAI APIs from trigger handlers.
    */
   readonly openai: OpenAI = new OpenAI();
+
+  /**
+   * Claude service for fetching API credentials.
+   * Use with the Anthropic SDK to call Claude APIs from trigger handlers.
+   */
+  readonly claude: Claude = new Claude();
 
   /**
    * Debug utilities exposing low-level registration helpers.
