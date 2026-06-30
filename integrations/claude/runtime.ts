@@ -7,7 +7,7 @@ import {
 
 export interface ClaudeCredentialFetcherOptions extends CommonCredentialFetcherOptions {
   /** Optional API key name to select the appropriate Claude account. */
-  apiKeyName?: string;
+  accountName?: string;
 }
 
 /**
@@ -39,7 +39,7 @@ export class Claude {
   ): CredentialFetcher<ApiKeyCredential> {
     return registerCredentialFetcher<ApiKeyCredential>("claude", {
       description: options?.description,
-      selector: options?.apiKeyName,
+      selector: options?.accountName,
     });
   }
 }
