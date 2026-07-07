@@ -6,8 +6,6 @@ import {
 } from "../../runtimeSupport.ts";
 
 export interface ResendCredentialFetcherOptions extends CommonCredentialFetcherOptions {
-  /** Optional API key name to select appropriate api key. */
-  apiKeyName?: string;
 }
 
 /**
@@ -16,7 +14,7 @@ export interface ResendCredentialFetcherOptions extends CommonCredentialFetcherO
  * @example
  * ```typescript
  * // Get a credential fetcher for Resend
- * const fetcher = glue.resend.createCredentialFetcher({apiKeyName: "api-key-name"});
+ * const fetcher = glue.resend.createCredentialFetcher();
  *
  * // Send an email
  * glue.webhook.onGet(async (_event) => {
@@ -37,9 +35,6 @@ export class Resend {
   createCredentialFetcher(
     options?: ResendCredentialFetcherOptions,
   ): CredentialFetcher<ApiKeyCredential> {
-    return registerCredentialFetcher<ApiKeyCredential>("resend", {
-      description: options?.description,
-      selector: options?.apiKeyName,
-    });
+    return registerCredentialFetcher<ApiKeyCredential>("resend", options ?? {});
   }
 }

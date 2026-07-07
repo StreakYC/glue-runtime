@@ -1,5 +1,8 @@
 import z from "zod";
-import { CommonTriggerBackendConfig, type CommonTriggerOptions } from "../../common.ts";
+import {
+  CommonTriggerWithAccountBackendConfig,
+  type CommonTriggerWithAccountOptions,
+} from "../../common.ts";
 import { registerEventListener } from "../../runtimeSupport.ts";
 import type { drive_v3 } from "@googleapis/drive";
 
@@ -13,26 +16,13 @@ export interface DriveSingleFileChangeEvent {
  * Options for registering a trigger to listen to changes in Google Drive.
  */
 export interface DriveChangesTriggerOptions
-  extends CommonTriggerOptions, Omit<DriveChangesTriggerBackendConfig, "type"> {
-  /**
-   * Optional email address to select appropriate account.
-   *
-   * @example "user@gmail.com"
-   */
-  accountEmailAddress?: string;
-}
+  extends CommonTriggerWithAccountOptions, Omit<DriveChangesTriggerBackendConfig, "type"> {}
 
 /**
  * Options for registering a trigger to listen to changes in a specific Google
  * Drive file.
  */
-export interface DriveSingleFileTriggerOptions extends CommonTriggerOptions {
-  /**
-   * Optional email address to select appropriate account.
-   *
-   * @example "user@gmail.com"
-   */
-  accountEmailAddress?: string;
+export interface DriveSingleFileTriggerOptions extends CommonTriggerWithAccountOptions {
   fileId: string;
 }
 
@@ -84,14 +74,12 @@ const DriveSingleFileTriggerBackendConfig: z.ZodType<DriveSingleFileTriggerBacke
     fileId: z.string(),
   });
 
-export interface DriveTriggerBackendConfig extends CommonTriggerBackendConfig {
-  accountEmailAddress?: string;
+export interface DriveTriggerBackendConfig extends CommonTriggerWithAccountBackendConfig {
   watchConfig: DriveChangesTriggerBackendConfig | DriveSingleFileTriggerBackendConfig;
 }
 export const DriveTriggerBackendConfig: z.ZodType<DriveTriggerBackendConfig> =
-  CommonTriggerBackendConfig
+  CommonTriggerWithAccountBackendConfig
     .extend({
-      accountEmailAddress: z.string().optional(),
       watchConfig: z.union([
         DriveChangesTriggerBackendConfig,
         DriveSingleFileTriggerBackendConfig,
@@ -110,7 +98,6 @@ export class Drive {
     options?: DriveChangesTriggerOptions,
   ): void {
     const backendConfig: DriveTriggerBackendConfig = {
-      accountEmailAddress: options?.accountEmailAddress,
       watchConfig: {
         type: "changes",
         driveId: options?.driveId,
@@ -131,7 +118,6 @@ export class Drive {
     options: DriveSingleFileTriggerOptions,
   ): void {
     const backendConfig: DriveTriggerBackendConfig = {
-      accountEmailAddress: options.accountEmailAddress,
       watchConfig: {
         type: "file",
         fileId: options.fileId,

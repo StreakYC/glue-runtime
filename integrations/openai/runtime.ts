@@ -6,8 +6,6 @@ import {
 } from "../../runtimeSupport.ts";
 
 export interface OpenAICredentialFetcherOptions extends CommonCredentialFetcherOptions {
-  /** Optional API key name to select the appropriate OpenAI account. */
-  apiKeyName?: string;
 }
 
 /**
@@ -17,7 +15,7 @@ export interface OpenAICredentialFetcherOptions extends CommonCredentialFetcherO
  * ```typescript
  * import OpenAIClient from "jsr:@openai/openai";
  *
- * const fetcher = glue.openai.createCredentialFetcher({ apiKeyName: "primary-openai" });
+ * const fetcher = glue.openai.createCredentialFetcher();
  *
  * glue.webhook.onPost(async () => {
  *   const cred = await fetcher.get();
@@ -36,9 +34,6 @@ export class OpenAI {
   createCredentialFetcher(
     options?: OpenAICredentialFetcherOptions,
   ): CredentialFetcher<ApiKeyCredential> {
-    return registerCredentialFetcher<ApiKeyCredential>("openai", {
-      description: options?.description,
-      selector: options?.apiKeyName,
-    });
+    return registerCredentialFetcher<ApiKeyCredential>("openai", options ?? {});
   }
 }

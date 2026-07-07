@@ -1,8 +1,8 @@
 import z from "zod";
 import {
   type CommonCredentialFetcherOptions,
-  CommonTriggerBackendConfig,
-  type CommonTriggerOptions,
+  CommonTriggerWithAccountBackendConfig,
+  type CommonTriggerWithAccountOptions,
 } from "../../common.ts";
 import {
   type ApiKeyCredential,
@@ -14,30 +14,21 @@ import {
 /**
  * Options specific to Streak event triggers.
  */
-export interface StreakTriggerOptions extends CommonTriggerOptions {
-  /**
-   * Optional email address to select appropriate account.
-   */
-  emailAddress?: string;
+export interface StreakTriggerOptions extends CommonTriggerWithAccountOptions {
 }
 
-export interface StreakTriggerBackendConfig extends CommonTriggerBackendConfig {
+export interface StreakTriggerBackendConfig extends CommonTriggerWithAccountBackendConfig {
   /** The Streak pipeline key to monitor for events */
   pipelineKey: string;
   /** The specific box event type to listen for */
   event: BoxEventType;
-  /** Optional email address to select appropriate Streak account. */
-  emailAddress?: string;
 }
-export const StreakTriggerBackendConfig = CommonTriggerBackendConfig.extend({
+export const StreakTriggerBackendConfig = CommonTriggerWithAccountBackendConfig.extend({
   pipelineKey: z.string(),
   event: z.string(),
-  emailAddress: z.string().optional(),
 }) as z.ZodType<StreakTriggerBackendConfig>; // doing a cast only because we have a looser type for event
 
 export interface StreakCredentialFetcherOptions extends CommonCredentialFetcherOptions {
-  /** Optional email address to select appropriate account. */
-  emailAddress?: string;
 }
 
 /**
@@ -107,7 +98,6 @@ export class Streak {
     const config: StreakTriggerBackendConfig = {
       pipelineKey,
       event,
-      emailAddress: options?.emailAddress,
     };
     registerEventListener("streak", fn, options, config);
   }
@@ -173,10 +163,7 @@ export class Streak {
   createCredentialFetcher(
     options?: StreakCredentialFetcherOptions,
   ): CredentialFetcher<ApiKeyCredential> {
-    return registerCredentialFetcher<ApiKeyCredential>("streak", {
-      description: options?.description,
-      selector: options?.emailAddress,
-    });
+    return registerCredentialFetcher<ApiKeyCredential>("streak", options ?? {});
   }
 }
 

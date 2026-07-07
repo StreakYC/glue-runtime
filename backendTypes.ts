@@ -51,13 +51,11 @@ export const TriggerRegistration: z.ZodType<TriggerRegistration> = z.object({
 
 export interface CredentialFetcherBackendConfig extends CommonCredentialFetcherOptions {
   scopes?: string[];
-  selector?: string;
 }
 
 export const CredentialFetcherBackendConfig: z.ZodType<CredentialFetcherBackendConfig> =
   CommonCredentialFetcherOptions.extend({
     scopes: z.array(z.string()).optional(),
-    selector: z.string().optional(),
   });
 
 export interface CredentialFetcherRegistration {

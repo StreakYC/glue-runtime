@@ -8,8 +8,8 @@ import {
 } from "../../runtimeSupport.ts";
 import {
   type CommonCredentialFetcherOptions,
-  CommonTriggerBackendConfig,
-  type CommonTriggerOptions,
+  CommonTriggerWithAccountBackendConfig,
+  type CommonTriggerWithAccountOptions,
 } from "../../common.ts";
 
 /**
@@ -22,22 +22,15 @@ import {
  */
 export type StripeEventType = StripeLib.Event.Type;
 
-export interface StripeTriggerOptions extends CommonTriggerOptions {
-  /**
-   * Optional label to select appropriate account.
-   */
-  accountLabel?: string;
+export interface StripeTriggerOptions extends CommonTriggerWithAccountOptions {
 }
 
-export interface StripeTriggerBackendConfig extends CommonTriggerBackendConfig {
+export interface StripeTriggerBackendConfig extends CommonTriggerWithAccountBackendConfig {
   /** Array of Stripe event types to listen for */
   events: StripeEventType[];
-  /** Optional account label for the account */
-  accountLabel?: string;
 }
-export const StripeTriggerBackendConfig = CommonTriggerBackendConfig.extend({
+export const StripeTriggerBackendConfig = CommonTriggerWithAccountBackendConfig.extend({
   events: z.array(z.string()),
-  accountLabel: z.string().optional(),
 }) as z.ZodType<StripeTriggerBackendConfig>; // doing a cast only because we have a looser type for events
 
 /**
@@ -123,7 +116,7 @@ export class Stripe {
    *   "customer.deleted"
    * ], (event) => {
    *   syncCustomerToDatabase(event);
-   * }, { accountLabel: "main-account" });
+   * });
    * ```
    *
    * @see https://stripe.com/docs/api/events/types - Full list of event types
@@ -135,7 +128,6 @@ export class Stripe {
   ): void {
     const config: StripeTriggerBackendConfig = {
       events,
-      accountLabel: options?.accountLabel,
     };
     registerEventListener("stripe", fn, options, config);
   }
@@ -208,14 +200,8 @@ export class Stripe {
   createCredentialFetcher(
     options?: StripeCredentialFetcherOptions,
   ): CredentialFetcher<ApiKeyCredential> {
-    return registerCredentialFetcher<ApiKeyCredential>("stripe", {
-      description: options?.description,
-      selector: options?.apiKeyName,
-    });
+    return registerCredentialFetcher<ApiKeyCredential>("stripe", options ?? {});
   }
 }
 
-export interface StripeCredentialFetcherOptions extends CommonCredentialFetcherOptions {
-  /** Optional API key name to select appropriate api key. */
-  apiKeyName?: string;
-}
+export interface StripeCredentialFetcherOptions extends CommonCredentialFetcherOptions {}

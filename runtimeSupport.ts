@@ -10,7 +10,13 @@ import {
 } from "./backendTypes.ts";
 export type { AccessTokenCredential, ApiKeyCredential };
 import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
-import type { CommonTriggerBackendConfig, CommonTriggerOptions } from "./common.ts";
+import type {
+  CommonTriggerBackendConfig,
+  CommonTriggerOptions,
+  CommonTriggerWithAccountBackendConfig,
+  // deno-lint-ignore no-unused-vars
+  CommonTriggerWithAccountOptions,
+} from "./common.ts";
 import type { DelayedTask, DelayedTaskScheduleOptions } from "./tasks.ts";
 import { type DelayedTaskSchedule, resolveScheduleToDate } from "./tasks/schedule.ts";
 
@@ -58,8 +64,9 @@ let nextAutomaticDelayedTaskLabel = 0;
  * should be of a type that extends {@link CommonTriggerBackendConfig} specific
  * to the event source. The caller should ensure this object only includes the
  * properties that are expected by glue-backend. Properties that are part of
- * {@link CommonTriggerOptions} do not need to be included here, as they will be
- * taken from the `commonTriggerOptions` parameter automatically.
+ * {@link CommonTriggerOptions} or {@link CommonTriggerWithAccountOptions} do
+ * not need to be included here, as they will be taken from the
+ * `commonTriggerOptions` parameter automatically.
  */
 export function registerEventListener<T>(
   eventName: string,
@@ -90,6 +97,14 @@ export function registerEventListener<T>(
     ...backendConfig,
     description: commonTriggerOptions?.description,
   };
+  if (
+    commonTriggerOptions && "accountSelector" in commonTriggerOptions &&
+    commonTriggerOptions.accountSelector != null &&
+    typeof commonTriggerOptions.accountSelector === "object"
+  ) {
+    (fullBackendConfig as CommonTriggerWithAccountBackendConfig).accountSelector =
+      commonTriggerOptions.accountSelector as Record<string, string>;
+  }
 
   const typedCallback = callback as RegisteredEvent["fn"];
 

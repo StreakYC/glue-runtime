@@ -6,12 +6,6 @@ import {
 } from "../../runtimeSupport.ts";
 
 export interface GoogleCredentialFetcherOptions extends CommonCredentialFetcherOptions {
-  /**
-   * Optional email address to select appropriate account.
-   *
-   * @example "user@gmail.com"
-   */
-  accountEmailAddress?: string;
   scopes: string[];
 }
 
@@ -43,10 +37,6 @@ export class Google {
   createCredentialFetcher(
     options: GoogleCredentialFetcherOptions,
   ): CredentialFetcher<AccessTokenCredential> {
-    return registerCredentialFetcher<AccessTokenCredential>("google", {
-      description: options.description,
-      selector: options.accountEmailAddress,
-      scopes: options.scopes,
-    });
+    return registerCredentialFetcher<AccessTokenCredential>("google", options);
   }
 }

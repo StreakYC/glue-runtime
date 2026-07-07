@@ -79,7 +79,11 @@ export type {
 export type { DelayedTask, DelayedTaskScheduleOptions } from "./tasks.ts";
 export type { DelayedTaskSchedule, DelayedTaskTimePeriod } from "./tasks/schedule.ts";
 export type { SecretFetcher, SecretFetcherOptions } from "./secrets.ts";
-export type { CommonCredentialFetcherOptions, CommonTriggerOptions } from "./common.ts";
+export type {
+  CommonCredentialFetcherOptions,
+  CommonTriggerOptions,
+  CommonTriggerWithAccountOptions,
+} from "./common.ts";
 
 /**
  * The main Glue runtime class that provides access to all event sources.

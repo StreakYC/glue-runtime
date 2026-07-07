@@ -1,8 +1,8 @@
 import z from "zod";
 import {
   type CommonCredentialFetcherOptions,
-  CommonTriggerBackendConfig,
-  type CommonTriggerOptions,
+  CommonTriggerWithAccountBackendConfig,
+  type CommonTriggerWithAccountOptions,
 } from "../../common.ts";
 import {
   type AccessTokenCredential,
@@ -56,32 +56,25 @@ export const SlackEventWebhook: z.ZodType<SlackEventWebhook<SlackEvent>> = z.obj
   })),
 });
 
-export interface SlackTriggerOptions extends CommonTriggerOptions {
-  /** Optional team ID or workspace to listen for events on */
-  teamId?: string;
-
+export interface SlackTriggerOptions extends CommonTriggerWithAccountOptions {
   /** Optional channel ID to filter events on. If provided, only events from this channel will be listened to.  */
   channelId?: string;
 }
 
-export interface SlackTriggerBackendConfig extends CommonTriggerBackendConfig {
-  /** The team ID or workspace to listen for events on */
-  teamId?: string;
+export interface SlackTriggerBackendConfig extends CommonTriggerWithAccountBackendConfig {
   /** Array of user events to listen for */
   events: SlackEventType[];
   /** Optional channel IDs to filter events */
   channels?: string[];
 }
 export const SlackTriggerBackendConfig: z.ZodType<SlackTriggerBackendConfig> =
-  CommonTriggerBackendConfig.extend({
-    teamId: z.string().optional(),
+  CommonTriggerWithAccountBackendConfig.extend({
     events: z.array(z.custom<SlackEventType>()),
     channels: z.array(z.string()).optional(),
   });
 
 export interface SlackCredentialFetcherOptions extends CommonCredentialFetcherOptions {
   scopes: string[];
-  teamId?: string;
 }
 
 /**
@@ -155,7 +148,6 @@ export class Slack {
   ): void {
     const config: SlackTriggerBackendConfig = {
       events: events,
-      teamId: options?.teamId,
       channels: options?.channelId ? [options.channelId] : undefined,
     };
     registerEventListener("slack", fn, options, config);
@@ -197,11 +189,7 @@ export class Slack {
   createUserCredentialFetcher(
     options: SlackCredentialFetcherOptions,
   ): CredentialFetcher<AccessTokenCredential> {
-    return registerCredentialFetcher<AccessTokenCredential>("slack", {
-      description: options.description,
-      selector: options.teamId,
-      scopes: options.scopes,
-    });
+    return registerCredentialFetcher<AccessTokenCredential>("slack", options);
   }
 
   /**
@@ -228,11 +216,7 @@ export class Slack {
   createBotCredentialFetcher(
     options: SlackCredentialFetcherOptions,
   ): CredentialFetcher<AccessTokenCredential> {
-    return registerCredentialFetcher<AccessTokenCredential>("slackBot", {
-      description: options.description,
-      selector: options.teamId,
-      scopes: options.scopes,
-    });
+    return registerCredentialFetcher<AccessTokenCredential>("slackBot", options);
   }
 
   /**

@@ -2,8 +2,8 @@ import z from "zod";
 import type { Intercom as IntercomTypes } from "intercom-client";
 import {
   type CommonCredentialFetcherOptions,
-  CommonTriggerBackendConfig,
-  type CommonTriggerOptions,
+  CommonTriggerWithAccountBackendConfig,
+  type CommonTriggerWithAccountOptions,
 } from "../../common.ts";
 import {
   type AccessTokenCredential,
@@ -12,11 +12,7 @@ import {
   registerEventListener,
 } from "../../runtimeSupport.ts";
 
-export interface IntercomTriggerOptions extends CommonTriggerOptions {
-  /**
-   * Optional Intercom workspace ID to select the appropriate account.
-   */
-  workspaceId?: string;
+export interface IntercomTriggerOptions extends CommonTriggerWithAccountOptions {
 }
 
 export interface IntercomConversationPartTag {
@@ -88,27 +84,20 @@ export type IntercomEvent<TTopic extends string> = {
   };
 }[TTopic];
 
-export interface IntercomTriggerBackendConfig extends CommonTriggerBackendConfig {
+export interface IntercomTriggerBackendConfig extends CommonTriggerWithAccountBackendConfig {
   /** Array of Intercom event topics to listen for */
   events: string[];
-  /** Optional workspace ID filter */
-  workspaceId?: string;
 }
 
 export const IntercomTriggerBackendConfig: z.ZodType<IntercomTriggerBackendConfig> =
-  CommonTriggerBackendConfig.extend({
+  CommonTriggerWithAccountBackendConfig.extend({
     events: z.array(z.string()),
-    workspaceId: z.string().optional(),
   });
 
 /**
  * Options for Intercom credential fetchers.
  */
 export interface IntercomCredentialFetcherOptions extends CommonCredentialFetcherOptions {
-  /**
-   * Optional Intercom workspace ID to select appropriate account.
-   */
-  workspaceId?: string;
 }
 
 /**
@@ -186,7 +175,6 @@ export class Intercom {
   ): void {
     const config: IntercomTriggerBackendConfig = {
       events,
-      workspaceId: options?.workspaceId,
     };
     registerEventListener("intercom", fn, options, config);
   }
@@ -228,9 +216,6 @@ export class Intercom {
   createCredentialFetcher(
     options?: IntercomCredentialFetcherOptions,
   ): CredentialFetcher<AccessTokenCredential> {
-    return registerCredentialFetcher<AccessTokenCredential>("intercom", {
-      description: options?.description,
-      selector: options?.workspaceId,
-    });
+    return registerCredentialFetcher<AccessTokenCredential>("intercom", options ?? {});
   }
 }

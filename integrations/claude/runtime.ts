@@ -5,10 +5,7 @@ import {
   registerCredentialFetcher,
 } from "../../runtimeSupport.ts";
 
-export interface ClaudeCredentialFetcherOptions extends CommonCredentialFetcherOptions {
-  /** Optional API key name to select the appropriate Claude account. */
-  accountName?: string;
-}
+export interface ClaudeCredentialFetcherOptions extends CommonCredentialFetcherOptions {}
 
 /**
  * Claude service for fetching API key credentials.
@@ -37,9 +34,6 @@ export class Claude {
   createCredentialFetcher(
     options?: ClaudeCredentialFetcherOptions,
   ): CredentialFetcher<ApiKeyCredential> {
-    return registerCredentialFetcher<ApiKeyCredential>("claude", {
-      description: options?.description,
-      selector: options?.accountName,
-    });
+    return registerCredentialFetcher<ApiKeyCredential>("claude", options ?? {});
   }
 }
