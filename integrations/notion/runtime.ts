@@ -1,7 +1,8 @@
-import type {
-  CommonCredentialFetcherOptions,
+import z from "zod";
+import {
+  type CommonCredentialFetcherOptions,
   CommonTriggerBackendConfig,
-  CommonTriggerOptions,
+  type CommonTriggerOptions,
 } from "../../common.ts";
 import {
   type AccessTokenCredential,
@@ -93,6 +94,11 @@ export interface NotionTriggerBackendConfig extends CommonTriggerBackendConfig {
   events: NotionEventType[];
   workspaceId?: string;
 }
+export const NotionTriggerBackendConfig: z.ZodType<NotionTriggerBackendConfig> =
+  CommonTriggerBackendConfig.extend({
+    events: z.array(z.custom<NotionEventType>((type) => typeof type === "string")),
+    workspaceId: z.string().optional(),
+  });
 
 export interface NotionCredentialFetcherOptions extends CommonCredentialFetcherOptions {
   /** Optional Notion workspace ID to select a connected workspace. */

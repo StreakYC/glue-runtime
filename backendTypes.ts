@@ -151,7 +151,7 @@ export { SheetsTriggerBackendConfig } from "./integrations/sheets/runtime.ts";
 export { IntercomTriggerBackendConfig } from "./integrations/intercom/runtime.ts";
 export { SlackEventWebhook, SlackTriggerBackendConfig } from "./integrations/slack/runtime.ts";
 export {
-  type NotionTriggerBackendConfig,
+  NotionTriggerBackendConfig,
   type NotionWebhookPayload,
 } from "./integrations/notion/runtime.ts";
 export { StreakTriggerBackendConfig } from "./integrations/streak/runtime.ts";
