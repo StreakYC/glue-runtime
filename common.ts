@@ -38,7 +38,7 @@ export interface CommonTriggerWithAccountOptions extends CommonTriggerOptions {
    * deployment. The available labels for existing accounts can be seen with
    * `glue accounts list`.
    */
-  accountSelector?: Record<string, string>;
+  accountSelector?: Record<string, string | undefined>;
 }
 // This explicit type is necessary to pass deno's missing-explicit-type lint. It
 // needs to be a ZodObject type instead of ZodType so the `.extend()` method is
@@ -47,13 +47,13 @@ export interface CommonTriggerWithAccountOptions extends CommonTriggerOptions {
 export const CommonTriggerWithAccountOptions:
   & z.ZodObject<
     z.util.Extend<(typeof CommonTriggerOptions)["shape"], {
-      accountSelector: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
+      accountSelector: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodString>>>;
     }>
   >
   & z.ZodType<CommonTriggerWithAccountOptions, CommonTriggerWithAccountOptions> =
     CommonTriggerOptions
       .extend({
-        accountSelector: z.record(z.string(), z.string()).optional(),
+        accountSelector: z.record(z.string(), z.string().optional()).optional(),
       });
 
 /**
@@ -97,14 +97,14 @@ export interface CommonCredentialFetcherOptions {
    * deployment. The available labels for existing accounts can be seen with
    * `glue accounts list`.
    */
-  accountSelector?: Record<string, string>;
+  accountSelector?: Record<string, string | undefined>;
 }
 export const CommonCredentialFetcherOptions:
   & z.ZodObject<{
     description: z.ZodOptional<z.ZodString>;
-    accountSelector: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
+    accountSelector: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodString>>>;
   }>
   & z.ZodType<CommonCredentialFetcherOptions, CommonCredentialFetcherOptions> = z.object({
     description: z.string().optional(),
-    accountSelector: z.record(z.string(), z.string()).optional(),
+    accountSelector: z.record(z.string(), z.string().optional()).optional(),
   });

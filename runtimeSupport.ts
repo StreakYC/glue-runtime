@@ -104,7 +104,7 @@ export function registerEventListener<T>(
     typeof commonTriggerOptions.accountSelector === "object"
   ) {
     (fullBackendConfig as CommonTriggerWithAccountBackendConfig).accountSelector =
-      commonTriggerOptions.accountSelector as Record<string, string>;
+      commonTriggerOptions.accountSelector as Record<string, string | undefined>;
   }
 
   const typedCallback = callback as RegisteredEvent["fn"];
