@@ -7,6 +7,7 @@ import {
   type Registrations,
   type SecretInjectionBackendConfig,
   TriggerEvent,
+  type TriggerRegistration,
 } from "./backendTypes.ts";
 export type { AccessTokenCredential, ApiKeyCredential };
 import { type Log, patchConsoleGlobal, runInLoggingContext } from "./logging.ts";
@@ -29,7 +30,7 @@ interface TriggerEventResponse {
 
 interface RegisteredEvent {
   fn: (event: unknown) => void | Promise<void>;
-  config: unknown;
+  config: TriggerRegistration["config"];
 }
 
 interface RegisteredCredentialFetcher {

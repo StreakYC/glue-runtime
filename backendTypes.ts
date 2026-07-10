@@ -11,7 +11,7 @@
  */
 
 import { z } from "zod";
-import { CommonCredentialFetcherOptions } from "./common.ts";
+import { CommonCredentialFetcherOptions, CommonTriggerWithAccountBackendConfig } from "./common.ts";
 
 export interface TriggerEvent {
   /** The event source type (e.g., "github", "stripe", "webhook") */
@@ -40,13 +40,13 @@ export interface TriggerRegistration {
    */
   label: string;
   /** Event source specific configuration (varies by type) */
-  config?: unknown;
+  config?: CommonTriggerWithAccountBackendConfig & Record<string, unknown>;
 }
 
 export const TriggerRegistration: z.ZodType<TriggerRegistration> = z.object({
   type: z.string(),
   label: z.string(),
-  config: z.looseObject({}).optional(),
+  config: CommonTriggerWithAccountBackendConfig.loose().optional(),
 });
 
 export interface CredentialFetcherBackendConfig extends CommonCredentialFetcherOptions {
