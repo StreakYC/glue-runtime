@@ -6,6 +6,7 @@
     "jsr:@std/async@^1.0.15": "1.0.15",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "npm:@googleapis/drive@20": "20.0.0",
+    "npm:@notionhq/client@^5.22.0": "5.22.0",
     "npm:@octokit/webhooks-types@*": "7.6.1",
     "npm:@octokit/webhooks-types@^7.6.1": "7.6.1",
     "npm:@slack/types@^2.17.0": "2.17.0",
@@ -50,6 +51,9 @@
         "wrap-ansi@8.1.0",
         "wrap-ansi-cjs@npm:wrap-ansi@7.0.0"
       ]
+    },
+    "@notionhq/client@5.22.0": {
+      "integrity": "sha512-lZ3JGBCd6O6MNHWn/58QcUqX1FgmlcODcx/EaUEEpuxLXF5tSi+v29Vzoz8mZ6JgDWDn5pMzzjB69QevYjQQZA=="
     },
     "@octokit/app@15.1.5_@octokit+core@6.1.4": {
       "integrity": "sha512-6cxLT9U8x7GGQ7lNWsKtFr4ccg9oLkGvowk373sX9HvX5U37kql5d55SzaQUxPE8PwgX2cqkzDm5NF5aPKevqg==",
@@ -987,6 +991,7 @@
       "jsr:@std/assert@1",
       "jsr:@std/async@^1.0.15",
       "npm:@googleapis/drive@20",
+      "npm:@notionhq/client@^5.22.0",
       "npm:@octokit/webhooks-types@^7.6.1",
       "npm:@slack/types@^2.17.0",
       "npm:@slack/web-api@^7.11.0",
