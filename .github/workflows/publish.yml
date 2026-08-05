@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - chris/accountSelector
 
 jobs:
   publish:
