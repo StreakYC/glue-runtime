@@ -101,8 +101,6 @@ export const NotionTriggerBackendConfig: z.ZodType<NotionTriggerBackendConfig> =
   });
 
 export interface NotionCredentialFetcherOptions extends CommonCredentialFetcherOptions {
-  /** Optional Notion workspace ID to select a connected workspace. */
-  workspaceId?: string;
 }
 
 /**
@@ -182,9 +180,6 @@ export class Notion {
   createCredentialFetcher(
     options?: NotionCredentialFetcherOptions,
   ): CredentialFetcher<AccessTokenCredential> {
-    return registerCredentialFetcher<AccessTokenCredential>("notion", {
-      description: options?.description,
-      selector: options?.workspaceId,
-    });
+    return registerCredentialFetcher<AccessTokenCredential>("notion", options ?? {});
   }
 }
