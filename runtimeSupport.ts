@@ -465,11 +465,12 @@ function scheduleInit() {
 function startLifeline(cliWebsocketAddr: string) {
   const ws = new WebSocket(cliWebsocketAddr);
   ws.onclose = (_event) => {
-    // runner died so exit
-    Deno.exit(5); // arbitrary non-default error exit code
+    // Runner died so exit. Send kill signal instead of using `Deno.exit()` so
+    // we still fully exit the process when `deno run --watch` is used.
+    Deno.kill(Deno.pid);
   };
   ws.onerror = (event) => {
     console.error((event as ErrorEvent).error);
-    Deno.exit(5);
+    Deno.kill(Deno.pid);
   };
 }
