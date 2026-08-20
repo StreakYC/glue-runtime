@@ -86,18 +86,14 @@ type NotionEventHandler<T extends NotionEventType> = (
 ) => void;
 
 export interface NotionTriggerOptions extends CommonTriggerOptions {
-  /** Optional Notion workspace ID to select a connected workspace. */
-  workspaceId?: string;
 }
 
 export interface NotionTriggerBackendConfig extends CommonTriggerBackendConfig {
   events: NotionEventType[];
-  workspaceId?: string;
 }
 export const NotionTriggerBackendConfig: z.ZodType<NotionTriggerBackendConfig> =
   CommonTriggerBackendConfig.extend({
     events: z.array(z.custom<NotionEventType>((type) => typeof type === "string")),
-    workspaceId: z.string().optional(),
   });
 
 export interface NotionCredentialFetcherOptions extends CommonCredentialFetcherOptions {
@@ -122,7 +118,6 @@ export class Notion {
   ): void {
     const config: NotionTriggerBackendConfig = {
       events,
-      workspaceId: options?.workspaceId,
     };
     registerEventListener("notion", fn, options, config);
   }
