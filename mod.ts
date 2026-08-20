@@ -24,6 +24,8 @@ import { Claude } from "./integrations/claude/runtime.ts";
 export type { Claude };
 import { Notion } from "./integrations/notion/runtime.ts";
 export type { Notion };
+import { QuickBooks } from "./integrations/quickbooks/runtime.ts";
+export type { QuickBooks };
 import { Debug } from "./integrations/debug/runtime.ts";
 export type { Debug };
 import { Drive } from "./integrations/drive/runtime.ts";
@@ -79,6 +81,10 @@ export type {
   NotionTriggerOptions,
   NotionWebhookPayload,
 } from "./integrations/notion/runtime.ts";
+export type {
+  QuickBooksCredential,
+  QuickBooksCredentialFetcherOptions,
+} from "./integrations/quickbooks/runtime.ts";
 export type {
   AccessTokenCredential,
   ApiKeyCredential,
@@ -186,6 +192,11 @@ class Glue {
    * Tracks Notion webhooks and provides access tokens for the Notion API.
    */
   readonly notion: Notion = new Notion();
+
+  /**
+   * QuickBooks Online credentials for the Accounting API.
+   */
+  readonly quickbooks: QuickBooks = new QuickBooks();
 
   /**
    * Debug utilities exposing low-level registration helpers.
