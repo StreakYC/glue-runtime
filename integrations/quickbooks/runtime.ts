@@ -12,7 +12,10 @@ export interface QuickBooksCredential extends AccessTokenCredential {
 
 export interface QuickBooksCredentialFetcherOptions extends CommonCredentialFetcherOptions {
   /** Optional QuickBooks company ID to select a connected company. */
-  realmId?: string;
+  accountSelector?: {
+    realmId?: string;
+    emailAddress?: string;
+  };
 }
 
 export class QuickBooks {
@@ -23,11 +26,6 @@ export class QuickBooks {
   createCredentialFetcher(
     options?: QuickBooksCredentialFetcherOptions,
   ): CredentialFetcher<QuickBooksCredential> {
-    return registerCredentialFetcher<QuickBooksCredential>("quickbooks", {
-      description: options?.description,
-      accountSelector: options?.realmId
-        ? { ...options.accountSelector, realmId: options.realmId }
-        : options?.accountSelector,
-    });
+    return registerCredentialFetcher<QuickBooksCredential>("quickbooks", options ?? {});
   }
 }
