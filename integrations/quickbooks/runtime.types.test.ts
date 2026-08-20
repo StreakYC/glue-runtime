@@ -6,7 +6,9 @@ function expectType<T>(_value: T): void {}
 
 function verifyCredentialTyping(quickBooks: QuickBooks): void {
   const credentialFetcher = quickBooks.createCredentialFetcher({
-    realmId: "1234567890",
+    accountSelector: {
+      realmId: "1234567890",
+    },
     description: "QuickBooks company",
   });
   expectType<CredentialFetcher<QuickBooksCredential>>(credentialFetcher);
