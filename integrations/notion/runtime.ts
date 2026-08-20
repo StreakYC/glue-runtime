@@ -101,6 +101,12 @@ export const NotionTriggerBackendConfig: z.ZodType<NotionTriggerBackendConfig> =
   });
 
 export interface NotionCredentialFetcherOptions extends CommonCredentialFetcherOptions {
+  accountSelector?: {
+    workspaceId?: string;
+    workspaceName?: string;
+    userId?: string;
+    email?: string;
+  };
 }
 
 /**

@@ -5,7 +5,11 @@ import {
   registerCredentialFetcher,
 } from "../../runtimeSupport.ts";
 
-export interface ClaudeCredentialFetcherOptions extends CommonCredentialFetcherOptions {}
+export interface ClaudeCredentialFetcherOptions extends CommonCredentialFetcherOptions {
+  accountSelector?: {
+    organizationId?: string;
+  };
+}
 
 /**
  * Claude service for fetching API key credentials.
@@ -14,7 +18,9 @@ export interface ClaudeCredentialFetcherOptions extends CommonCredentialFetcherO
  * ```typescript
  * import Anthropic from "npm:@anthropic-ai/sdk@0.68";
  *
- * const fetcher = glue.claude.createCredentialFetcher({ accountName: "primary-claude" });
+ * const fetcher = glue.claude.createCredentialFetcher({
+ *   accountSelector: { organizationId: "org_123" },
+ * });
  *
  * glue.webhook.onPost(async () => {
  *   const cred = await fetcher.get();

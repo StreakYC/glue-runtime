@@ -16,13 +16,22 @@ export interface DriveSingleFileChangeEvent {
  * Options for registering a trigger to listen to changes in Google Drive.
  */
 export interface DriveChangesTriggerOptions
-  extends CommonTriggerWithAccountOptions, Omit<DriveChangesTriggerBackendConfig, "type"> {}
+  extends CommonTriggerWithAccountOptions, Omit<DriveChangesTriggerBackendConfig, "type"> {
+  accountSelector?: {
+    email?: string;
+    userId?: string;
+  };
+}
 
 /**
  * Options for registering a trigger to listen to changes in a specific Google
  * Drive file.
  */
 export interface DriveSingleFileTriggerOptions extends CommonTriggerWithAccountOptions {
+  accountSelector?: {
+    email?: string;
+    userId?: string;
+  };
   fileId: string;
 }
 

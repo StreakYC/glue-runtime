@@ -17,7 +17,11 @@ import {
  *
  * Extends the common trigger options with GitHub-specific configuration.
  */
-export interface GithubTriggerOptions extends CommonTriggerWithAccountOptions {}
+export interface GithubTriggerOptions extends CommonTriggerWithAccountOptions {
+  accountSelector?: {
+    username?: string;
+  };
+}
 
 /**
  * Configuration for listening to events on a specific GitHub repository.
@@ -68,6 +72,9 @@ export const GithubTriggerBackendConfig: z.ZodType<GithubTriggerBackendConfig> =
  * Options for GitHub credential fetchers.
  */
 export interface GithubCredentialFetcherOptions extends CommonCredentialFetcherOptions {
+  accountSelector?: {
+    username?: string;
+  };
   /**
    * The scopes to request from the GitHub API.
    */

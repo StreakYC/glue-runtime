@@ -13,6 +13,9 @@ import {
 } from "../../runtimeSupport.ts";
 
 export interface IntercomTriggerOptions extends CommonTriggerWithAccountOptions {
+  accountSelector?: {
+    workspaceId?: string;
+  };
 }
 
 export interface IntercomConversationPartTag {
@@ -98,6 +101,9 @@ export const IntercomTriggerBackendConfig: z.ZodType<IntercomTriggerBackendConfi
  * Options for Intercom credential fetchers.
  */
 export interface IntercomCredentialFetcherOptions extends CommonCredentialFetcherOptions {
+  accountSelector?: {
+    workspaceId?: string;
+  };
 }
 
 /**

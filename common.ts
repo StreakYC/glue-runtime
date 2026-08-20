@@ -32,7 +32,7 @@ export const CommonTriggerOptions:
  */
 export interface CommonTriggerWithAccountOptions extends CommonTriggerOptions {
   /**
-   * Key-value pairs identifying which account to use, e.g. `{emailAddress:
+   * Key-value pairs identifying which account to use, e.g. `{email:
    * "foo@example.com"}` or `{workspaceId: "xyz"}`. If multiple accounts match
    * all the given selectors, the user will be prompted to pick one during
    * deployment. The available labels for existing accounts can be seen with
@@ -91,7 +91,7 @@ export interface CommonCredentialFetcherOptions {
   /** Description that appears for the credential fetcher when configuring a Glue. */
   description?: string;
   /**
-   * Key-value pairs identifying which account to use, e.g. `{emailAddress:
+   * Key-value pairs identifying which account to use, e.g. `{email:
    * "foo@example.com"}` or `{workspaceId: "xyz"}`. If multiple accounts match
    * all the given selectors, the user will be prompted to pick one during
    * deployment. The available labels for existing accounts can be seen with
