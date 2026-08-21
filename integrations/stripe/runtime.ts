@@ -22,8 +22,7 @@ import {
  */
 export type StripeEventType = StripeLib.Event.Type;
 
-export interface StripeTriggerOptions extends CommonTriggerWithAccountOptions {
-}
+export type StripeTriggerOptions = Omit<CommonTriggerWithAccountOptions, "accountSelector">;
 
 export interface StripeTriggerBackendConfig extends CommonTriggerWithAccountBackendConfig {
   /** Array of Stripe event types to listen for */
@@ -204,4 +203,7 @@ export class Stripe {
   }
 }
 
-export interface StripeCredentialFetcherOptions extends CommonCredentialFetcherOptions {}
+export type StripeCredentialFetcherOptions = Omit<
+  CommonCredentialFetcherOptions,
+  "accountSelector"
+>;

@@ -57,6 +57,11 @@ export const SlackEventWebhook: z.ZodType<SlackEventWebhook<SlackEvent>> = z.obj
 });
 
 export interface SlackTriggerOptions extends CommonTriggerWithAccountOptions {
+  accountSelector?: {
+    teamId?: string;
+    userId?: string;
+    teamName?: string;
+  };
   /** Optional channel ID to filter events on. If provided, only events from this channel will be listened to.  */
   channelId?: string;
 }
@@ -74,6 +79,19 @@ export const SlackTriggerBackendConfig: z.ZodType<SlackTriggerBackendConfig> =
   });
 
 export interface SlackCredentialFetcherOptions extends CommonCredentialFetcherOptions {
+  accountSelector?: {
+    teamId?: string;
+    userId?: string;
+    teamName?: string;
+  };
+  scopes: string[];
+}
+
+export interface SlackBotCredentialFetcherOptions extends CommonCredentialFetcherOptions {
+  accountSelector?: {
+    teamId?: string;
+    teamName?: string;
+  };
   scopes: string[];
 }
 
@@ -214,7 +232,7 @@ export class Slack {
    * ```
    */
   createBotCredentialFetcher(
-    options: SlackCredentialFetcherOptions,
+    options: SlackBotCredentialFetcherOptions,
   ): CredentialFetcher<AccessTokenCredential> {
     return registerCredentialFetcher<AccessTokenCredential>("slackBot", options);
   }
@@ -273,7 +291,7 @@ export class Slack {
    * ```
    */
   createBotMessageSendingCredentialFetcher(
-    options?: Omit<SlackCredentialFetcherOptions, "scopes">,
+    options?: Omit<SlackBotCredentialFetcherOptions, "scopes">,
   ): CredentialFetcher<AccessTokenCredential> {
     return this.createBotCredentialFetcher({
       ...options,

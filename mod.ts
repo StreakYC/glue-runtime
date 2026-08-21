@@ -67,6 +67,7 @@ export type {
   IntercomTriggerOptions,
 } from "./integrations/intercom/runtime.ts";
 export type {
+  SlackBotCredentialFetcherOptions,
   SlackCredentialFetcherOptions,
   SlackEventType,
   SlackEventWebhook,

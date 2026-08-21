@@ -15,6 +15,10 @@ import {
  * Options specific to Streak event triggers.
  */
 export interface StreakTriggerOptions extends CommonTriggerWithAccountOptions {
+  accountSelector?: {
+    email?: string;
+    displayName?: string;
+  };
 }
 
 export interface StreakTriggerBackendConfig extends CommonTriggerWithAccountBackendConfig {
@@ -29,6 +33,10 @@ export const StreakTriggerBackendConfig = CommonTriggerWithAccountBackendConfig.
 }) as z.ZodType<StreakTriggerBackendConfig>; // doing a cast only because we have a looser type for event
 
 export interface StreakCredentialFetcherOptions extends CommonCredentialFetcherOptions {
+  accountSelector?: {
+    email?: string;
+    displayName?: string;
+  };
 }
 
 /**

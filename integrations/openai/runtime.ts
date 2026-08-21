@@ -5,8 +5,10 @@ import {
   registerCredentialFetcher,
 } from "../../runtimeSupport.ts";
 
-export interface OpenAICredentialFetcherOptions extends CommonCredentialFetcherOptions {
-}
+export type OpenAICredentialFetcherOptions = Omit<
+  CommonCredentialFetcherOptions,
+  "accountSelector"
+>;
 
 /**
  * OpenAI service for fetching API key credentials.

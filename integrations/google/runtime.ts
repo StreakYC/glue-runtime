@@ -6,6 +6,10 @@ import {
 } from "../../runtimeSupport.ts";
 
 export interface GoogleCredentialFetcherOptions extends CommonCredentialFetcherOptions {
+  accountSelector?: {
+    email?: string;
+    userId?: string;
+  };
   scopes: string[];
 }
 

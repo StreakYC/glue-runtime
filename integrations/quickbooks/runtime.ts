@@ -11,10 +11,11 @@ export interface QuickBooksCredential extends AccessTokenCredential {
 }
 
 export interface QuickBooksCredentialFetcherOptions extends CommonCredentialFetcherOptions {
-  /** Optional QuickBooks company ID to select a connected company. */
   accountSelector?: {
     realmId?: string;
-    emailAddress?: string;
+    companyName?: string;
+    userName?: string;
+    userEmail?: string;
   };
 }
 

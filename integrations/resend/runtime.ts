@@ -5,8 +5,10 @@ import {
   registerCredentialFetcher,
 } from "../../runtimeSupport.ts";
 
-export interface ResendCredentialFetcherOptions extends CommonCredentialFetcherOptions {
-}
+export type ResendCredentialFetcherOptions = Omit<
+  CommonCredentialFetcherOptions,
+  "accountSelector"
+>;
 
 /**
  * Resend email service for sending emails.
