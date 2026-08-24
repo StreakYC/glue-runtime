@@ -143,7 +143,7 @@ const credentials = glue.quickbooks.createCredentialFetcher({
 
 glue.quickbooks.onCustomerCreated(async (event) => {
   const { accessToken, realmId } = await credentials.get();
-  console.log(event.type, event.intuitentityid, realmId, accessToken);
+  console.log(event.type, event.intuitentityid, realmId);
   const customer = await fetch(`https://quickbooks.api.com/v1/customers/${event.intuitentityid}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
