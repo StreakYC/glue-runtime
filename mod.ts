@@ -83,8 +83,14 @@ export type {
   NotionWebhookPayload,
 } from "./integrations/notion/runtime.ts";
 export type {
+  QuickBooksAccountSelector,
+  QuickBooksCloudEvent,
   QuickBooksCredential,
   QuickBooksCredentialFetcherOptions,
+  QuickBooksEventHandler,
+  QuickBooksEventType,
+  QuickBooksKnownEventType,
+  QuickBooksTriggerOptions,
 } from "./integrations/quickbooks/runtime.ts";
 export type {
   AccessTokenCredential,

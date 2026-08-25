@@ -130,6 +130,37 @@ glue.stripe.onSubscriptionCreated((event) => {
 });
 ```
 
+### QuickBooks Online
+
+React to accounting entity changes from a connected QuickBooks company. QuickBooks webhook events
+(CloudEvents) don't contain the full entity. Instead they contain an `intuitentityid` which can be
+used to fetch the full entity using a credential fetcher.
+
+```typescript
+const credentials = glue.quickbooks.createCredentialFetcher({
+  accountSelector: { realmId: "1234567890" },
+});
+
+glue.quickbooks.onCustomerCreated(async (event) => {
+  const { accessToken, realmId } = await credentials.get();
+  console.log(event.type, event.intuitentityid, realmId);
+  const customer = await fetch(`https://quickbooks.api.com/v1/customers/${event.intuitentityid}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}, {
+  accountSelector: { realmId: "1234567890" },
+});
+
+glue.quickbooks.onEvents([
+  "qbo.invoice.created.v1",
+  "qbo.invoice.updated.v1",
+], (event) => {
+  console.log(event.id, event.type, event.intuitaccountid);
+});
+```
+
 ### Intercom
 
 Monitor customer conversations and support interactions.
