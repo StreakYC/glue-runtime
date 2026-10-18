@@ -35,6 +35,8 @@ export interface WebhookEvent {
   headers: Record<string, string>;
   /** The raw body content as text, if present */
   bodyText?: string;
+  /** The raw body content as JSON, if present */
+  bodyJson?: unknown;
 }
 
 /**
