@@ -197,6 +197,8 @@ export type BoxEventType =
   | "BOX_CHANGE_PIPELINE"
   /** Triggered when a box is deleted */
   | "BOX_DELETE"
+  /** Triggered when a box's presence changes */
+  | "BOX_PRESENCE_CHANGED"
   /** Triggered when a comment is added to a box */
   | "COMMENT_CREATE"
   /** Triggered when a new task is created in a box */
